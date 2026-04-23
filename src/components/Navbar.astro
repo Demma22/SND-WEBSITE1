@@ -1,0 +1,85 @@
+---
+// Navbar Component - Reusable across all pages
+// Place at: src/components/Navbar.astro
+---
+
+<nav id="navbar">
+  <a href="/" class="nav-logo">
+    <img src="/snd.png" alt="SND" onerror="this.parentNode.innerHTML='<div class=\'logo-fallback\'>SND</div>';" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about">About Us</a></li>
+    <li><a href="/blog">Blog</a></li>
+
+  </ul>
+  <a href="/contact" class="nav-cta">Get in Touch</a>
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<style>
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 4rem;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(52,57,64,0.08);
+    transition: background 0.25s, box-shadow 0.25s;
+  }
+  nav.scrolled {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    background: rgba(255,255,255,0.98);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+  .nav-logo img { height: 44px; width: auto; }
+  .logo-fallback {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 1.5rem;
+    color: var(--snd-dark); background: var(--snd-light);
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 2.8rem; list-style: none; }
+  .nav-links a { color: var(--snd-dark); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--snd-black); }
+  .nav-cta {
+    background: var(--snd-black); color: var(--snd-white);
+    border: none; padding: 0.65rem 1.6rem;
+    border-radius: 40px; font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.01em; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: #2c2c2c; transform: scale(1.02); }
+  .hamburger { display: none; flex-direction: column; gap: 6px; background: none; border: none; cursor: pointer; }
+  .hamburger span { width: 24px; height: 2px; background: var(--snd-dark); border-radius: 2px; transition: 0.2s; }
+
+  @media (max-width: 900px) {
+    nav { padding: 0.9rem 1.5rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+  }
+</style>
+
+<script>
+  // Navbar scroll effect
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (nav) nav.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  // Hamburger menu placeholder
+  const hamburger = document.querySelector('.hamburger');
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      alert('Mobile menu — add your drawer logic.');
+    });
+  }
+</script>

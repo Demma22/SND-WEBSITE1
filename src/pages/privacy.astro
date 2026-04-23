@@ -1,0 +1,583 @@
+---
+// REMI Privacy Policy
+// Place at: src/pages/privacy.astro
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — REMI</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --snd-dark:   #343940;
+      --snd-light:  #CFCFD3;
+      --snd-black:  #0d0d0d;
+      --snd-white:  #ffffff;
+      --remi-blue:  #535FFD;
+      --remi-amber: #FDAC1B;
+      --remi-white: #FAFAFA;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-remi:    'Athelas', 'Palatino Linotype', Palatino, Georgia, serif;
+      --font-body:    'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--snd-white);
+      color: var(--snd-black);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── HERO BANNER ─────────────────────────────────────── */
+    .policy-hero {
+      background: var(--remi-blue);
+      padding: 10rem 4rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .policy-hero::before {
+      content: '';
+      position: absolute; top: -100px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.07), transparent 70%);
+      pointer-events: none;
+    }
+
+    .policy-hero::after {
+      content: '';
+      position: absolute; bottom: -60px; left: 10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(253,172,27,0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    .policy-hero-inner {
+      max-width: 860px;
+      position: relative; z-index: 1;
+    }
+
+    .policy-product-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px; padding: 0.38rem 1.1rem;
+      font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 1.8rem;
+    }
+    .badge-amber-dot { width: 6px; height: 6px; background: var(--remi-amber); border-radius: 50%; }
+
+    .policy-hero h1 {
+      font-family: var(--font-remi);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+    }
+
+    .policy-hero p {
+      color: rgba(255,255,255,0.72);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 560px;
+      font-weight: 400;
+    }
+
+    .policy-meta {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .policy-meta-item {
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+
+    .policy-meta-label {
+      font-size: 0.68rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .policy-meta-value {
+      font-size: 0.88rem; color: rgba(255,255,255,0.8); font-weight: 500;
+    }
+
+    /* ── CONTENT AREA ────────────────────────────────────── */
+    .policy-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 4rem 8rem;
+      align-items: start;
+    }
+
+    /* ── LEFT: Sticky Table of Contents ── */
+    .policy-toc {
+      position: sticky;
+      top: 100px;
+    }
+
+    .toc-title {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: #9ca3af; margin-bottom: 1.2rem;
+    }
+
+    .toc-list { list-style: none; }
+
+    .toc-list li { margin-bottom: 0.1rem; }
+
+    .toc-list a {
+      display: block;
+      font-size: 0.83rem; font-weight: 500;
+      color: #6b7280;
+      text-decoration: none;
+      padding: 0.45rem 0.8rem;
+      border-left: 2px solid #f0f0f0;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .toc-list a:hover,
+    .toc-list a.active {
+      color: var(--remi-blue);
+      border-left-color: var(--remi-blue);
+      background: rgba(83,95,253,0.05);
+    }
+
+    /* ── RIGHT: Policy Content ── */
+    .policy-content { min-width: 0; }
+
+    .policy-section {
+      margin-bottom: 3.5rem;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .policy-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .policy-section-number {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--remi-blue); margin-bottom: 0.6rem;
+    }
+
+    .policy-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .policy-section p {
+      color: #4b5563;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      font-weight: 400;
+    }
+
+    .policy-section p:last-child { margin-bottom: 0; }
+
+    /* Highlight box */
+    .policy-callout {
+      background: rgba(83,95,253,0.05);
+      border: 1px solid rgba(83,95,253,0.15);
+      border-left: 3px solid var(--remi-blue);
+      border-radius: 0 12px 12px 0;
+      padding: 1.2rem 1.5rem;
+      margin: 1.4rem 0;
+    }
+
+    .policy-callout p {
+      color: #374151;
+      font-size: 0.92rem;
+      margin-bottom: 0;
+    }
+
+    .policy-callout.amber {
+      background: rgba(253,172,27,0.06);
+      border-color: rgba(253,172,27,0.2);
+      border-left-color: var(--remi-amber);
+    }
+
+    .policy-callout.amber p { color: #6b5a1e; }
+
+    .policy-list {
+      list-style: none;
+      margin: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .policy-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.93rem;
+      color: #4b5563;
+      line-height: 1.65;
+    }
+
+    .policy-list li::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--remi-blue);
+      border-radius: 50%;
+      margin-top: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .deletion-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--remi-white);
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 1.4rem 1.8rem;
+      margin-top: 1.4rem;
+      text-decoration: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .deletion-box:hover {
+      border-color: var(--remi-blue);
+      box-shadow: 0 4px 16px rgba(83,95,253,0.08);
+    }
+
+    .deletion-box-text strong {
+      display: block;
+      font-size: 0.95rem; font-weight: 600;
+      color: var(--snd-black); margin-bottom: 0.2rem;
+    }
+
+    .deletion-box-text span {
+      font-size: 0.82rem; color: #6b7280;
+    }
+
+    .deletion-box-arrow {
+      width: 36px; height: 36px;
+      background: var(--remi-blue);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ── FOOTER STRIP ────────────────────────────────────── */
+    .policy-footer-strip {
+      background: var(--snd-dark);
+      padding: 3rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .policy-footer-strip p {
+      font-size: 0.82rem;
+      color: rgba(207,207,211,0.5);
+    }
+
+    .policy-footer-strip a {
+      color: rgba(207,207,211,0.7);
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: color 0.2s;
+    }
+
+    .policy-footer-strip a:hover { color: white; }
+
+    .footer-strip-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .policy-hero { padding: 8rem 1.5rem 4rem; }
+      .policy-layout { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 1.5rem 6rem; }
+      .policy-toc { position: static; top: auto; margin-bottom: 1rem; }
+      .policy-footer-strip { padding: 2.5rem 1.5rem; flex-direction: column; text-align: center; }
+      .footer-strip-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- IMPORTED NAVBAR COMPONENT -->
+  <Navbar />
+
+  <!-- ══════════════ HERO BANNER ══════════════ -->
+  <div class="policy-hero">
+    <div class="policy-hero-inner">
+      <div class="policy-product-badge">
+        <span class="badge-amber-dot"></span>
+        Remi — Academic Assistant
+      </div>
+      <h1>Privacy Policy</h1>
+      <p>
+        We are committed to protecting your academic data and personal information. This policy explains exactly what we collect, how we use it, and the controls you have.
+      </p>
+      <div class="policy-meta">
+        <div class="policy-meta-item">
+          <span class="policy-meta-label">Product</span>
+          <span class="policy-meta-value">REMI App</span>
+        </div>
+        <div class="policy-meta-item">
+          <span class="policy-meta-label">Applies to</span>
+          <span class="policy-meta-value">Android (Google Play)</span>
+        </div>
+        <div class="policy-meta-item">
+          <span class="policy-meta-label">Last updated</span>
+          <span class="policy-meta-value">2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════ CONTENT ══════════════ -->
+  <div class="policy-layout">
+
+    <!-- LEFT: Table of Contents -->
+    <aside class="policy-toc">
+      <p class="toc-title">Contents</p>
+      <ul class="toc-list">
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#information">Information We Collect</a></li>
+        <li><a href="#usage">How We Use Your Information</a></li>
+        <li><a href="#ai">AI Assistant & Data Access</a></li>
+        <li><a href="#storage">Data Storage & Security</a></li>
+        <li><a href="#sharing">Data Sharing</a></li>
+        <li><a href="#rights">Your Rights</a></li>
+        <li><a href="#children">Children's Privacy</a></li>
+        <li><a href="#changes">Changes to This Policy</a></li>
+        <li><a href="#contact">Contact Information</a></li>
+      </ul>
+    </aside>
+
+    <!-- RIGHT: Policy Sections -->
+    <div class="policy-content">
+
+      <div class="policy-section" id="introduction">
+        <p class="policy-section-number">01 — Introduction</p>
+        <h2>Introduction</h2>
+        <p>
+          REMI is a mobile-based academic assistant designed to help university students manage timetables, GPA calculations, exams, and academic planning with AI support. This Privacy Policy explains how we collect, use, store, and protect your data when you use the REMI application.
+        </p>
+        <div class="policy-callout">
+          <p>By using REMI, you agree to the collection and use of information in accordance with this policy. We encourage you to read it in full so you understand your rights and how your data is handled.</p>
+        </div>
+      </div>
+
+      <div class="policy-section" id="information">
+        <p class="policy-section-number">02 — Data Collection</p>
+        <h2>Information We Collect</h2>
+        <p>
+          We collect information you provide during registration and onboarding. This includes:
+        </p>
+        <ul class="policy-list">
+          <li>Account registration details provided during sign-up</li>
+          <li>Academic details such as course structure and programme information</li>
+          <li>Timetable entries and class schedules you create within the app</li>
+          <li>Exam schedules and deadline dates you input</li>
+          <li>GPA records and grade data you enter for calculation</li>
+          <li>Basic technical data required for app functionality (e.g. device type, OS version)</li>
+        </ul>
+        <p>
+          We only collect data that is necessary to deliver REMI's features. We do not collect location data, contacts, or any information unrelated to your academic use of the app.
+        </p>
+      </div>
+
+      <div class="policy-section" id="usage">
+        <p class="policy-section-number">03 — Data Usage</p>
+        <h2>How We Use Your Information</h2>
+        <p>
+          Your information is used solely to provide REMI's core features. Specifically, your data enables:
+        </p>
+        <ul class="policy-list">
+          <li>Timetable management and schedule display</li>
+          <li>GPA calculation and academic performance tracking</li>
+          <li>Exam planning and deadline reminders</li>
+          <li>Personalized AI assistance based on your academic context</li>
+          <li>App performance monitoring and bug resolution</li>
+        </ul>
+        <p>
+          We do not use your data for advertising, profiling, or any purpose outside of providing the REMI service to you.
+        </p>
+      </div>
+
+      <div class="policy-section" id="ai">
+        <p class="policy-section-number">04 — AI Assistant</p>
+        <h2>AI Assistant and Data Access</h2>
+        <p>
+          The REMI AI assistant accesses limited academic data strictly to provide personalized responses. This includes your timetable entries, upcoming exams, and GPA history — only to the extent needed to answer your queries meaningfully.
+        </p>
+        <div class="policy-callout">
+          <p>Chat history within the AI assistant is limited and managed carefully to preserve your privacy. Conversations are not stored indefinitely and are not used to train external AI models.</p>
+        </div>
+        <p>
+          AI processing may involve transmitting limited data to a third-party AI provider. This is the only instance in which academic data leaves the REMI system, and it is done solely to power the assistant feature.
+        </p>
+      </div>
+
+      <div class="policy-section" id="storage">
+        <p class="policy-section-number">05 — Storage & Security</p>
+        <h2>Data Storage and Security</h2>
+        <p>
+          All user data is securely stored using Firebase Firestore, which includes authentication and role-based access controls. We take the following measures to protect your data:
+        </p>
+        <ul class="policy-list">
+          <li>All data transmission is encrypted using HTTPS</li>
+          <li>Access to user data is restricted to authorised users only</li>
+          <li>Firebase security rules are applied to prevent unauthorised read or write access</li>
+          <li>Authentication is required before any personal data can be accessed or modified</li>
+        </ul>
+        <p>
+          While we implement industry-standard security practices, no method of transmission or storage is 100% secure. We continually review and improve our security measures.
+        </p>
+      </div>
+
+      <div class="policy-section" id="sharing">
+        <p class="policy-section-number">06 — Data Sharing</p>
+        <h2>Data Sharing</h2>
+        <p>
+          REMI does not sell, trade, or rent your personal data to third parties. Your academic information is treated as private and confidential.
+        </p>
+        <div class="policy-callout amber">
+          <p>Academic data is not shared externally except where strictly required for essential app functionality — specifically, limited data shared with our AI processing provider to power the assistant feature.</p>
+        </div>
+        <p>
+          We do not share your data with advertisers, analytics companies, or any third parties for commercial purposes.
+        </p>
+      </div>
+
+      <div class="policy-section" id="rights">
+        <p class="policy-section-number">07 — Your Rights</p>
+        <h2>User Rights</h2>
+        <p>
+          You have full control over your data. At any time, you may:
+        </p>
+        <ul class="policy-list">
+          <li>Access the data stored in your REMI account</li>
+          <li>Update or correct any of your academic information within the app</li>
+          <li>Request complete deletion of your account and all associated data</li>
+        </ul>
+        <p>
+          To request deletion of your account and all associated data, please follow the steps described on the page linked below:
+        </p>
+        <a href="#" class="deletion-box">
+          <div class="deletion-box-text">
+            <strong>Account & Data Deletion Instructions</strong>
+            <span>Step-by-step guide to deleting your REMI account and data</span>
+          </div>
+          <div class="deletion-box-arrow">→</div>
+        </a>
+      </div>
+
+      <div class="policy-section" id="children">
+        <p class="policy-section-number">08 — Children's Privacy</p>
+        <h2>Children's Privacy</h2>
+        <p>
+          REMI is intended for university students and is not designed for or directed at children under the age of 13. We do not knowingly collect personal data from anyone under 13 years of age.
+        </p>
+        <p>
+          If we become aware that a child under 13 has provided personal information, we will take immediate steps to delete that data from our systems.
+        </p>
+      </div>
+
+      <div class="policy-section" id="changes">
+        <p class="policy-section-number">09 — Policy Updates</p>
+        <h2>Changes to This Policy</h2>
+        <p>
+          We may update this Privacy Policy from time to time to reflect changes in our practices, technology, or legal requirements. When we make updates, we will:
+        </p>
+        <ul class="policy-list">
+          <li>Update the "Last updated" date at the top of this page</li>
+          <li>Notify users through an in-app notification or message where the change is significant</li>
+          <li>Post the revised policy on this page</li>
+        </ul>
+        <p>
+          We encourage you to review this policy periodically. Continued use of REMI after any changes constitutes your acceptance of the updated policy.
+        </p>
+      </div>
+
+      <div class="policy-section" id="contact">
+        <p class="policy-section-number">10 — Contact</p>
+        <h2>Contact Information</h2>
+        <p>
+          If you have any questions, concerns, or requests regarding this Privacy Policy or how your data is handled, please contact us using the support options available within the REMI app.
+        </p>
+        <p>
+          You can also reach the SND team — the developers behind REMI — through the Contact page on this website.
+        </p>
+        <div class="policy-callout">
+          <p>We aim to respond to all privacy-related enquiries within 5 business days.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════ FOOTER STRIP ══════════════ -->
+  <div class="policy-footer-strip">
+    <p>© 2026 SND. REMI Privacy Policy.</p>
+    <div class="footer-strip-links">
+      <a href="/terms">Terms & Conditions</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/contact">Contact Us</a>
+    </div>
+  </div>
+
+  <!-- IMPORTED FOOTER COMPONENT -->
+  <Footer />
+
+  <script>
+    // Active TOC link on scroll
+    const sections = document.querySelectorAll('.policy-section');
+    const tocLinks = document.querySelectorAll('.toc-list a');
+
+    const tocObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          tocLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(section => tocObserver.observe(section));
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+---
+// Footer Component - Reusable across all pages
+// Place at: src/components/Footer.astro
+---
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img src="/snd.png" alt="SND" height="150" onerror="this.style.display='none';" />
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/snd.graphiix/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+    <img src="/instagram.svg" alt="Instagram" class="social-icon" />
+    </a>
+        <a href="https://www.tiktok.com/@snd.store0?lang=en" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="TikTok">
+    <img src="/tiktok.svg" alt="TikTok" class="social-icon" />
+</a>
+        <a href="https://www.threads.com/@snd.graphiix?xmt=AQF0s0BLGM7T1G-QmMiLX5rr4xiB9WsJsEYTjw51EnCosLg" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Threads">
+    <img src="/threads.svg" alt="Threads" class="social-icon" />
+</a>
+        <a href="#" class="social-link" aria-label="X">
+    <img src="/x.svg" alt="X" class="social-icon" />
+</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="/terms">Terms & Conditions</a></li>
+        <li><a href="/privacy">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 6 SND. All rights reserved.</p>
+    <p>Built by SND.</p>
+  </div>
+</footer>
+
+<style>
+  footer { background: var(--snd-white); padding: 5rem 4rem 2rem; border-top: 1px solid var(--snd-light); }
+  .footer-top { display: grid; grid-template-columns: 1.8fr 1fr 1fr; gap: 3rem; margin-bottom: 3.5rem; }
+  .footer-brand p { color: #5a6874; font-size: 0.85rem; line-height: 1.7; margin-top: 0.8rem; max-width: 280px; }
+  .footer-socials { display: flex; gap: 0.8rem; margin-top: 1.2rem; }
+  .social-link {
+    width: 25px; height: 38px; border-radius: 50%;
+
+    text-decoration: none; font-size: 0.8rem; font-weight: 600;
+
+  }
+
+  .footer-col h4 { font-family: var(--font-body); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--snd-dark); margin-bottom: 1.2rem; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 0.7rem; }
+  .footer-col ul li a { color: #5e6d7e; text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+  .footer-col ul li a:hover { color: var(--snd-black); }
+  .footer-bottom { border-top: 1px solid var(--snd-light); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-bottom p { font-size: 0.75rem; color: #8595a3; }
+
+  @media (max-width: 900px) {
+    footer { padding: 4rem 1.5rem 2rem; }
+    .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+  }
+</style>

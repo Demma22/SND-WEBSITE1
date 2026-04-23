@@ -1,0 +1,233 @@
+---
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  console.log('=== GET STATIC PATHS ===');
+  console.log('Number of posts for paths:', posts.length);
+  
+  const paths = posts.map((post) => {
+    // In Astro v6, use 'id' (without .md extension) as the slug
+    const slug = post.id.replace(/\.md$/, '');
+    console.log('Creating path for slug:', slug);
+    return {
+      params: { slug: slug },
+      props: { post },
+    };
+  });
+  
+  return paths;
+}
+
+const { post } = Astro.props;
+
+// Store the result in a variable instead of returning JSX
+let ContentComponent = null;
+let postExists = !!post;
+
+if (postExists) {
+  const rendered = await render(post);
+  ContentComponent = rendered.Content;
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{postExists ? post.data.title : 'Post Not Found'} — SND Blog</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --snd-dark:   #343940;
+      --snd-light:  #CFCFD3;
+      --snd-black:  #0d0d0d;
+      --snd-white:  #ffffff;
+      --remi-blue:  #535FFD;
+      --remi-amber: #FDAC1B;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--snd-white);
+      color: var(--snd-black);
+      font-family: var(--font-body);
+      line-height: 1.6;
+    }
+
+    .post-hero {
+      background: linear-gradient(135deg, var(--snd-dark) 0%, #2a2f35 100%);
+      padding: 10rem 4rem 4rem;
+    }
+
+    .post-hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .post-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .post-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .post-tag {
+      background: rgba(255,255,255,0.15);
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .post-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .post-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem;
+    }
+
+    .post-content h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      color: var(--snd-black);
+    }
+
+    .post-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 1.5rem 0 1rem;
+      color: var(--snd-black);
+    }
+
+    .post-content p {
+      color: #4b5563;
+      margin-bottom: 1rem;
+      line-height: 1.8;
+    }
+
+    .post-content ul, .post-content ol {
+      margin: 1rem 0;
+      padding-left: 1.5rem;
+      color: #4b5563;
+    }
+
+    .post-content li {
+      margin-bottom: 0.5rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      font-weight: 500;
+      transition: gap 0.2s;
+    }
+
+    .back-link:hover {
+      gap: 0.8rem;
+      color: white;
+    }
+
+    .not-found {
+      text-align: center;
+      padding: 6rem 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .not-found h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--snd-black);
+    }
+
+    .not-found p {
+      color: #5f6c7a;
+      margin-bottom: 2rem;
+    }
+
+    .not-found a {
+      color: var(--remi-blue);
+      text-decoration: none;
+    }
+
+    @media (max-width: 900px) {
+      .post-hero { padding: 8rem 1.5rem 3rem; }
+      .post-content { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <Navbar />
+
+  {
+    !postExists ? (
+      <div class="not-found">
+        <h1>Post Not Found</h1>
+        <p>The blog post you're looking for doesn't exist or has been moved.</p>
+        <a href="/blog">← Back to Blog</a>
+      </div>
+    ) : (
+      <>
+        <div class="post-hero">
+          <div class="post-hero-inner">
+            <a href="/blog" class="back-link">← Back to Blog</a>
+            <div class="post-meta">
+              <span>{post.data.pubDate}</span>
+              <span>•</span>
+              <span>by {post.data.author}</span>
+            </div>
+            <div class="post-tags">
+              {post.data.tags?.map((tag) => (
+                <span class="post-tag">#{tag}</span>
+              ))}
+            </div>
+            <h1>{post.data.title}</h1>
+          </div>
+        </div>
+
+        <article class="post-content">
+          <ContentComponent />
+        </article>
+      </>
+    )
+  }
+
+  <Footer />
+
+</body>
+</html>

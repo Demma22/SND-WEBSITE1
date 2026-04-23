@@ -1,0 +1,447 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — SND</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --snd-dark:   #343940;
+      --snd-light:  #CFCFD3;
+      --snd-black:  #0d0d0d;
+      --snd-white:  #ffffff;
+      --remi-blue:  #535FFD;
+      --remi-amber: #FDAC1B;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--snd-white);
+      color: var(--snd-black);
+      font-family: var(--font-body);
+      line-height: 1.5;
+    }
+
+    /* Hero Section with img_section.jpg background */
+    .about-hero {
+      position: relative;
+      height: 70vh;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      color: white;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-content h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-content p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Content Sections */
+    .about-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 4rem;
+    }
+
+    /* Mission Section */
+    .mission-section {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .mission-section .section-label {
+      color: var(--snd-dark);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .mission-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1.5rem;
+    }
+
+    .mission-text {
+      max-width: 800px;
+      margin: 0 auto;
+      color: #5f6c7a;
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin: 4rem 0;
+      padding: 2rem 0;
+      border-top: 1px solid var(--snd-light);
+      border-bottom: 1px solid var(--snd-light);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--snd-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #8a9bb0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Two Column Layout */
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin: 4rem 0;
+      align-items: center;
+    }
+
+    .column-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1rem;
+    }
+
+    .column-content p {
+      color: #5f6c7a;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .column-image {
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--snd-light);
+    }
+
+    .column-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .column-image:hover img {
+      transform: scale(1.02);
+    }
+
+    /* Values Section */
+    .values-section {
+      text-align: center;
+      margin: 5rem 0;
+    }
+
+    .values-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 3rem;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .value-card {
+      padding: 2rem;
+      background: #f9fafb;
+      border-radius: 24px;
+      transition: transform 0.3s ease;
+    }
+
+    .value-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .value-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .value-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--snd-black);
+    }
+
+    .value-card p {
+      color: #5f6c7a;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* Team Section Placeholder */
+    .team-section {
+      text-align: center;
+      margin: 5rem 0 3rem;
+    }
+
+    .team-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1rem;
+    }
+
+    .team-section > p {
+      color: #5f6c7a;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .team-card {
+      text-align: center;
+    }
+
+    .team-image {
+      width: 150px;
+      height: 150px;
+      background: var(--snd-light);
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .team-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .team-card p {
+      color: #8a9bb0;
+      font-size: 0.85rem;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      text-align: center;
+      background: var(--snd-dark);
+      padding: 5rem 2rem;
+      border-radius: 32px;
+      margin-top: 3rem;
+    }
+
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2rem;
+    }
+
+    .cta-btn {
+      background: white;
+      color: var(--snd-black);
+      padding: 0.9rem 2rem;
+      border-radius: 40px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .about-content { padding: 3rem 1.5rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+      .two-column { grid-template-columns: 1fr; gap: 2rem; }
+      .values-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; max-width: 300px; margin: 0 auto; }
+      .about-hero { height: 50vh; min-height: 400px; }
+    }
+  </style>
+</head>
+<body>
+
+  <Navbar />
+
+  <!-- Hero Section with img_section.jpg background -->
+  <div class="about-hero">
+    <img src="/img_section.jpg" alt="SND Studio" class="hero-background" onerror="this.src='https://placehold.co/1920x800/e2e8f0/475569?text=SND+Studio';" />
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>About Us</h1>
+      <p>We turn ideas into reality through thoughtful design, innovative development, and genuine collaboration.</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="about-content">
+    
+    <!-- Mission Section -->
+    <div class="mission-section">
+      <div class="section-label">OUR MISSION</div>
+      <h2>Think It. Create It.</h2>
+      <div class="mission-text">
+        <p>We believe every great solution starts with a single thought. At SND, we're dedicated to helping individuals and businesses bring their ideas to life — whether through digital products, creative design, or tangible experiences.</p>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">10+</div>
+        <div class="stat-label">Projects Completed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Happy Clients</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">3+</div>
+        <div class="stat-label">Years of Experience</div>
+      </div>
+
+    </div>
+
+    <!-- Two Column: Our Story -->
+    <div class="two-column">
+      <div class="column-content">
+        <h3>Our Story</h3>
+        <p>SND was born from a simple observation: great ideas often stay just that — ideas. We saw countless brilliant concepts never make it to the world because their creators lacked the technical expertise, design know-how, or resources to bring them to life.</p>
+        <p>That's why we built SND. We're a team of designers, developers, and creators who are passionate about turning visions into reality. From mobile apps to brand identities, from websites to physical products — we help you bridge the gap between "what if" and "what's next."</p>
+      </div>
+      <div class="column-image">
+        <img src="/img_section.jpg" alt="Our workspace" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Our+Story';" />
+      </div>
+    </div>
+
+    <!-- Two Column: What We Believe -->
+    <div class="two-column">
+      <div class="column-image">
+        <img src="/img_section.jpg" alt="Our philosophy" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Our+Belief';" />
+      </div>
+      <div class="column-content">
+        <h3>What We Believe</h3>
+        <p>We believe that every problem can be solved with one thought. It starts with understanding — deeply understanding the people we're designing for, the challenges they face, and the outcomes they desire.</p>
+        <p>From there, we create. We iterate. We refine. And we never stop until the solution feels right — not just for us, but for the people who will use it every day.</p>
+      </div>
+    </div>
+
+    <!-- Values Section -->
+    <div class="values-section">
+      <h2>Our Core Values</h2>
+      <div class="values-grid">
+        <div class="value-card">
+
+          <h3>Curiosity</h3>
+          <p>We ask questions, challenge assumptions, and never stop learning.</p>
+        </div>
+        <div class="value-card">
+          <h3>Collaboration</h3>
+          <p>The best ideas come from working together — with our clients and each other.</p>
+        </div>
+        <div class="value-card">
+
+          <h3>Excellence</h3>
+          <p>We take pride in our craft and never settle for "good enough."</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <Footer />
+
+</body>
+</html>

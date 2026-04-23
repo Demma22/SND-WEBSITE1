@@ -1,0 +1,782 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Remi — Your Academic Assistant</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --snd-dark:   #343940;
+      --snd-light:  #CFCFD3;
+      --snd-black:  #0d0d0d;
+      --snd-white:  #ffffff;
+      --remi-blue:  #535FFD;
+      --remi-amber: #FDAC1B;
+      --remi-bg:    #FAFAFA;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-remi:    'Athelas', 'Palatino Linotype', Palatino, Georgia, serif;
+      --font-body:    'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--snd-white);
+      color: var(--snd-black);
+      font-family: var(--font-body);
+      line-height: 1.6;
+    }
+
+    /* Hero Section */
+    .remi-hero {
+      background: linear-gradient(135deg, var(--remi-blue) 0%, #3b46c4 100%);
+      padding: 10rem 4rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .remi-hero::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .remi-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: 10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(253,172,27,0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    .remi-hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .remi-hero-content h1 {
+      font-family: var(--font-remi);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .remi-hero-content p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px;
+      padding: 0.3rem 1rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--remi-amber);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--remi-amber);
+      border-radius: 50%;
+    }
+
+    .remi-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-download {
+      background: var(--remi-amber);
+      color: var(--snd-black);
+      padding: 0.9rem 1.8rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-learn {
+      background: transparent;
+      color: white;
+      padding: 0.9rem 1.8rem;
+      border-radius: 100px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-learn:hover {
+      border-color: white;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .remi-hero-image {
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-frame-large {
+      width: 280px;
+      height: 560px;
+      background: #ffffff;
+      border-radius: 44px;
+      box-shadow: 0 40px 60px -20px rgba(0,0,0,0.3), 0 0 0 10px rgba(255,255,255,0.15);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone-notch-large {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 28px;
+      background: #111;
+      border-radius: 40px;
+      z-index: 2;
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 6rem 4rem;
+      background: var(--snd-white);
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .features-header .section-label {
+      color: var(--remi-blue);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .features-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1rem;
+    }
+
+    .features-header p {
+      color: #5f6c7a;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--remi-bg);
+      border-radius: 24px;
+      padding: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+    }
+
+    .feature-icon {
+      width: 70px;
+      height: 70px;
+      background: rgba(83,95,253,0.1);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--snd-black);
+    }
+
+    .feature-card p {
+      color: #5f6c7a;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* Screenshots Section */
+    .screenshots-section {
+      padding: 6rem 4rem;
+      background: var(--remi-bg);
+    }
+
+    .screenshots-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .screenshots-header .section-label {
+      color: var(--remi-blue);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .screenshots-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1rem;
+    }
+
+    .screenshots-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .screenshot-card {
+      background: white;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px -12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .screenshot-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .screenshot-placeholder {
+      width: 100%;
+      aspect-ratio: 9 / 19;
+      background: linear-gradient(145deg, #e8ecf1, #dce1e8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .screenshot-placeholder span {
+      font-size: 3rem;
+    }
+
+    .screenshot-placeholder p {
+      font-size: 0.7rem;
+      color: #8a9bb0;
+    }
+
+    .screenshot-card p {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--snd-dark);
+      background: white;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      padding: 6rem 4rem;
+      background: var(--snd-dark);
+      text-align: center;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .stat-item h3 {
+      font-family: var(--font-remi);
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--remi-amber);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-item p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+    }
+
+    /* How It Works */
+    .how-it-works {
+      padding: 6rem 4rem;
+      background: var(--snd-white);
+    }
+
+    .how-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .how-header .section-label {
+      color: var(--remi-blue);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .how-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--snd-black);
+    }
+
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .step {
+      text-align: center;
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: var(--remi-blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 1.5rem;
+    }
+
+    .step h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .step p {
+      color: #5f6c7a;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      padding: 6rem 4rem;
+      background: var(--remi-bg);
+    }
+
+    .faq-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .faq-header .section-label {
+      color: var(--remi-blue);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .faq-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--snd-black);
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: white;
+      border-radius: 20px;
+      padding: 1.5rem;
+    }
+
+    .faq-item h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--snd-black);
+    }
+
+    .faq-item p {
+      color: #5f6c7a;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      text-align: center;
+      padding: 6rem 4rem;
+      background: linear-gradient(135deg, var(--remi-blue) 0%, #3b46c4 100%);
+    }
+
+    .cta-section h2 {
+      font-family: var(--font-remi);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-cta-primary {
+      background: var(--remi-amber);
+      color: var(--snd-black);
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.2s;
+    }
+
+    .btn-cta-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-cta-secondary {
+      background: transparent;
+      color: white;
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-cta-secondary:hover {
+      border-color: white;
+      background: rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 900px) {
+      .remi-hero { padding: 8rem 1.5rem 4rem; }
+      .remi-hero-container { grid-template-columns: 1fr; gap: 2rem; }
+      .features-section { padding: 4rem 1.5rem; }
+      .screenshots-section { padding: 4rem 1.5rem; }
+      .screenshots-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .stats-section { padding: 4rem 1.5rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .how-it-works { padding: 4rem 1.5rem; }
+      .steps-container { grid-template-columns: 1fr; gap: 2rem; }
+      .faq-section { padding: 4rem 1.5rem; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .cta-section { padding: 4rem 1.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .screenshots-grid { grid-template-columns: repeat(2, 1fr); }
+      .phone-frame-large { width: 220px; height: 440px; }
+    }
+  </style>
+</head>
+<body>
+
+  <Navbar />
+
+  <!-- Hero Section -->
+  <div class="remi-hero">
+    <div class="remi-hero-container">
+      <div class="remi-hero-content">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          Academic Assistant
+        </div>
+        <h1>Meet Remi.<br/>Your Study Companion.</h1>
+        <p>Remi is a digital tool designed to help University students stay on top of their academic life. From tracking tasks to managing schedules, it keeps everything in one place — simple, fast, and reliable.</p>
+        <div class="remi-actions">
+          <a href="https://play.google.com/store/apps/details?id=com.anonymous.remi" target="_blank" rel="noopener noreferrer" class="btn-download">
+            ↓ Download on Android
+          </a>
+          <a href="#features" class="btn-learn">Learn More</a>
+        </div>
+      </div>
+      <div class="remi-hero-image">
+        <div class="phone-frame-large">
+          <div class="phone-notch-large"></div>
+          <!-- Screenshot placeholder -->
+          <div style="width: 100%; height: 100%; background: linear-gradient(145deg, #eeeeff, #f9fafb); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
+            <div style="font-family: var(--font-remi); font-size: 2rem; font-weight: 700; color: var(--remi-blue); margin-bottom: 0.5rem;">Remi</div>
+            <p style="font-size: 0.7rem; color: #94a3b8;">App Screenshot<br/>Placeholder</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="features-header">
+      <div class="section-label">KEY FEATURES</div>
+      <h2>Everything You Need to Succeed</h2>
+      <p>Designed specifically for university students to streamline academic life</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Timetable Management</h3>
+        <p>Organize your class schedule, track lecture times, and never miss a session with smart reminders.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>GPA Calculator</h3>
+        <p>Automatically calculate your GPA based on your grades and credit hours. Track your academic progress.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Exam Planner</h3>
+        <p>Keep track of all your exams, deadlines, and study sessions in one organized place.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Assistant</h3>
+        <p>Get personalized academic guidance and answers to your study questions with our AI assistant.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⏰</div>
+        <h3>Smart Reminders</h3>
+        <p>Receive timely notifications for upcoming classes, assignments, and exam dates.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Progress Tracking</h3>
+        <p>Visualize your academic performance over time and identify areas for improvement.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screenshots Section -->
+  <section class="screenshots-section">
+    <div class="screenshots-header">
+      <div class="section-label">APP PREVIEW</div>
+      <h2>See Remi in Action</h2>
+      <p>A glimpse of what awaits you inside the app</p>
+    </div>
+    <div class="screenshots-grid">
+      <div class="screenshot-card">
+        <img src="/screenshots/dashboard.png" alt="Dashboard" class="screenshot-image" width="280"/>
+        <p>Dashboard View</p>
+      </div>
+      <div class="screenshot-card">
+        <div class="screenshot-placeholder">
+          <span>📅</span>
+          <p>Screenshot 2</p>
+        </div>
+        <p>Timetable</p>
+      </div>
+      <div class="screenshot-card">
+        <div class="screenshot-placeholder">
+          <span>📊</span>
+          <p>Screenshot 3</p>
+        </div>
+        <p>GPA Calculator</p>
+      </div>
+      <div class="screenshot-card">
+        <div class="screenshot-placeholder">
+          <span>🤖</span>
+          <p>Screenshot 4</p>
+        </div>
+        <p>AI Assistant</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <h3>60+</h3>
+        <p>App Installs</p>
+      </div>
+      <div class="stat-item">
+        <h3>4.8★</h3>
+        <p>User Rating</p>
+      </div>
+      <div class="stat-item">
+        <h3>24/7</h3>
+        <p>AI Support</p>
+      </div>
+      <div class="stat-item">
+        <h3>100%</h3>
+        <p>Free to Use</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="how-header">
+      <div class="section-label">GET STARTED</div>
+      <h2>How Remi Works</h2>
+    </div>
+    <div class="steps-container">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Download & Install</h3>
+        <p>Get Remi from Google Play Store and install it on your Android device.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Set Up Your Profile</h3>
+        <p>Add your courses, schedule, and academic information.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Start Managing</h3>
+        <p>Track your timetable, calculate GPA, and let AI help you succeed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="faq-header">
+      <div class="section-label">FAQ</div>
+      <h2>Frequently Asked Questions</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h3>Is Remi free to use?</h3>
+        <p>Yes! Remi is completely free for all university students with no hidden costs.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is my data safe?</h3>
+        <p>Absolutely. We take data privacy seriously. Your academic information is encrypted and secure.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I use Remi offline?</h3>
+        <p>Most features work offline. You'll need an internet connection for AI assistant features.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is Remi available on iOS?</h3>
+        <p>Currently, Remi is available on Android. iOS version is in development!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <div class="cta-section">
+    <h2>Ready to Transform Your Academic Life?</h2>
+    <p>Join hundreds of students already using Remi to stay organized and succeed.</p>
+    <div class="cta-buttons">
+      <a href="https://play.google.com/store/apps/details?id=com.anonymous.remi" target="_blank" rel="noopener noreferrer" class="btn-cta-primary">
+        ↓ Download Remi Now
+      </a>
+      <a href="/contact" class="btn-cta-secondary">
+        Contact Us
+      </a>
+    </div>
+  </div>
+
+  <Footer />
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

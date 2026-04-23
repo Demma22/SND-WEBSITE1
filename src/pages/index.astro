@@ -1,0 +1,854 @@
+---
+// SND Website — Home Page
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+// Get all blog posts and sort by date (newest first)
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => 
+  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
+// Get only the latest 3 posts for the homepage
+const latestPosts = sortedPosts.slice(0, 3);
+---
+
+<BaseLayout title="SND — Think It, Let's Create It">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --snd-dark:   #343940;
+      --snd-light:  #CFCFD3;
+      --snd-black:  #000;
+      --snd-white:  #ffffff;
+      --remi-blue:  #535FFD;
+      --remi-amber: #FDAC1B;
+      --remi-bg:    #FAFAFA;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-remi:    'Athelas', 'Palatino Linotype', Palatino, Georgia, serif;
+      --font-body:    'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--snd-white);
+      color: var(--snd-black);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── NAVBAR ────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 4rem;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(52,57,64,0.08);
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    nav.scrolled {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+      background: rgba(255,255,255,0.98);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+    .nav-logo img { height: 44px; width: auto; }
+    .logo-fallback {
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 1.5rem;
+      color: var(--snd-dark); background: var(--snd-light);
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2.8rem; list-style: none; }
+    .nav-links a { color: var(--snd-dark); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--snd-black); }
+    .nav-cta {
+      background: var(--snd-black); color: var(--snd-white);
+      border: none; padding: 0.65rem 1.6rem;
+      border-radius: 40px; font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.01em; cursor: pointer; text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { background: #2c2c2c; transform: scale(1.02); }
+    .hamburger { display: none; flex-direction: column; gap: 6px; background: none; border: none; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--snd-dark); border-radius: 2px; transition: 0.2s; }
+
+    /* ── HERO SECTION ── */
+    .hero {
+      position: relative;
+      height: 90vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      color: white;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-headline {
+      font-size: clamp(3.8rem, 8vw, 7rem);
+      font-weight: 700;
+      line-height: 1.05;
+      color: white;
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.03em;
+      margin-top: 1.9rem;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: rgba(255,255,255,0.8);
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: white;
+      color: var(--snd-black);
+      padding: 0.85rem 2.2rem;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .btn-primary:hover { background: #f0f0f0; transform: translateY(-2px); }
+
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      padding: 0.85rem 2rem;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.4);
+      font-weight: 500;
+      text-decoration: none;
+      transition: border 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover { border-color: white; background: rgba(255,255,255,0.1); }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      opacity: 0.7;
+    }
+    .scroll-hint span {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.7);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 32px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
+    }
+
+    /* ══════════════ WHAT WE DO SECTION ══════════════ */
+    .complex-services {
+      padding: 7rem 4rem;
+      background: var(--snd-white);
+      position: relative;
+    }
+
+    .services-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .services-static-text {
+      position: sticky;
+      top: 120px;
+    }
+
+    .services-static-text .section-label {
+      color: var(--snd-dark);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .services-static-text h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .services-static-text > p {
+      color: #5f6c7a;
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .view-all-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--snd-dark);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .view-all-link:hover {
+      border-bottom-color: var(--snd-dark);
+    }
+
+    .services-cards-scroll {
+      height: 600px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .services-cards-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .service-scroll-card {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      background: var(--snd-white);
+      border-radius: 0px;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-bottom: 1px solid var(--snd-light);
+    }
+
+    .service-scroll-card:hover {
+      transform: translateX(-4px);
+    }
+
+    .card-image {
+      flex-shrink: 0;
+      width: 160px;
+      height: 160px;
+      overflow: hidden;
+      background: var(--snd-light);
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .service-scroll-card:hover .card-image img {
+      transform: scale(1.08);
+    }
+
+    .card-content {
+      flex: 1;
+    }
+
+    .card-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--snd-black);
+      transition: color 0.2s ease;
+    }
+
+    .service-scroll-card:hover .card-content h3 {
+      color: var(--snd-dark);
+    }
+
+    .card-content p {
+      color: #5f6c7a;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--snd-dark);
+      background: rgba(52,57,64,0.08);
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── REMI SECTION ── */
+    .remi-section-purple {
+      background: var(--remi-blue);
+      padding: 6rem 4rem;
+    }
+    
+    .remi-card-purple {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--remi-bg);
+      border-radius: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      padding: 3rem 4rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    
+    .remi-card-content .remi-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--remi-blue);
+      background: rgba(83,95,253,0.1);
+      padding: 0.3rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .remi-label-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--remi-amber);
+      border-radius: 50%;
+    }
+    
+    .remi-card-content h2 {
+      font-family: var(--font-remi);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1rem;
+    }
+    
+    .remi-card-content p {
+      color: #4b5563;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    
+    .remi-stats {
+      background: rgba(83,95,253,0.08);
+      border-radius: 20px;
+      padding: 1rem 1.5rem;
+      display: inline-block;
+      margin-bottom: 1.8rem;
+    }
+    
+    .remi-stats .stat-number {
+      font-family: var(--font-remi);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--remi-blue);
+    }
+    
+    .remi-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn-remi-dark {
+      background: var(--remi-blue);
+      color: white;
+      padding: 0.8rem 1.8rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-remi-dark:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+    
+    .btn-remi-outline-dark {
+      background: transparent;
+      color: var(--snd-black);
+      padding: 0.8rem 1.8rem;
+      border-radius: 100px;
+      border: 1px solid var(--snd-light);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn-remi-outline-dark:hover {
+      border-color: var(--remi-blue);
+      background: rgba(83,95,253,0.05);
+    }
+    
+    .remi-card-mockup {
+      display: flex;
+      justify-content: center;
+    }
+    
+    .phone-frame-purple {
+      width: 260px;
+      height: 520px;
+      background: #ffffff;
+      border-radius: 40px;
+      box-shadow: 0 30px 40px -20px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── DYNAMIC BLOG SECTION ── */
+    .blog-section {
+      padding: 7rem 4rem;
+      background: var(--snd-white);
+    }
+    
+    .blog-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    
+    .blog-header .section-label {
+      color: var(--snd-dark);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+    
+    .blog-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--snd-black);
+    }
+    
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    
+    .blog-card {
+      background: var(--snd-white);
+      border: 1px solid var(--snd-light);
+      border-radius: 24px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .blog-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 30px -12px rgba(0,0,0,0.08);
+    }
+    
+    .blog-image {
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      background: var(--snd-light);
+    }
+    
+    .blog-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    
+    .blog-card:hover .blog-image img {
+      transform: scale(1.05);
+    }
+    
+    .blog-content {
+      padding: 1.5rem;
+    }
+    
+    .blog-date {
+      font-size: 0.7rem;
+      color: #8a9bb0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    
+    .blog-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--snd-black);
+      line-height: 1.3;
+    }
+    
+    .blog-content p {
+      color: #5f6c7a;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .read-more {
+      color: var(--snd-dark);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: gap 0.2s;
+    }
+    
+    .read-more:hover {
+      gap: 0.5rem;
+    }
+
+    .empty-blog-state {
+      text-align: center;
+      padding: 3rem;
+      background: #f9fafb;
+      border-radius: 24px;
+      color: #8a9bb0;
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      text-align: center; padding: 6rem 2rem;
+      background: var(--snd-black);
+      border-top: 1px solid var(--snd-light);
+      border-bottom: 1px solid var(--snd-light);
+    }
+    .cta-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--snd-white); margin-bottom: 1rem; }
+    .cta-sub { color: #5c6670; font-size: 1.05rem; margin-bottom: 2.5rem; }
+    .cta-btn {
+      background: var(--snd-black); color: var(--snd-white);
+      padding: 0.9rem 2.2rem;
+      border-radius: 60px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .cta-btn:hover { background: #2c2c2c; transform: scale(1.02); }
+
+    /* ── REVEAL ANIMATIONS ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.2,0.9,0.4,1), transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* View All Blog Link */
+    .view-all-blog {
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    .view-all-blog-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--snd-dark);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    
+    .view-all-blog-link:hover {
+      border-bottom-color: var(--snd-dark);
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 0.9rem 1.5rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero { height: 70vh; min-height: 500px; }
+      .complex-services { padding: 4rem 1.5rem; }
+      .services-container { grid-template-columns: 1fr; gap: 2rem; }
+      .services-cards-scroll { height: 450px; }
+      .services-static-text { position: relative; top: 0; }
+      .remi-section-purple { padding: 4rem 1.5rem; }
+      .remi-card-purple { grid-template-columns: 1fr; padding: 2rem; gap: 2rem; }
+      .blog-section { padding: 4rem 1.5rem; }
+    }
+    @media (max-width: 600px) {
+      .hero-headline { font-size: 3rem; }
+      .card-image { width: 100px; height: 100px; }
+      .service-scroll-card { padding: 1rem; gap: 1rem; }
+    }
+  </style>
+
+  <Navbar />
+
+  <!-- HERO SECTION -->
+  <div class="hero">
+    <img src="/img_section.jpg" alt="SND Studio" class="hero-background" onerror="this.src='https://placehold.co/1920x1080/e2e8f0/475569?text=SND+Studio';" />
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-headline">Think It,<br/>Let's Create It.</h1>
+      <p class="hero-sub">SND is a brand for you to bring anything to life.</p>
+      <div class="hero-actions">
+        <a href="/about" class="btn-primary">Who We Are</a>
+        <a href="/contact" class="btn-secondary">Start a Project</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </div>
+
+  <!-- WHAT WE DO SECTION -->
+  <section class="complex-services reveal">
+    <div class="services-container">
+      <div class="services-static-text">
+        <div class="section-label">WHAT WE DO</div>
+        <h2>We Build Things<br/>That Matter</h2>
+        <p>SND offers a range of customizable services to cater to your specific needs. From digital products to physical builds — we turn ideas into real, working things people actually use.</p>
+        <a href="/services" class="view-all-link">ABOUT US →</a>
+      </div>
+
+      <div class="services-cards-scroll">
+        <div class="service-scroll-card">
+          <div class="card-image">
+            <img src="/digital.jpg" alt="Digital Products" onerror="this.src='https://placehold.co/160x160/f3f4f6/475569?text=📱';" />
+          </div>
+          <div class="card-content">
+            <h3>Digital Products</h3>
+            <p>Apps, tools, and platforms built to solve real problems. From concept to launch, we ship things that work.</p>
+            <span class="card-badge">Apps · Tools · Platforms</span>
+          </div>
+        </div>
+
+        <div class="service-scroll-card">
+          <div class="card-image">
+            <img src="/design.jpg" alt="Design & Creative" onerror="this.src='https://placehold.co/160x160/f3f4f6/475569?text=🎨';" />
+          </div>
+          <div class="card-content">
+            <h3>Design & Creative</h3>
+            <p>Branding, graphics, and visual systems that give ideas a face. Design that communicates before you say a word.</p>
+            <span class="card-badge">Branding · Graphics · Visuals</span>
+          </div>
+        </div>
+
+        <div class="service-scroll-card">
+          <div class="card-image">
+            <img src="/development.jpg" alt="Development" onerror="this.src='https://placehold.co/160x160/f3f4f6/475569?text=⚙️';" />
+          </div>
+          <div class="card-content">
+            <h3>Development</h3>
+            <p>Websites, systems, and animations crafted with precision. Modern builds that perform as well as they look.</p>
+            <span class="card-badge">Websites · Systems · Motion</span>
+          </div>
+        </div>
+
+        <div class="service-scroll-card">
+          <div class="card-image">
+            <img src="/physical.jpg" alt="Physical Products" onerror="this.src='https://placehold.co/160x160/f3f4f6/475569?text=📦';" />
+          </div>
+          <div class="card-content">
+            <h3>Physical Products</h3>
+            <p>Notebooks, merchandise, and future tangible builds. Because great ideas don't always stay on a screen.</p>
+            <span class="card-badge">Notebooks · Merch · Tangibles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REMI SECTION -->
+  <div class="remi-section-purple reveal">
+    <div class="remi-card-purple">
+      <div class="remi-card-content">
+        <div class="remi-label">
+          <span class="remi-label-dot"></span>
+          Featured Product
+        </div>
+        <h2>Meet Remi.</h2>
+        <p>Remi is a digital tool designed to help University students stay on top of their academic life. From tracking tasks to managing schedules, it keeps everything in one place — simple, fast, and reliable.</p>
+        <div class="remi-stats">
+          <span class="stat-number">60+</span>
+          <span style="color: #5f6c7a;"> App installs and growing</span>
+        </div>
+        <div class="remi-actions">
+          <a href="https://play.google.com/store/apps/details?id=com.anonymous.remi" target="_blank" rel="noopener noreferrer" class="btn-remi-dark">↓ Install on Android</a>
+          <a href="/remi" class="btn-remi-outline-dark">Learn More</a>
+        </div>
+      </div>
+      <div class="remi-card-mockup">
+        <div class="phone-frame-purple">
+          <div class="phone-notch" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 80px; height: 20px; background: #111; border-radius: 40px; z-index: 2;"></div>
+          <img 
+            src="/remi_screenshot.png" 
+            alt="Remi App Screenshot" 
+            style="width: 100%; padding-top: 1rem; height: 100%; object-fit: cover;"
+            onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\"width:100%;height:100%;background:linear-gradient(145deg, #eeeeff, #f9fafb);display:flex;align-items:center;justify-content:center;flex-direction:column;\">
+            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOG SECTION -->
+  <section class="blog-section reveal">
+    <div class="blog-header">
+      <div class="section-label">INSIGHTS & UPDATES</div>
+      <h2>Latest from the Journal</h2>
+    </div>
+    
+    {
+      latestPosts.length === 0 ? (
+        <div class="empty-blog-state">
+          <p>📝 No blog posts yet. Check back soon for insights and updates!</p>
+        </div>
+      ) : (
+        <>
+          <div class="blog-grid">
+            {latestPosts.map((post) => {
+              const postSlug = post.id.replace(/\.md$/, '');
+              return (
+                <a href={`/blog/${postSlug}`} class="blog-card">
+                  <div class="blog-image">
+                    <img 
+                      src={post.data.image || '/blog-placeholder.jpg'} 
+                      alt={post.data.title}
+                      onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=' + encodeURIComponent(post.data.title)"
+                    />
+                  </div>
+                  <div class="blog-content">
+                    <div class="blog-date">{post.data.pubDate}</div>
+                    <h3>{post.data.title}</h3>
+                    <p>{post.data.description}</p>
+                    <span class="read-more">Read More →</span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+          <div class="view-all-blog">
+            <a href="/blog" class="view-all-blog-link">View All Articles →</a>
+          </div>
+        </>
+      )
+    }
+  </section>
+
+  <!-- CTA SECTION -->
+  <div class="cta-section reveal">
+    <h2 class="cta-title">Have a project<br/>in mind?</h2>
+    <p class="cta-sub">Let's build something great together.</p>
+    <a href="/contact" class="cta-btn">Let's Talk →</a>
+  </div>
+
+  <Footer />
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 30);
+    });
+
+    const hamburger = document.querySelector('.hamburger');
+    if (hamburger) {
+      hamburger.addEventListener('click', () => {
+        alert('Mobile menu — add your drawer logic.');
+      });
+    }
+  </script>
+
+</BaseLayout>

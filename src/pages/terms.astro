@@ -1,0 +1,612 @@
+---
+// REMI Terms & Conditions
+// Place at: src/pages/terms.astro
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+// Get current date for "Last Updated"
+const currentDate = new Date().toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms & Conditions — REMI</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --snd-dark:   #343940;
+      --snd-light:  #CFCFD3;
+      --snd-black:  #0d0d0d;
+      --snd-white:  #ffffff;
+      --remi-blue:  #535FFD;
+      --remi-amber: #FDAC1B;
+      --remi-white: #FAFAFA;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-remi:    'Athelas', 'Palatino Linotype', Palatino, Georgia, serif;
+      --font-body:    'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--snd-white);
+      color: var(--snd-black);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── HERO BANNER ─────────────────────────────────────── */
+    .terms-hero {
+      background: var(--remi-blue);
+      padding: 10rem 4rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .terms-hero::before {
+      content: '';
+      position: absolute; top: -100px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.07), transparent 70%);
+      pointer-events: none;
+    }
+
+    .terms-hero::after {
+      content: '';
+      position: absolute; bottom: -60px; left: 10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(253,172,27,0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    .terms-hero-inner {
+      max-width: 860px;
+      position: relative; z-index: 1;
+    }
+
+    .terms-product-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px; padding: 0.38rem 1.1rem;
+      font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 1.8rem;
+    }
+    .badge-amber-dot { width: 6px; height: 6px; background: var(--remi-amber); border-radius: 50%; }
+
+    .terms-hero h1 {
+      font-family: var(--font-remi);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+    }
+
+    .terms-hero p {
+      color: rgba(255,255,255,0.72);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 560px;
+      font-weight: 400;
+    }
+
+    .terms-meta {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .terms-meta-item {
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+
+    .terms-meta-label {
+      font-size: 0.68rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .terms-meta-value {
+      font-size: 0.88rem; color: rgba(255,255,255,0.8); font-weight: 500;
+    }
+
+    /* ── CONTENT AREA ────────────────────────────────────── */
+    .terms-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 4rem 8rem;
+      align-items: start;
+    }
+
+    /* ── LEFT: Sticky Table of Contents ── */
+    .terms-toc {
+      position: sticky;
+      top: 100px;
+    }
+
+    .toc-title {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: #9ca3af; margin-bottom: 1.2rem;
+    }
+
+    .toc-list { list-style: none; }
+
+    .toc-list li { margin-bottom: 0.1rem; }
+
+    .toc-list a {
+      display: block;
+      font-size: 0.83rem; font-weight: 500;
+      color: #6b7280;
+      text-decoration: none;
+      padding: 0.45rem 0.8rem;
+      border-left: 2px solid #f0f0f0;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .toc-list a:hover,
+    .toc-list a.active {
+      color: var(--remi-blue);
+      border-left-color: var(--remi-blue);
+      background: rgba(83,95,253,0.05);
+    }
+
+    /* ── RIGHT: Terms Content ── */
+    .terms-content { min-width: 0; }
+
+    .terms-section {
+      margin-bottom: 3.5rem;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .terms-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .terms-section-number {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--remi-blue); margin-bottom: 0.6rem;
+    }
+
+    .terms-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .terms-section p {
+      color: #4b5563;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      font-weight: 400;
+    }
+
+    .terms-section p:last-child { margin-bottom: 0; }
+
+    /* Highlight box */
+    .terms-callout {
+      background: rgba(83,95,253,0.05);
+      border: 1px solid rgba(83,95,253,0.15);
+      border-left: 3px solid var(--remi-blue);
+      border-radius: 0 12px 12px 0;
+      padding: 1.2rem 1.5rem;
+      margin: 1.4rem 0;
+    }
+
+    .terms-callout p {
+      color: #374151;
+      font-size: 0.92rem;
+      margin-bottom: 0;
+    }
+
+    .terms-callout.amber {
+      background: rgba(253,172,27,0.06);
+      border-color: rgba(253,172,27,0.2);
+      border-left-color: var(--remi-amber);
+    }
+
+    .terms-list {
+      list-style: none;
+      margin: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .terms-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.93rem;
+      color: #4b5563;
+      line-height: 1.65;
+    }
+
+    .terms-list li::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--remi-blue);
+      border-radius: 50%;
+      margin-top: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* Update box (Last Updated) */
+    .update-container {
+      background: #F8FAFC;
+      border-radius: 16px;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .update-text {
+      font-size: 0.85rem;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    /* Agreement Box */
+    .agreement-container {
+      background: #F8FAFC;
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin: 2rem 0 1.5rem;
+      text-align: center;
+    }
+
+    .agreement-text {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--snd-dark);
+      font-weight: 500;
+    }
+
+    /* Accept Button */
+    .accept-button {
+      display: inline-block;
+      background: var(--remi-blue);
+      color: white;
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-align: center;
+      transition: transform 0.2s, background 0.2s;
+      width: 100%;
+    }
+
+    .accept-button:hover {
+      background: #404bdb;
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER STRIP ────────────────────────────────────── */
+    .terms-footer-strip {
+      background: var(--snd-dark);
+      padding: 3rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .terms-footer-strip p {
+      font-size: 0.82rem;
+      color: rgba(207,207,211,0.5);
+    }
+
+    .terms-footer-strip a {
+      color: rgba(207,207,211,0.7);
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: color 0.2s;
+    }
+
+    .terms-footer-strip a:hover { color: white; }
+
+    .footer-strip-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .terms-hero { padding: 8rem 1.5rem 4rem; }
+      .terms-layout { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 1.5rem 6rem; }
+      .terms-toc { position: static; top: auto; margin-bottom: 1rem; }
+      .terms-footer-strip { padding: 2.5rem 1.5rem; flex-direction: column; text-align: center; }
+      .footer-strip-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- IMPORTED NAVBAR COMPONENT -->
+  <Navbar />
+
+  <!-- ══════════════ HERO BANNER ══════════════ -->
+  <div class="terms-hero">
+    <div class="terms-hero-inner">
+      <div class="terms-product-badge">
+        <span class="badge-amber-dot"></span>
+        Remi — Academic Assistant
+      </div>
+      <h1>Terms & Conditions</h1>
+      <p>
+        Please read these terms carefully before using the REMI application. By using our service, you agree to be bound by these terms.
+      </p>
+      <div class="terms-meta">
+        <div class="terms-meta-item">
+          <span class="terms-meta-label">Product</span>
+          <span class="terms-meta-value">REMI App</span>
+        </div>
+        <div class="terms-meta-item">
+          <span class="terms-meta-label">Applies to</span>
+          <span class="terms-meta-value">Android (Google Play)</span>
+        </div>
+        <div class="terms-meta-item">
+          <span class="terms-meta-label">Last updated</span>
+          <span class="terms-meta-value">{currentDate}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════ CONTENT ══════════════ -->
+  <div class="terms-layout">
+
+    <!-- LEFT: Table of Contents -->
+    <aside class="terms-toc">
+      <p class="toc-title">Contents</p>
+      <ul class="toc-list">
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#use-of-app">Use of the App</a></li>
+        <li><a href="#user-accounts">User Accounts</a></li>
+        <li><a href="#data-accuracy">Academic Data Accuracy</a></li>
+        <li><a href="#ai-disclaimer">AI Assistance Disclaimer</a></li>
+        <li><a href="#intellectual-property">Intellectual Property</a></li>
+        <li><a href="#limitation-liability">Limitation of Liability</a></li>
+        <li><a href="#termination">Termination</a></li>
+        <li><a href="#changes">Changes to Terms</a></li>
+        <li><a href="#governing-law">Governing Law</a></li>
+        <li><a href="#contact">Contact Information</a></li>
+      </ul>
+    </aside>
+
+    <!-- RIGHT: Terms Content -->
+    <div class="terms-content">
+
+      <!-- Last Updated (mobile-friendly) -->
+      <div class="update-container">
+        <span class="update-text">📅 Last Updated: {currentDate}</span>
+      </div>
+
+      <!-- 1. Introduction -->
+      <div class="terms-section" id="introduction">
+        <p class="terms-section-number">01 — Introduction</p>
+        <h2>Introduction</h2>
+        <p>
+          These Terms and Conditions govern your use of the Remi mobile application. By using the app, you agree to these terms. If you do not agree with any part of these terms, please do not use the application.
+        </p>
+        <div class="terms-callout">
+          <p>REMI is an academic assistance tool designed to help university students manage their studies. These terms form a legally binding agreement between you and the developer of REMI.</p>
+        </div>
+      </div>
+
+      <!-- 2. Use of the App -->
+      <div class="terms-section" id="use-of-app">
+        <p class="terms-section-number">02 — Use of the App</p>
+        <h2>Use of the App</h2>
+        <p>
+          Remi is provided as an academic assistance tool. You agree to use the app only for lawful and educational purposes. You may not:
+        </p>
+        <ul class="terms-list">
+          <li>Use the app for any illegal activities</li>
+          <li>Attempt to reverse engineer or extract the source code</li>
+          <li>Interfere with or disrupt the app's functionality</li>
+          <li>Use the app to harass, abuse, or harm others</li>
+        </ul>
+      </div>
+
+      <!-- 3. User Accounts -->
+      <div class="terms-section" id="user-accounts">
+        <p class="terms-section-number">03 — User Accounts</p>
+        <h2>User Accounts</h2>
+        <p>
+          You are responsible for maintaining the confidentiality of your login credentials and for all activities conducted through your account. You agree to:
+        </p>
+        <ul class="terms-list">
+          <li>Provide accurate and complete information during registration</li>
+          <li>Notify us immediately of any unauthorized use of your account</li>
+          <li>Accept responsibility for all activities that occur under your account</li>
+        </ul>
+        <p>
+          We reserve the right to suspend or terminate accounts that violate these terms or pose a security risk.
+        </p>
+      </div>
+
+      <!-- 4. Academic Data Accuracy -->
+      <div class="terms-section" id="data-accuracy">
+        <p class="terms-section-number">04 — Academic Data Accuracy</p>
+        <h2>Academic Data Accuracy</h2>
+        <p>
+          While Remi provides automated GPA calculations, timetable management, and scheduling tools, the app does not guarantee academic outcomes. Important notes:
+        </p>
+        <ul class="terms-list">
+          <li>Users are responsible for verifying official academic records with their institution</li>
+          <li>GPA calculations are estimates based on user-provided data</li>
+          <li>We are not responsible for any discrepancies between app data and official records</li>
+          <li>The app should not be used as the sole source for academic decision-making</li>
+        </ul>
+        <div class="terms-callout amber">
+          <p>⚠️ Always verify critical academic information with your university's official systems. REMI is a supplementary tool, not an official academic record keeper.</p>
+        </div>
+      </div>
+
+      <!-- 5. AI Assistance Disclaimer -->
+      <div class="terms-section" id="ai-disclaimer">
+        <p class="terms-section-number">05 — AI Assistance Disclaimer</p>
+        <h2>AI Assistance Disclaimer</h2>
+        <p>
+          The AI assistant in REMI provides guidance based on user-provided academic data. Please understand that:
+        </p>
+        <ul class="terms-list">
+          <li>AI responses are informational and generated automatically</li>
+          <li>Responses should not replace official academic advice from your institution</li>
+          <li>We do not guarantee the accuracy, completeness, or usefulness of AI-generated content</li>
+          <li>You assume full responsibility for any actions taken based on AI suggestions</li>
+        </ul>
+      </div>
+
+      <!-- 6. Intellectual Property -->
+      <div class="terms-section" id="intellectual-property">
+        <p class="terms-section-number">06 — Intellectual Property</p>
+        <h2>Intellectual Property</h2>
+        <p>
+          All content, features, and functionality of the Remi app — including but not limited to code, design, text, graphics, logos, and user interface — are the exclusive property of the developer and are protected by copyright and other intellectual property laws.
+        </p>
+        <p>
+          You may not copy, modify, distribute, sell, or lease any part of the app without explicit written permission.
+        </p>
+      </div>
+
+      <!-- 7. Limitation of Liability -->
+      <div class="terms-section" id="limitation-liability">
+        <p class="terms-section-number">07 — Limitation of Liability</p>
+        <h2>Limitation of Liability</h2>
+        <p>
+          Remi is provided on an "as is" and "as available" basis. To the fullest extent permitted by law:
+        </p>
+        <ul class="terms-list">
+          <li>We are not liable for any academic decisions made using the app</li>
+          <li>We are not responsible for data loss or corruption</li>
+          <li>We are not liable for any indirect, incidental, or consequential damages</li>
+          <li>We do not warrant that the app will be uninterrupted or error-free</li>
+        </ul>
+        <div class="terms-callout">
+          <p>Your use of the app is at your sole risk. In no event shall the developer be liable for any damages arising from your use or inability to use the app.</p>
+        </div>
+      </div>
+
+      <!-- 8. Termination -->
+      <div class="terms-section" id="termination">
+        <p class="terms-section-number">08 — Termination</p>
+        <h2>Termination</h2>
+        <p>
+          We reserve the right to suspend or terminate accounts that misuse the app or violate these terms. Grounds for termination include:
+        </p>
+        <ul class="terms-list">
+          <li>Violation of these Terms and Conditions</li>
+          <li>Abuse of the app's features or services</li>
+          <li>Engaging in fraudulent or illegal activities</li>
+          <li>Any behavior that harms other users or the app's functionality</li>
+        </ul>
+        <p>
+          You may also delete your account and stop using the app at any time. Upon termination, your data will be handled in accordance with our Privacy Policy.
+        </p>
+      </div>
+
+      <!-- 9. Changes to Terms -->
+      <div class="terms-section" id="changes">
+        <p class="terms-section-number">09 — Changes to Terms</p>
+        <h2>Changes to Terms</h2>
+        <p>
+          We may update these Terms and Conditions periodically to reflect changes in our practices, legal requirements, or app features. When we make changes:
+        </p>
+        <ul class="terms-list">
+          <li>We will update the "Last Updated" date at the top of this page</li>
+          <li>We will notify users through the app of significant changes</li>
+          <li>Continued use of the app after changes indicates acceptance of the updated terms</li>
+        </ul>
+      </div>
+
+      <!-- 10. Governing Law -->
+      <div class="terms-section" id="governing-law">
+        <p class="terms-section-number">10 — Governing Law</p>
+        <h2>Governing Law</h2>
+        <p>
+          These Terms and Conditions are governed by and construed in accordance with the laws applicable in Uganda. Any disputes arising from these terms or your use of the app shall be subject to the exclusive jurisdiction of the courts of Uganda.
+        </p>
+      </div>
+
+      <!-- 11. Contact Information -->
+      <div class="terms-section" id="contact">
+        <p class="terms-section-number">11 — Contact</p>
+        <h2>Contact Information</h2>
+        <p>
+          For questions regarding these Terms and Conditions, please contact us through the support options available within the REMI app.
+        </p>
+        <p>
+          You can also reach the SND team — the developers behind REMI — through the Contact page on this website.
+        </p>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════ FOOTER STRIP ══════════════ -->
+  <div class="terms-footer-strip">
+    <p>© 2025 SND. REMI Terms & Conditions.</p>
+    <div class="footer-strip-links">
+      <a href="/terms">Terms & Conditions</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/contact">Contact Us</a>
+    </div>
+  </div>
+
+  <!-- IMPORTED FOOTER COMPONENT -->
+  <Footer />
+
+  <script>
+    // Active TOC link on scroll
+    const sections = document.querySelectorAll('.terms-section');
+    const tocLinks = document.querySelectorAll('.toc-list a');
+
+    const tocObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          tocLinks.forEach(link => {
+            const href = link.getAttribute('href').substring(1);
+            link.classList.toggle('active', href === id);
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(section => tocObserver.observe(section));
+  </script>
+
+</body>
+</html>
