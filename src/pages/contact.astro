@@ -1,15 +1,11 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact Us — SND</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<BaseLayout title="Contact Us — SND | Let's Talk">
+  <Navbar />
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
@@ -102,8 +98,13 @@ import Footer from '../components/Footer.astro';
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
       flex-shrink: 0;
+    }
+
+    .contact-icon img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
     }
 
     .contact-item h3 {
@@ -152,16 +153,22 @@ import Footer from '../components/Footer.astro';
       align-items: center;
       justify-content: center;
       text-decoration: none;
-      color: var(--snd-dark);
-      font-size: 1.1rem;
-      font-weight: 600;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+    }
+
+    .social-icon img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
     }
 
     .social-icon:hover {
       background: var(--snd-dark);
-      color: white;
       transform: translateY(-3px);
+    }
+
+    .social-icon:hover img {
+      filter: brightness(0) invert(1);
     }
 
     /* Contact Form */
@@ -224,25 +231,26 @@ import Footer from '../components/Footer.astro';
       transform: translateY(-2px);
     }
 
-    /* Success Message */
-    .success-message {
-      background: #d1fae5;
-      color: #065f46;
+    /* Success/Error Messages */
+    .form-message {
       padding: 1rem;
       border-radius: 12px;
       margin-bottom: 1.5rem;
       text-align: center;
       font-size: 0.9rem;
+      display: none;
     }
 
-    .error-message {
+    .form-message.success {
+      background: #d1fae5;
+      color: #065f46;
+      display: block;
+    }
+
+    .form-message.error {
       background: #fee2e2;
       color: #991b1b;
-      padding: 1rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      font-size: 0.9rem;
+      display: block;
     }
 
     /* Responsive */
@@ -251,10 +259,6 @@ import Footer from '../components/Footer.astro';
       .contact-content { padding: 3rem 1.5rem; grid-template-columns: 1fr; gap: 3rem; }
     }
   </style>
-</head>
-<body>
-
-  <Navbar />
 
   <!-- Hero Section -->
   <div class="contact-hero">
@@ -274,7 +278,9 @@ import Footer from '../components/Footer.astro';
         
         <!-- Phone 1 -->
         <div class="contact-item">
-          <div class="contact-icon">📞</div>
+          <div class="contact-icon">
+            <img src="/phone.svg" alt="Phone" onerror="this.style.display='none'; this.parentNode.innerHTML='📞';" />
+          </div>
           <div>
             <h3>Phone (Primary)</h3>
             <a href="tel:+256742072661">0742072661</a>
@@ -283,25 +289,31 @@ import Footer from '../components/Footer.astro';
         
         <!-- Phone 2 -->
         <div class="contact-item">
-          <div class="contact-icon">📱</div>
+          <div class="contact-icon">
+            <img src="/phone.svg" alt="Phone" onerror="this.style.display='none'; this.parentNode.innerHTML='📱';" />
+          </div>
           <div>
             <h3>Phone (Secondary)</h3>
             <a href="tel:+256780288715">0780288715</a>
           </div>
         </div>
         
-        <!-- Email (optional) -->
+        <!-- Email -->
         <div class="contact-item">
-          <div class="contact-icon">✉️</div>
+          <div class="contact-icon">
+            <img src="/mail.svg" alt="Email" onerror="this.style.display='none'; this.parentNode.innerHTML='✉️';" />
+          </div>
           <div>
             <h3>Email</h3>
             <a href="mailto:hello@snd.com">hello@snd.com</a>
           </div>
         </div>
         
-        <!-- Location (optional) -->
+        <!-- Location -->
         <div class="contact-item">
-          <div class="contact-icon">📍</div>
+          <div class="contact-icon">
+            <img src="/pin.svg" alt="Location" onerror="this.style.display='none'; this.parentNode.innerHTML='📍';" />
+          </div>
           <div>
             <h3>Location</h3>
             <p>Kampala, Uganda</p>
@@ -310,15 +322,22 @@ import Footer from '../components/Footer.astro';
         
       </div>
       
-      <!-- Social Media Links -->
+      <!-- Social Media Links (same as footer) -->
       <div class="social-links">
         <h3>Follow Us</h3>
         <div class="social-icons">
-          <a href="#" class="social-icon" id="instagram-link" target="_blank" rel="noopener">IG</a>
-          <a href="#" class="social-icon" id="tiktok-link" target="_blank" rel="noopener">TK</a>
-          <a href="#" class="social-icon" id="threads-link" target="_blank" rel="noopener">TH</a>
-          <a href="#" class="social-icon" id="twitter-link" target="_blank" rel="noopener">𝕏</a>
-          <a href="#" class="social-icon" id="linkedin-link" target="_blank" rel="noopener">IN</a>
+          <a href="https://www.instagram.com/snd.graphiix/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+            <img src="/instagram.svg" alt="Instagram" onerror="this.style.display='none'; this.parentNode.innerHTML='IG';" />
+          </a>
+          <a href="https://www.tiktok.com/@snd.store0?lang=en" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="TikTok">
+            <img src="/tiktok.svg" alt="TikTok" onerror="this.style.display='none'; this.parentNode.innerHTML='TK';" />
+          </a>
+          <a href="https://www.threads.com/@snd.graphiix?xmt=AQF0s0BLGM7T1G-QmMiLX5rr4xiB9WsJsEYTjw51EnCosLg" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Threads">
+            <img src="/threads.svg" alt="Threads" onerror="this.style.display='none'; this.parentNode.innerHTML='TH';" />
+          </a>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="X">
+            <img src="/x.svg" alt="X" onerror="this.style.display='none'; this.parentNode.innerHTML='𝕏';" />
+          </a>
         </div>
       </div>
     </div>
@@ -327,7 +346,9 @@ import Footer from '../components/Footer.astro';
     <div class="contact-form">
       <h2>Send a Message</h2>
       
-      <form id="contactForm" method="POST" netlify>
+      <div id="formMessage" class="form-message"></div>
+      
+      <form id="contactForm">
         <div class="form-group">
           <label for="name">Full Name</label>
           <input type="text" id="name" name="name" required />
@@ -351,77 +372,68 @@ import Footer from '../components/Footer.astro';
         <button type="submit" class="submit-btn">Send Message →</button>
       </form>
     </div>
-    
-  </div>
-
   <Footer />
 
-  <script>
-    // Social media links - REPLACE THESE WITH YOUR ACTUAL LINKS
-    const socialLinks = {
-      instagram: "https://www.instagram.com/snd.graphiix/",
-      tiktok: "https://www.tiktok.com/@snd",
-      threads: "https://www.threads.net/@snd",
-      twitter: "https://twitter.com/snd",
-      linkedin: "https://www.linkedin.com/company/snd"
-    };
-    
-    // Update social media links
-    const instagramLink = document.getElementById('instagram-link');
-    const tiktokLink = document.getElementById('tiktok-link');
-    const threadsLink = document.getElementById('threads-link');
-    const twitterLink = document.getElementById('twitter-link');
-    const linkedinLink = document.getElementById('linkedin-link');
-    
-    if (instagramLink) instagramLink.href = socialLinks.instagram;
-    if (tiktokLink) tiktokLink.href = socialLinks.tiktok;
-    if (threadsLink) threadsLink.href = socialLinks.threads;
-    if (twitterLink) twitterLink.href = socialLinks.twitter;
-    if (linkedinLink) linkedinLink.href = socialLinks.linkedin;
-    
-    // Form submission handling
+   <script>
     const form = document.getElementById('contactForm');
+    const formMessage = document.getElementById('formMessage');
     
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const formData = new FormData(form);
         const submitBtn = form.querySelector('.submit-btn');
         const originalText = submitBtn.textContent;
+        
+        // Clear previous message
+        formMessage.className = 'form-message';
+        formMessage.textContent = '';
         
         submitBtn.textContent = 'Sending...';
         submitBtn.disabled = true;
         
+        // Get form data
+        const formData = new FormData(form);
+        const data = {
+          name: formData.get('name'),
+          email: formData.get('email'),
+          phone: formData.get('phone') || '',
+          message: formData.get('message')
+        };
+        
         try {
-          // For Netlify forms
-          const response = await fetch('/', {
+          const response = await fetch('/api/contact', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(formData).toString()
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
           });
           
           if (response.ok) {
-            form.innerHTML = '<div class="success-message">✅ Thank you! Your message has been sent. We\'ll get back to you soon.</div>';
+            const result = await response.json();
+            formMessage.className = 'form-message success';
+            formMessage.textContent = result.message || '✓ Message sent successfully! We\'ll get back to you soon.';
+            form.reset();
           } else {
-            throw new Error('Form submission failed');
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to send message');
           }
         } catch (error) {
-          // If Netlify forms not configured, show a message
-          form.innerHTML = `
-            <div class="error-message">
-              ⚠️ Form submission failed. Please email us directly at hello@snd.com or call ${phoneNumbers.primary}.
-            </div>
-            <div class="form-group" style="margin-top: 1rem;">
-              <p style="color: #5f6c7a; font-size: 0.85rem;">You can also reach us at:</p>
-              <p style="font-weight: 600;">📞 0742072661</p>
-              <p style="font-weight: 600;">📞 0780288715</p>
-            </div>
+          console.error('Form error:', error);
+          formMessage.className = 'form-message error';
+          formMessage.innerHTML = `
+            <strong>✗ Unable to send message right now.</strong><br><br>
+            Please contact us directly:<br>
+            📞 <a href="tel:+256742072661" style="color: #991b1b;">0742072661</a> or 
+            📞 <a href="tel:+256780288715" style="color: #991b1b;">0780288715</a><br>
+            ✉️ <a href="mailto:hello@snd.com" style="color: #991b1b;">hello@snd.com</a>
           `;
+        } finally {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
         }
       });
     }
   </script>
-
-</body>
-</html>
+</BaseLayout>
