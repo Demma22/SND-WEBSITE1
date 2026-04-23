@@ -1,15 +1,11 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Remi — Your Academic Assistant</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<BaseLayout title="Remi — Your Academic Assistant | SND">
+  <Navbar />
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
@@ -180,7 +176,7 @@ import Footer from '../components/Footer.astro';
       z-index: 2;
     }
 
-    /* Features Section */
+    /* Features Section with Full Images */
     .features-section {
       padding: 6rem 4rem;
       background: var(--snd-white);
@@ -216,7 +212,7 @@ import Footer from '../components/Footer.astro';
 
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 2rem;
       max-width: 1200px;
       margin: 0 auto;
@@ -225,7 +221,7 @@ import Footer from '../components/Footer.astro';
     .feature-card {
       background: var(--remi-bg);
       border-radius: 24px;
-      padding: 2rem;
+      overflow: hidden;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       text-align: center;
     }
@@ -235,23 +231,28 @@ import Footer from '../components/Footer.astro';
       box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
     }
 
-    .feature-icon {
-      width: 70px;
-      height: 70px;
-      background: rgba(83,95,253,0.1);
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      margin: 0 auto 1.5rem;
+    .feature-image {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .feature-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .feature-card:hover .feature-image img {
+      transform: scale(1.05);
     }
 
     .feature-card h3 {
       font-family: var(--font-display);
       font-size: 1.3rem;
       font-weight: 700;
-      margin-bottom: 0.75rem;
+      margin: 1.25rem 1.25rem 0.75rem;
       color: var(--snd-black);
     }
 
@@ -259,9 +260,10 @@ import Footer from '../components/Footer.astro';
       color: #5f6c7a;
       font-size: 0.9rem;
       line-height: 1.6;
+      margin: 0 1.25rem 1.5rem;
     }
 
-    /* Screenshots Section */
+    /* Screenshots Section with Video */
     .screenshots-section {
       padding: 6rem 4rem;
       background: var(--remi-bg);
@@ -336,6 +338,32 @@ import Footer from '../components/Footer.astro';
       font-weight: 500;
       color: var(--snd-dark);
       background: white;
+    }
+
+    /* Video Section */
+    .video-section {
+      padding: 6rem 4rem;
+      background: var(--remi-bg);
+    }
+
+    .video-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
     }
 
     /* Stats Section */
@@ -549,6 +577,7 @@ import Footer from '../components/Footer.astro';
       .remi-hero-container { grid-template-columns: 1fr; gap: 2rem; }
       .features-section { padding: 4rem 1.5rem; }
       .screenshots-section { padding: 4rem 1.5rem; }
+      .video-section { padding: 4rem 1.5rem; }
       .screenshots-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
       .stats-section { padding: 4rem 1.5rem; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -562,12 +591,9 @@ import Footer from '../components/Footer.astro';
     @media (max-width: 600px) {
       .screenshots-grid { grid-template-columns: repeat(2, 1fr); }
       .phone-frame-large { width: 220px; height: 440px; }
+      .feature-image { height: 160px; }
     }
   </style>
-</head>
-<body>
-
-  <Navbar />
 
   <!-- Hero Section -->
   <div class="remi-hero">
@@ -583,23 +609,23 @@ import Footer from '../components/Footer.astro';
           <a href="https://play.google.com/store/apps/details?id=com.anonymous.remi" target="_blank" rel="noopener noreferrer" class="btn-download">
             ↓ Download on Android
           </a>
-          <a href="#features" class="btn-learn">Learn More</a>
         </div>
       </div>
       <div class="remi-hero-image">
         <div class="phone-frame-large">
-          <div class="phone-notch-large"></div>
-          <!-- Screenshot placeholder -->
-          <div style="width: 100%; height: 100%; background: linear-gradient(145deg, #eeeeff, #f9fafb); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
-            <div style="font-family: var(--font-remi); font-size: 2rem; font-weight: 700; color: var(--remi-blue); margin-bottom: 0.5rem;">Remi</div>
-            <p style="font-size: 0.7rem; color: #94a3b8;">App Screenshot<br/>Placeholder</p>
-          </div>
+          <div class="phone-notch" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 80px; height: 20px; background: #111; border-radius: 40px; z-index: 2;"></div>
+          <img 
+            src="/remi_screenshot.png" 
+            alt="Remi App Screenshot" 
+            style="width: 100%; padding-top: 1rem; height: 100%; object-fit: cover;"
+            onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\"width:100%;height:100%;background:linear-gradient(145deg, #eeeeff, #f9fafb);display:flex;align-items:center;justify-content:center;flex-direction:column;\">
+            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Features Section -->
+  <!-- Features Section with Full Images -->
   <section class="features-section" id="features">
     <div class="features-header">
       <div class="section-label">KEY FEATURES</div>
@@ -608,73 +634,68 @@ import Footer from '../components/Footer.astro';
     </div>
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">📅</div>
+        <div class="feature-image">
+          <img src="/features/timetable.jpg" alt="Timetable Management" onerror="this.src='https://placehold.co/400x200/f3f4f6/475569?text=Timetable+Management';" />
+        </div>
         <h3>Timetable Management</h3>
         <p>Organize your class schedule, track lecture times, and never miss a session with smart reminders.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📊</div>
+        <div class="feature-image">
+          <img src="/features/gpa_calculator.jpg" alt="GPA Calculator" onerror="this.src='https://placehold.co/400x200/f3f4f6/475569?text=GPA+Calculator';" />
+        </div>
         <h3>GPA Calculator</h3>
         <p>Automatically calculate your GPA based on your grades and credit hours. Track your academic progress.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📝</div>
+        <div class="feature-image">
+          <img src="/features/exam_planner.jpg" alt="Exam Planner" onerror="this.src='https://placehold.co/400x200/f3f4f6/475569?text=Exam+Planner';" />
+        </div>
         <h3>Exam Planner</h3>
         <p>Keep track of all your exams, deadlines, and study sessions in one organized place.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🤖</div>
+        <div class="feature-image">
+          <img src="/features/ai.jpg" alt="AI Assistant" onerror="this.src='https://placehold.co/400x200/f3f4f6/475569?text=AI+Assistant';" />
+        </div>
         <h3>AI Assistant</h3>
         <p>Get personalized academic guidance and answers to your study questions with our AI assistant.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">⏰</div>
+        <div class="feature-image">
+          <img src="/features/reminders.jpg" alt="Smart Reminders" onerror="this.src='https://placehold.co/400x200/f3f4f6/475569?text=Smart+Reminders';" />
+        </div>
         <h3>Smart Reminders</h3>
         <p>Receive timely notifications for upcoming classes, assignments, and exam dates.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📈</div>
+        <div class="feature-image">
+          <img src="/features/tracking.jpg" alt="Progress Tracking" onerror="this.src='https://placehold.co/400x200/f3f4f6/475569?text=Progress+Tracking';" />
+        </div>
         <h3>Progress Tracking</h3>
         <p>Visualize your academic performance over time and identify areas for improvement.</p>
       </div>
     </div>
   </section>
 
-  <!-- Screenshots Section -->
-  <section class="screenshots-section">
+  <!-- Video Section (YouTube) -->
+  <div class="video-section">
     <div class="screenshots-header">
-      <div class="section-label">APP PREVIEW</div>
+      <div class="section-label">WATCH DEMO</div>
       <h2>See Remi in Action</h2>
-      <p>A glimpse of what awaits you inside the app</p>
+      <p>Watch how Remi can transform your academic journey</p>
     </div>
-    <div class="screenshots-grid">
-      <div class="screenshot-card">
-        <img src="/screenshots/dashboard.png" alt="Dashboard" class="screenshot-image" width="280"/>
-        <p>Dashboard View</p>
-      </div>
-      <div class="screenshot-card">
-        <div class="screenshot-placeholder">
-          <span>📅</span>
-          <p>Screenshot 2</p>
-        </div>
-        <p>Timetable</p>
-      </div>
-      <div class="screenshot-card">
-        <div class="screenshot-placeholder">
-          <span>📊</span>
-          <p>Screenshot 3</p>
-        </div>
-        <p>GPA Calculator</p>
-      </div>
-      <div class="screenshot-card">
-        <div class="screenshot-placeholder">
-          <span>🤖</span>
-          <p>Screenshot 4</p>
-        </div>
-        <p>AI Assistant</p>
-      </div>
+    <div class="video-container">
+      <iframe 
+        src="https://www.youtube.com/embed/YOUR_VIDEO_ID" 
+        title="Remi App Demo"
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen>
+      </iframe>
     </div>
-  </section>
+  </div>
 
   <!-- Stats Section -->
   <div class="stats-section">
@@ -777,6 +798,4 @@ import Footer from '../components/Footer.astro';
       });
     });
   </script>
-
-</body>
-</html>
+</BaseLayout>
