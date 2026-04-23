@@ -13,6 +13,10 @@
     <li><a href="/">Home</a></li>
     <li><a href="/about">About Us</a></li>
     <li><a href="/blog">Blog</a></li>
+    <li><a href="/remi">Remi App</a></li>
+    <li><a href="/contact">Contact</a></li>
+    <li><a href="/terms">Terms</a></li>
+    <li><a href="/privacy">Privacy</a></li>
   </ul>
   
   <a href="/contact" class="nav-cta">Get in Touch</a>
@@ -25,7 +29,7 @@
   </button>
 </nav>
 
-<!-- Mobile Menu Overlay -->
+<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-header">
     <div class="mobile-menu-logo">
@@ -33,6 +37,7 @@
     </div>
     <button class="mobile-menu-close" id="closeMenuBtn" aria-label="Close Menu">✕</button>
   </div>
+  
   <ul class="mobile-nav-links">
     <li><a href="/">Home</a></li>
     <li><a href="/about">About Us</a></li>
@@ -42,10 +47,12 @@
     <li><a href="/terms">Terms</a></li>
     <li><a href="/privacy">Privacy</a></li>
   </ul>
-  <div class="mobile-menu-footer">
-    <a href="/contact" class="mobile-cta">Get in Touch</a>
-  </div>
+  
+
 </div>
+
+<!-- Overlay -->
+<div class="menu-overlay" id="menuOverlay"></div>
 
 <style>
   /* Desktop Navbar Styles */
@@ -83,7 +90,7 @@
   .nav-links { 
     display: flex; 
     align-items: center; 
-    gap: 2.8rem; 
+    gap: 2rem; 
     list-style: none; 
   }
   
@@ -101,7 +108,7 @@
     background: var(--snd-black); 
     color: var(--snd-white);
     border: none; 
-    padding: 0.65rem 1.6rem;
+    padding: 0.6rem 1.4rem;
     border-radius: 40px; 
     font-size: 0.85rem; 
     font-weight: 600;
@@ -117,7 +124,7 @@
   .hamburger {
     display: none;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
     background: none;
     border: none;
     cursor: pointer;
@@ -126,28 +133,28 @@
   }
   
   .hamburger span {
-    width: 25px;
+    width: 22px;
     height: 2px;
     background: var(--snd-dark);
     border-radius: 2px;
     transition: 0.3s ease;
   }
   
-  /* Mobile Menu Overlay */
+  /* Mobile Menu Overlay - Compact and Clean */
   .mobile-menu {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 80%;
-    max-width: 350px;
+    width: 85%;
+    max-width: 320px;
     height: 100vh;
     background: var(--snd-white);
     z-index: 2000;
-    box-shadow: -2px 0 20px rgba(0,0,0,0.1);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.1);
     transition: right 0.3s ease;
     display: flex;
     flex-direction: column;
-    padding: 1.5rem;
+    padding: 1.2rem;
   }
   
   .mobile-menu.active {
@@ -158,49 +165,61 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--snd-light);
   }
   
   .mobile-menu-logo img {
-    height: 40px;
+    height: 36px;
     width: auto;
   }
   
   .mobile-menu-close {
     background: none;
     border: none;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     cursor: pointer;
     color: var(--snd-dark);
-    padding: 8px;
+    padding: 5px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
+  /* Mobile Navigation Links - Tight Spacing */
   .mobile-nav-links {
     list-style: none;
     flex: 1;
+    margin: 0;
+    padding: 0;
   }
   
   .mobile-nav-links li {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(52,57,64,0.05);
   }
   
   .mobile-nav-links a {
     color: var(--snd-dark);
     text-decoration: none;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 500;
     transition: color 0.2s;
     display: block;
-    padding: 0.5rem 0;
+    padding: 0.6rem 0;
   }
   
   .mobile-nav-links a:hover {
     color: var(--snd-black);
+    transform: translateX(5px);
   }
   
+  /* Footer with Get in Touch Button - Clearly Visible */
   .mobile-menu-footer {
+    margin-top: auto;
     padding-top: 1rem;
     border-top: 1px solid var(--snd-light);
   }
@@ -208,19 +227,20 @@
   .mobile-cta {
     background: var(--snd-black);
     color: var(--snd-white);
-    padding: 0.8rem 1.5rem;
+    padding: 0.75rem 1.2rem;
     border-radius: 40px;
     text-decoration: none;
     font-weight: 600;
     font-size: 0.9rem;
-    display: inline-block;
+    display: block;
     text-align: center;
     width: 100%;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s;
   }
   
   .mobile-cta:hover {
     background: #2c2c2c;
+    transform: scale(1.02);
   }
   
   /* Overlay Background */
@@ -230,7 +250,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.4);
     z-index: 1999;
     opacity: 0;
     visibility: hidden;
@@ -244,10 +264,17 @@
   
   /* Responsive */
   @media (max-width: 900px) {
-    nav { padding: 0.9rem 1.5rem; }
+    nav { padding: 0.8rem 1.2rem; }
     .nav-links { display: none; }
     .nav-cta { display: none; }
     .hamburger { display: flex; }
+  }
+  
+  @media (min-width: 901px) {
+    .mobile-menu,
+    .menu-overlay {
+      display: none;
+    }
   }
 </style>
 
@@ -256,23 +283,19 @@
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobileMenu');
   const closeMenuBtn = document.getElementById('closeMenuBtn');
-  
-  // Create overlay element
-  const overlay = document.createElement('div');
-  overlay.className = 'menu-overlay';
-  document.body.appendChild(overlay);
+  const menuOverlay = document.getElementById('menuOverlay');
   
   // Function to open menu
   function openMenu() {
     mobileMenu.classList.add('active');
-    overlay.classList.add('active');
+    if (menuOverlay) menuOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
   
   // Function to close menu
   function closeMenu() {
     mobileMenu.classList.remove('active');
-    overlay.classList.remove('active');
+    if (menuOverlay) menuOverlay.classList.remove('active');
     document.body.style.overflow = '';
   }
   
@@ -285,8 +308,8 @@
     closeMenuBtn.addEventListener('click', closeMenu);
   }
   
-  if (overlay) {
-    overlay.addEventListener('click', closeMenu);
+  if (menuOverlay) {
+    menuOverlay.addEventListener('click', closeMenu);
   }
   
   // Close menu when clicking on a link
@@ -297,7 +320,7 @@
   
   // Close menu on escape key
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+    if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) {
       closeMenu();
     }
   });
