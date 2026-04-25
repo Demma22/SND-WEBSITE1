@@ -3,6 +3,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import CTA from '../components/CTA.astro';
 import { getCollection } from 'astro:content';
 
 // Get all blog posts and sort by date (newest first)
@@ -151,7 +152,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       color: white;
       margin-bottom: 1.2rem;
       letter-spacing: -0.03em;
-      margin-top: 1.9rem;
+      margin-top: 5.0rem;
     }
 
     .hero-sub {
@@ -627,7 +628,7 @@ const latestPosts = sortedPosts.slice(0, 3);
 
     .cta-bg-wrapper {
       position: absolute;
-      top: -20%;
+      top: 0%;
       left: 0;
       width: 100%;
       height: 140%;
@@ -851,8 +852,7 @@ const latestPosts = sortedPosts.slice(0, 3);
             alt="Remi App Screenshot" 
             style="width: 100%; padding-top: 1rem; height: 100%; object-fit: cover;"
             onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\"width:100%;height:100%;background:linear-gradient(145deg, #eeeeff, #f9fafb);display:flex;align-items:center;justify-content:center;flex-direction:column;\">
-            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>'
-          ">
+            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>
         </div>
       </div>
     </div>
@@ -903,26 +903,12 @@ const latestPosts = sortedPosts.slice(0, 3);
   </section>
 
   <!-- CTA SECTION WITH PARALLAX BACKGROUND -->
-  <div class="cta-section reveal" id="ctaParallax">
-    <div class="cta-bg-wrapper">
-      <img 
-        src="/development1.jpg" 
-        alt="Development workspace" 
-        class="cta-bg-image" 
-        onerror="this.src='https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop'; this.onerror=null;"
-      />
-      <div class="cta-overlay"></div>
-    </div>
-    <div class="cta-container">
-      <h2 class="cta-title">Have a project<br/>in mind?</h2>
-      <p class="cta-sub">Let's build something great together.</p>
-      <a href="/contact" class="cta-btn">Let's Talk →</a>
-    </div>
-  </div>
+  <CTA />
 
   <Footer />
 
   <script>
+    // ── Scroll reveal ──
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -931,50 +917,60 @@ const latestPosts = sortedPosts.slice(0, 3);
     }, { threshold: 0.12 });
     reveals.forEach(el => observer.observe(el));
 
+    // ── Navbar scroll ──
     const nav = document.querySelector('nav');
     window.addEventListener('scroll', () => {
       if (nav) nav.classList.toggle('scrolled', window.scrollY > 30);
     });
 
-    // PARALLAX EFFECT FOR HERO SECTION
-    const heroSection = document.getElementById('heroParallax');
-    const heroBgImage = document.querySelector('.hero-background');
-    
-    if (heroSection && heroBgImage) {
-      heroBgImage.style.transform = 'translateY(0px)';
-      
-      window.addEventListener('scroll', () => {
+    // ── PARALLAX: shared rAF-based runner ──
+    // Uses requestAnimationFrame so motion is always silky smooth.
+    // Speed multiplier controls how far the image travels — higher = more visible effect.
+    const HERO_SPEED  = 0.45;   // image moves at 45% of scroll speed — clearly visible
+    const CTA_SPEED   = 0.45;
+
+    const heroSection  = document.getElementById('heroParallax');
+    const heroBgImage  = document.querySelector('.hero-background');
+    const ctaSection   = document.getElementById('ctaParallax');
+    const ctaBgImage   = document.querySelector('.cta-bg-image');
+
+    let ticking = false;
+
+    function applyParallax() {
+      const scrollY = window.scrollY;
+
+      // ── Hero ──
+      if (heroSection && heroBgImage) {
         const rect = heroSection.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        if (rect.top < windowHeight && rect.bottom > 0) {
-          const scrollPercent = (window.scrollY + windowHeight - rect.top) / (rect.height + windowHeight);
-          const clampedPercent = Math.min(Math.max(scrollPercent, 0), 1);
-          const translateY = clampedPercent * 80;
-          heroBgImage.style.transform = `translateY(${translateY}px)`;
+        // Only calculate when section is near the viewport
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          // How far the top of the section is above the viewport top
+          const offset = scrollY - heroSection.offsetTop;
+          heroBgImage.style.transform = `translateY(${offset * HERO_SPEED}px)`;
         }
-      });
+      }
+
+      // ── CTA ──
+      if (ctaSection && ctaBgImage) {
+        const rect = ctaSection.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          const offset = scrollY - ctaSection.offsetTop;
+          ctaBgImage.style.transform = `translateY(${offset * CTA_SPEED}px)`;
+        }
+      }
+
+      ticking = false;
     }
 
-    // PARALLAX EFFECT FOR CTA SECTION
-    const ctaSection = document.getElementById('ctaParallax');
-    const ctaBgImage = document.querySelector('.cta-bg-image');
-    
-    if (ctaSection && ctaBgImage) {
-      ctaBgImage.style.transform = 'translateY(0px)';
-      
-      window.addEventListener('scroll', () => {
-        const rect = ctaSection.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        if (rect.top < windowHeight && rect.bottom > 0) {
-          const scrollPercent = (window.scrollY + windowHeight - rect.top) / (rect.height + windowHeight);
-          const clampedPercent = Math.min(Math.max(scrollPercent, 0), 1);
-          const translateY = clampedPercent * 100;
-          ctaBgImage.style.transform = `translateY(${translateY}px)`;
-        }
-      });
-    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(applyParallax);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Run once on load so initial position is correct
+    applyParallax();
   </script>
 
 </BaseLayout>

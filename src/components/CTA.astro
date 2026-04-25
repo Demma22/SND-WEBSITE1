@@ -1,0 +1,162 @@
+---
+// CTA Component - Reusable call-to-action section with parallax background
+// Place at: src/components/CTA.astro
+
+export interface Props {
+  bgImage?: string;
+  overlayOpacity?: number;
+  parallaxSpeed?: number;
+}
+
+const { 
+  bgImage = "/development1.jpg", 
+  overlayOpacity = 0.75,
+  parallaxSpeed = 0.45 
+} = Astro.props;
+---
+
+<div class="snd-cta-wrapper" id="sndCtaParallax">
+  <div class="snd-cta-bg-wrapper">
+    <img 
+      src={bgImage} 
+      alt="Let's work together" 
+      class="snd-cta-bg-image" 
+      onerror="this.src='https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop'; this.onerror=null;"
+    />
+    <div class="snd-cta-overlay" style={`background: rgba(0, 0, 0, ${overlayOpacity});`}></div>
+  </div>
+  <div class="snd-cta-container">
+    <h2 class="snd-cta-title">Have a project<br/>in mind?</h2>
+    <p class="snd-cta-sub">Let's build something great together.</p>
+    <a href="/contact" class="snd-cta-btn">Let's Talk →</a>
+  </div>
+</div>
+
+<style>
+  /* Self-contained CSS - no external variables needed */
+  .snd-cta-wrapper {
+    position: relative;
+    text-align: center;
+    padding: 8rem 2rem;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: #1a1a2e; /* fallback color */
+  }
+
+  .snd-cta-bg-wrapper {
+    position: absolute;
+    top: -25%;
+    left: 0;
+    width: 100%;
+    height: 150%;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .snd-cta-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 70%;
+    will-change: transform;
+    transform: translateY(0px);
+  }
+
+  .snd-cta-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .snd-cta-container {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .snd-cta-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .snd-cta-sub {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    font-family: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  .snd-cta-btn {
+    background: #ffffff;
+    color: #000000;
+    padding: 0.9rem 2.2rem;
+    border-radius: 60px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s, background 0.2s;
+    display: inline-block;
+    font-family: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+  }
+
+  .snd-cta-btn:hover {
+    background: #f0f0f0;
+    transform: scale(1.02);
+  }
+
+  @media (max-width: 900px) {
+    .snd-cta-wrapper { 
+      padding: 5rem 1.5rem; 
+      min-height: 400px; 
+    }
+  }
+</style>
+
+<script>
+  // Parallax effect for this CTA section
+  (function() {
+    const ctaSection = document.getElementById('sndCtaParallax');
+    const ctaBgImage = document.querySelector('.snd-cta-bg-image');
+    const speed = 0.45;
+    
+    if (ctaSection && ctaBgImage) {
+      let ticking = false;
+      
+      function applyParallax() {
+        const rect = ctaSection.getBoundingClientRect();
+        const scrollY = window.scrollY;
+        
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          const offset = scrollY - ctaSection.offsetTop;
+          ctaBgImage.style.transform = `translateY(${offset * speed}px)`;
+        }
+        
+        ticking = false;
+      }
+      
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(applyParallax);
+          ticking = true;
+        }
+      }, { passive: true });
+      
+      // Run once on load
+      applyParallax();
+    }
+  })();
+</script>
