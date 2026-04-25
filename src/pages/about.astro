@@ -1,15 +1,11 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About Us — SND</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<BaseLayout title="About Us — SND | Think It. Create It.">
+  <Navbar />
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
@@ -350,10 +346,6 @@ import Footer from '../components/Footer.astro';
       .about-hero { height: 50vh; min-height: 400px; }
     }
   </style>
-</head>
-<body>
-
-  <Navbar />
 
   <!-- Hero Section with img_section.jpg background -->
   <div class="about-hero">
@@ -373,7 +365,7 @@ import Footer from '../components/Footer.astro';
       <div class="section-label">OUR MISSION</div>
       <h2>Think It. Create It.</h2>
       <div class="mission-text">
-        <p>We believe every great solution starts with a single thought. At SND, we're dedicated to helping individuals and businesses bring their ideas to life — whether through digital products, creative design, or tangible experiences.</p>
+        <p>We believe every great solution starts with a single thought. At SND, we're dedicated to helping individuals and businesses bring their ideas to life, whether through digital products, creative design, or tangible experiences.</p>
       </div>
     </div>
 
@@ -391,30 +383,30 @@ import Footer from '../components/Footer.astro';
         <div class="stat-number">3+</div>
         <div class="stat-label">Years of Experience</div>
       </div>
-
     </div>
 
     <!-- Two Column: Our Story -->
     <div class="two-column">
       <div class="column-content">
         <h3>Our Story</h3>
-        <p>SND was born from a simple observation: great ideas often stay just that — ideas. We saw countless brilliant concepts never make it to the world because their creators lacked the technical expertise, design know-how, or resources to bring them to life.</p>
-        <p>That's why we built SND. We're a team of designers, developers, and creators who are passionate about turning visions into reality. From mobile apps to brand identities, from websites to physical products — we help you bridge the gap between "what if" and "what's next."</p>
+        <p>SND Studio was born from a simple idea: creativity and technology shouldn't exist separately—they should work together to solve real problems and build meaningful, beautiful solutions.</p>
+        <p>We are not just a tech company. SND Studio sits at the intersection of art and innovation, where design, fashion, and digital experiences come together as one. Every project we take on reflects this fusion, crafted with purpose, driven by creativity, and powered by technology.</p>
       </div>
       <div class="column-image">
-        <img src="/img_section.jpg" alt="Our workspace" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Our+Story';" />
+        <img src="/art_tech.jpg" alt="Our workspace" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Our+Story';" />
       </div>
     </div>
 
     <!-- Two Column: What We Believe -->
     <div class="two-column">
       <div class="column-image">
-        <img src="/img_section.jpg" alt="Our philosophy" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Our+Belief';" />
+        <img src="/believe.jpg" alt="Our philosophy" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Our+Belief';" />
       </div>
       <div class="column-content">
         <h3>What We Believe</h3>
-        <p>We believe that every problem can be solved with one thought. It starts with understanding — deeply understanding the people we're designing for, the challenges they face, and the outcomes they desire.</p>
-        <p>From there, we create. We iterate. We refine. And we never stop until the solution feels right — not just for us, but for the people who will use it every day.</p>
+        <p>We believe every problem can be solved with the right idea. It begins with understanding, a deep, intentional understanding of the people we design for, the challenges they face, and the outcomes they truly value.</p>
+        <p>From there, we build with clarity and purpose. We explore, create, test, and refine, shaping each solution until it feels natural, intuitive, and complete.</p>
+        <p>We don't stop at what works. We push for what feels right, for the people who will use it, rely on it, and experience it every day.</p>
       </div>
     </div>
 
@@ -423,16 +415,14 @@ import Footer from '../components/Footer.astro';
       <h2>Our Core Values</h2>
       <div class="values-grid">
         <div class="value-card">
-
           <h3>Curiosity</h3>
           <p>We ask questions, challenge assumptions, and never stop learning.</p>
         </div>
         <div class="value-card">
           <h3>Collaboration</h3>
-          <p>The best ideas come from working together — with our clients and each other.</p>
+          <p>The best ideas come from working together with our clients and each other.</p>
         </div>
         <div class="value-card">
-
           <h3>Excellence</h3>
           <p>We take pride in our craft and never settle for "good enough."</p>
         </div>
@@ -442,6 +432,4 @@ import Footer from '../components/Footer.astro';
   </div>
 
   <Footer />
-
-</body>
-</html>
+</BaseLayout>

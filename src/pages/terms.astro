@@ -1,6 +1,7 @@
 ---
 // REMI Terms & Conditions
 // Place at: src/pages/terms.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
@@ -12,13 +13,8 @@ const currentDate = new Date().toLocaleDateString('en-US', {
 });
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Terms & Conditions — REMI</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<BaseLayout title="Terms & Conditions — REMI | SND">
+  <Navbar />
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
@@ -346,11 +342,6 @@ const currentDate = new Date().toLocaleDateString('en-US', {
       .footer-strip-links { justify-content: center; }
     }
   </style>
-</head>
-<body>
-
-  <!-- IMPORTED NAVBAR COMPONENT -->
-  <Navbar />
 
   <!-- ══════════════ HERO BANNER ══════════════ -->
   <div class="terms-hero">
@@ -379,7 +370,6 @@ const currentDate = new Date().toLocaleDateString('en-US', {
       </div>
     </div>
   </div>
-
 
   <!-- ══════════════ CONTENT ══════════════ -->
   <div class="terms-layout">
@@ -468,7 +458,7 @@ const currentDate = new Date().toLocaleDateString('en-US', {
           <li>The app should not be used as the sole source for academic decision-making</li>
         </ul>
         <div class="terms-callout amber">
-          <p>⚠️ Always verify critical academic information with your university's official systems. REMI is a supplementary tool, not an official academic record keeper.</p>
+          <p>Always verify critical academic information with your university's official systems. REMI is a supplementary tool, not an official academic record keeper.</p>
         </div>
       </div>
 
@@ -569,11 +559,8 @@ const currentDate = new Date().toLocaleDateString('en-US', {
           You can also reach the SND team — the developers behind REMI — through the Contact page on this website.
         </p>
       </div>
-
-
     </div>
   </div>
-
 
   <!-- ══════════════ FOOTER STRIP ══════════════ -->
   <div class="terms-footer-strip">
@@ -585,7 +572,6 @@ const currentDate = new Date().toLocaleDateString('en-US', {
     </div>
   </div>
 
-  <!-- IMPORTED FOOTER COMPONENT -->
   <Footer />
 
   <script>
@@ -607,6 +593,4 @@ const currentDate = new Date().toLocaleDateString('en-US', {
 
     sections.forEach(section => tocObserver.observe(section));
   </script>
-
-</body>
-</html>
+</BaseLayout>

@@ -1,17 +1,13 @@
 ---
 // REMI Privacy Policy
 // Place at: src/pages/privacy.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Privacy Policy — REMI</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<BaseLayout title="Privacy Policy — REMI | SND">
+  <Navbar />
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
@@ -328,11 +324,6 @@ import Footer from '../components/Footer.astro';
       .footer-strip-links { justify-content: center; }
     }
   </style>
-</head>
-<body>
-
-  <!-- IMPORTED NAVBAR COMPONENT -->
-  <Navbar />
 
   <!-- ══════════════ HERO BANNER ══════════════ -->
   <div class="policy-hero">
@@ -362,7 +353,6 @@ import Footer from '../components/Footer.astro';
     </div>
   </div>
 
-
   <!-- ══════════════ CONTENT ══════════════ -->
   <div class="policy-layout">
 
@@ -383,7 +373,7 @@ import Footer from '../components/Footer.astro';
       </ul>
     </aside>
 
-    <!-- RIGHT: Policy Sections -->
+    <!-- RIGHT: Policy Content -->
     <div class="policy-content">
 
       <div class="policy-section" id="introduction">
@@ -546,7 +536,6 @@ import Footer from '../components/Footer.astro';
     </div>
   </div>
 
-
   <!-- ══════════════ FOOTER STRIP ══════════════ -->
   <div class="policy-footer-strip">
     <p>© 2026 SND. REMI Privacy Policy.</p>
@@ -557,7 +546,6 @@ import Footer from '../components/Footer.astro';
     </div>
   </div>
 
-  <!-- IMPORTED FOOTER COMPONENT -->
   <Footer />
 
   <script>
@@ -578,6 +566,4 @@ import Footer from '../components/Footer.astro';
 
     sections.forEach(section => tocObserver.observe(section));
   </script>
-
-</body>
-</html>
+</BaseLayout>
