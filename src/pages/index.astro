@@ -91,7 +91,7 @@ const latestPosts = sortedPosts.slice(0, 3);
     .hamburger { display: none; flex-direction: column; gap: 6px; background: none; border: none; cursor: pointer; }
     .hamburger span { width: 24px; height: 2px; background: var(--snd-dark); border-radius: 2px; transition: 0.2s; }
 
-    /* ── HERO SECTION ── */
+    /* ── HERO SECTION WITH PARALLAX ── */
     .hero {
       position: relative;
       height: 90vh;
@@ -103,6 +103,16 @@ const latestPosts = sortedPosts.slice(0, 3);
       overflow: hidden;
     }
 
+    .hero-bg-wrapper {
+      position: absolute;
+      top: -20%;
+      left: 0;
+      width: 100%;
+      height: 140%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
     .hero-background {
       position: absolute;
       top: 0;
@@ -110,7 +120,9 @@ const latestPosts = sortedPosts.slice(0, 3);
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: 0;
+      object-position: center;
+      will-change: transform;
+      transform: translateY(0px);
     }
 
     .hero-overlay {
@@ -600,25 +612,86 @@ const latestPosts = sortedPosts.slice(0, 3);
       color: #8a9bb0;
     }
 
-    /* ── CTA SECTION ── */
+    /* ── CTA SECTION WITH PARALLAX BACKGROUND ── */
     .cta-section {
-      text-align: center; padding: 6rem 2rem;
-      background: var(--snd-black);
-      border-top: 1px solid var(--snd-light);
-      border-bottom: 1px solid var(--snd-light);
+      position: relative;
+      text-align: center;
+      padding: 8rem 2rem;
+      overflow: hidden;
+      isolation: isolate;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .cta-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--snd-white); margin-bottom: 1rem; }
-    .cta-sub { color: #5c6670; font-size: 1.05rem; margin-bottom: 2.5rem; }
+
+    .cta-bg-wrapper {
+      position: absolute;
+      top: -20%;
+      left: 0;
+      width: 100%;
+      height: 140%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .cta-bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      will-change: transform;
+      transform: translateY(0px);
+    }
+
+    .cta-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 1;
+    }
+
+    .cta-section .cta-container {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .cta-sub {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
+      margin-bottom: 2.5rem;
+    }
+
     .cta-btn {
-      background: var(--snd-black); color: var(--snd-white);
+      background: white;
+      color: var(--snd-black);
       padding: 0.9rem 2.2rem;
       border-radius: 60px;
       text-decoration: none;
       font-weight: 600;
-      transition: all 0.2s;
+      transition: transform 0.2s, background 0.2s;
       display: inline-block;
     }
-    .cta-btn:hover { background: #2c2c2c; transform: scale(1.02); }
+
+    .cta-btn:hover {
+      background: #f0f0f0;
+      transform: scale(1.02);
+    }
 
     /* ── REVEAL ANIMATIONS ── */
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.2,0.9,0.4,1), transform 0.7s ease; }
@@ -657,6 +730,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       .remi-section-purple { padding: 4rem 1.5rem; }
       .remi-card-purple { grid-template-columns: 1fr; padding: 2rem; gap: 2rem; }
       .blog-section { padding: 4rem 1.5rem; }
+      .cta-section { padding: 5rem 1.5rem; }
     }
     @media (max-width: 600px) {
       .hero-headline { font-size: 3rem; }
@@ -667,9 +741,16 @@ const latestPosts = sortedPosts.slice(0, 3);
 
   <Navbar />
 
-  <!-- HERO SECTION -->
-  <div class="hero">
-    <img src="/img_section.jpg" alt="SND Studio" class="hero-background" onerror="this.src='https://placehold.co/1920x1080/e2e8f0/475569?text=SND+Studio';" />
+  <!-- HERO SECTION WITH PARALLAX -->
+  <div class="hero" id="heroParallax">
+    <div class="hero-bg-wrapper">
+      <img 
+        src="/img_section.jpg" 
+        alt="SND Studio" 
+        class="hero-background" 
+        onerror="this.src='https://placehold.co/1920x1080/e2e8f0/475569?text=SND+Studio';" 
+      />
+    </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1 class="hero-headline">Think It,<br/>Let's Create It.</h1>
@@ -770,7 +851,8 @@ const latestPosts = sortedPosts.slice(0, 3);
             alt="Remi App Screenshot" 
             style="width: 100%; padding-top: 1rem; height: 100%; object-fit: cover;"
             onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\"width:100%;height:100%;background:linear-gradient(145deg, #eeeeff, #f9fafb);display:flex;align-items:center;justify-content:center;flex-direction:column;\">
-            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>
+            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>'
+          ">
         </div>
       </div>
     </div>
@@ -786,7 +868,7 @@ const latestPosts = sortedPosts.slice(0, 3);
     {
       latestPosts.length === 0 ? (
         <div class="empty-blog-state">
-          <p>📝 No blog posts yet. Check back soon for insights and updates!</p>
+          <p>No blog posts yet. Check back soon for insights and updates!</p>
         </div>
       ) : (
         <>
@@ -820,11 +902,22 @@ const latestPosts = sortedPosts.slice(0, 3);
     }
   </section>
 
-  <!-- CTA SECTION -->
-  <div class="cta-section reveal">
-    <h2 class="cta-title">Have a project<br/>in mind?</h2>
-    <p class="cta-sub">Let's build something great together.</p>
-    <a href="/contact" class="cta-btn">Let's Talk →</a>
+  <!-- CTA SECTION WITH PARALLAX BACKGROUND -->
+  <div class="cta-section reveal" id="ctaParallax">
+    <div class="cta-bg-wrapper">
+      <img 
+        src="/development1.jpg" 
+        alt="Development workspace" 
+        class="cta-bg-image" 
+        onerror="this.src='https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop'; this.onerror=null;"
+      />
+      <div class="cta-overlay"></div>
+    </div>
+    <div class="cta-container">
+      <h2 class="cta-title">Have a project<br/>in mind?</h2>
+      <p class="cta-sub">Let's build something great together.</p>
+      <a href="/contact" class="cta-btn">Let's Talk →</a>
+    </div>
   </div>
 
   <Footer />
@@ -843,6 +936,45 @@ const latestPosts = sortedPosts.slice(0, 3);
       if (nav) nav.classList.toggle('scrolled', window.scrollY > 30);
     });
 
+    // PARALLAX EFFECT FOR HERO SECTION
+    const heroSection = document.getElementById('heroParallax');
+    const heroBgImage = document.querySelector('.hero-background');
+    
+    if (heroSection && heroBgImage) {
+      heroBgImage.style.transform = 'translateY(0px)';
+      
+      window.addEventListener('scroll', () => {
+        const rect = heroSection.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        if (rect.top < windowHeight && rect.bottom > 0) {
+          const scrollPercent = (window.scrollY + windowHeight - rect.top) / (rect.height + windowHeight);
+          const clampedPercent = Math.min(Math.max(scrollPercent, 0), 1);
+          const translateY = clampedPercent * 80;
+          heroBgImage.style.transform = `translateY(${translateY}px)`;
+        }
+      });
+    }
+
+    // PARALLAX EFFECT FOR CTA SECTION
+    const ctaSection = document.getElementById('ctaParallax');
+    const ctaBgImage = document.querySelector('.cta-bg-image');
+    
+    if (ctaSection && ctaBgImage) {
+      ctaBgImage.style.transform = 'translateY(0px)';
+      
+      window.addEventListener('scroll', () => {
+        const rect = ctaSection.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        if (rect.top < windowHeight && rect.bottom > 0) {
+          const scrollPercent = (window.scrollY + windowHeight - rect.top) / (rect.height + windowHeight);
+          const clampedPercent = Math.min(Math.max(scrollPercent, 0), 1);
+          const translateY = clampedPercent * 100;
+          ctaBgImage.style.transform = `translateY(${translateY}px)`;
+        }
+      });
+    }
   </script>
 
 </BaseLayout>
