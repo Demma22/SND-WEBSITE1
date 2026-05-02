@@ -120,7 +120,7 @@ import Footer from '../components/Footer.astro';
       background: var(--remi-amber);
       color: var(--snd-black);
       padding: 0.9rem 1.8rem;
-      border-radius: 100px;
+      border-radius: 8px;
       text-decoration: none;
       font-weight: 700;
       transition: transform 0.2s;
@@ -137,7 +137,7 @@ import Footer from '../components/Footer.astro';
       background: transparent;
       color: white;
       padding: 0.9rem 1.8rem;
-      border-radius: 100px;
+      border-radius: 8px;
       border: 1.5px solid rgba(255,255,255,0.3);
       text-decoration: none;
       font-weight: 500;
@@ -158,7 +158,7 @@ import Footer from '../components/Footer.astro';
       width: 280px;
       height: 560px;
       background: #ffffff;
-      border-radius: 44px;
+      border-radius: 40px;
       box-shadow: 0 40px 60px -20px rgba(0,0,0,0.3), 0 0 0 10px rgba(255,255,255,0.15);
       overflow: hidden;
       position: relative;
@@ -172,11 +172,11 @@ import Footer from '../components/Footer.astro';
       width: 140px;
       height: 28px;
       background: #111;
-      border-radius: 40px;
+      border-radius: 8px;
       z-index: 2;
     }
 
-    /* Features Section with Full Images */
+    /* Features Section with Black Cards */
     .features-section {
       padding: 6rem 4rem;
       background: var(--snd-white);
@@ -219,8 +219,8 @@ import Footer from '../components/Footer.astro';
     }
 
     .feature-card {
-      background: var(--remi-bg);
-      border-radius: 24px;
+      background: #000000;
+      border-radius: 8px;
       overflow: hidden;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       text-align: center;
@@ -228,7 +228,7 @@ import Footer from '../components/Footer.astro';
 
     .feature-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+      box-shadow: 0 20px 30px -12px rgba(0,0,0,0.3);
     }
 
     .feature-image {
@@ -253,11 +253,11 @@ import Footer from '../components/Footer.astro';
       font-size: 1.3rem;
       font-weight: 700;
       margin: 1.25rem 1.25rem 0.75rem;
-      color: var(--snd-black);
+      color: #ffffff;
     }
 
     .feature-card p {
-      color: #5f6c7a;
+      color: rgba(255,255,255,0.7);
       font-size: 0.9rem;
       line-height: 1.6;
       margin: 0 1.25rem 1.5rem;
@@ -301,7 +301,7 @@ import Footer from '../components/Footer.astro';
 
     .screenshot-card {
       background: white;
-      border-radius: 32px;
+      border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 15px 30px -12px rgba(0,0,0,0.1);
       transition: transform 0.3s ease;
@@ -352,7 +352,7 @@ import Footer from '../components/Footer.astro';
       position: relative;
       padding-bottom: 56.25%;
       height: 0;
-      border-radius: 24px;
+      border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
     }
@@ -438,7 +438,7 @@ import Footer from '../components/Footer.astro';
       height: 50px;
       background: var(--remi-blue);
       color: white;
-      border-radius: 50%;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -497,7 +497,7 @@ import Footer from '../components/Footer.astro';
 
     .faq-item {
       background: white;
-      border-radius: 20px;
+      border-radius: 8px;
       padding: 1.5rem;
     }
 
@@ -546,7 +546,7 @@ import Footer from '../components/Footer.astro';
       background: var(--remi-amber);
       color: var(--snd-black);
       padding: 0.9rem 2rem;
-      border-radius: 100px;
+      border-radius: 8px;
       text-decoration: none;
       font-weight: 700;
       transition: transform 0.2s;
@@ -560,7 +560,7 @@ import Footer from '../components/Footer.astro';
       background: transparent;
       color: white;
       padding: 0.9rem 2rem;
-      border-radius: 100px;
+      border-radius: 8px;
       border: 1.5px solid rgba(255,255,255,0.3);
       text-decoration: none;
       font-weight: 500;
@@ -613,7 +613,7 @@ import Footer from '../components/Footer.astro';
       </div>
       <div class="remi-hero-image">
         <div class="phone-frame-large">
-          <div class="phone-notch" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 80px; height: 20px; background: #111; border-radius: 40px; z-index: 2;"></div>
+          <div class="phone-notch" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 80px; height: 20px; background: #111; border-radius: 20px; z-index: 2;"></div>
           <img 
             src="/remi_screenshot.png" 
             alt="Remi App Screenshot" 
@@ -625,7 +625,7 @@ import Footer from '../components/Footer.astro';
     </div>
   </div>
 
-  <!-- Features Section with Full Images -->
+  <!-- Features Section with Black Cards -->
   <section class="features-section" id="features">
     <div class="features-header">
       <div class="section-label">KEY FEATURES</div>
