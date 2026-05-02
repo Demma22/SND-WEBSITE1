@@ -31,58 +31,24 @@ import CTA from '../components/CTA.astro';
       line-height: 1.5;
     }
 
-    /* Hero Section with img_section.jpg background */
-    .about-hero {
-      position: relative;
-      height: 70vh;
-      min-height: 500px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* Hero Tagline */
+    .hero-tagline {
       text-align: center;
-      overflow: hidden;
+      padding: 8rem 2rem 3rem;
     }
 
-    .hero-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 0;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
-      z-index: 1;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      color: white;
-      padding: 2rem;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .hero-content h1 {
+    .hero-tagline h1 {
       font-family: var(--font-display);
       font-size: clamp(3rem, 6vw, 5rem);
       font-weight: 700;
+      color: var(--snd-black);
       margin-bottom: 1rem;
       letter-spacing: -0.02em;
     }
 
-    .hero-content p {
+    .hero-tagline p {
+      color: #5f6c7a;
       font-size: 1.1rem;
-      opacity: 0.9;
       max-width: 600px;
       margin: 0 auto;
     }
@@ -91,16 +57,30 @@ import CTA from '../components/CTA.astro';
     .about-content {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 5rem 4rem;
+      padding: 2rem 4rem 5rem;
     }
 
-    /* Mission Section */
-    .mission-section {
-      text-align: center;
+    /* Mission & Vision Section */
+    .mission-vision {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
       margin-bottom: 5rem;
     }
 
-    .mission-section .section-label {
+    .mission-card, .vision-card {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .mission-card:hover, .vision-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px -12px rgba(0,0,0,0.1);
+    }
+
+    .mission-card .section-label, .vision-card .section-label {
       color: var(--snd-dark);
       font-size: 0.7rem;
       letter-spacing: 0.15em;
@@ -110,20 +90,147 @@ import CTA from '../components/CTA.astro';
       opacity: 0.7;
     }
 
-    .mission-section h2 {
+    .mission-card h2, .vision-card h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      color: var(--snd-black);
+      margin-bottom: 1rem;
+    }
+
+    .mission-card p, .vision-card p {
+      color: #5f6c7a;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    /* Core Operating Areas with Background Images */
+    .operating-areas {
+      margin-bottom: 5rem;
+    }
+
+    .operating-areas .section-label {
+      text-align: center;
+      color: var(--snd-dark);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .operating-areas h2 {
+      text-align: center;
       font-family: var(--font-display);
       font-size: clamp(2rem, 4vw, 2.8rem);
       font-weight: 700;
       color: var(--snd-black);
-      margin-bottom: 1.5rem;
+      margin-bottom: 3rem;
     }
 
-    .mission-text {
-      max-width: 800px;
-      margin: 0 auto;
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .area-card {
+      position: relative;
+      border-radius: 8px;
+      padding: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .area-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.15;
+      z-index: -1;
+      transition: opacity 0.3s ease, transform 0.5s ease;
+    }
+
+    .area-card:hover::before {
+      transform: scale(1.05);
+      opacity: 0.25;
+    }
+
+    .area-card-1::before {
+      background-image: url('/tech.jpg');
+    }
+
+    .area-card-2::before {
+      background-image: url('/art.jpg');
+    }
+
+    .area-card-3::before {
+      background-image: url('/fashion.jpg');
+    }
+
+    .area-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px -12px rgba(0,0,0,0.15);
+    }
+
+    .area-icon {
+      width: 70px;
+      height: 70px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .area-icon img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .area-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--snd-black);
+      position: relative;
+      z-index: 2;
+    }
+
+    .area-card p {
       color: #5f6c7a;
-      line-height: 1.8;
-      font-size: 1.05rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .area-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--snd-dark);
+      background: rgba(255,255,255,0.9);
+      padding: 0.2rem 0.8rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      position: relative;
+      z-index: 2;
     }
 
     /* Stats Grid */
@@ -180,7 +287,7 @@ import CTA from '../components/CTA.astro';
     }
 
     .column-image {
-      border-radius: 24px;
+      border-radius: 8px;
       overflow: hidden;
       background: var(--snd-light);
     }
@@ -196,140 +303,69 @@ import CTA from '../components/CTA.astro';
       transform: scale(1.02);
     }
 
-    /* Values Section */
-    .values-section {
-      text-align: center;
-      margin: 5rem 0;
-    }
-
-    .values-section h2 {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 2.5rem);
-      font-weight: 700;
-      color: var(--snd-black);
-      margin-bottom: 3rem;
-    }
-
-    .values-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-
-    .value-card {
-      padding: 2rem;
-      background: #f9fafb;
-      border-radius: 24px;
-      transition: transform 0.3s ease;
-    }
-
-    .value-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .value-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .value-card h3 {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-      color: var(--snd-black);
-    }
-
-    .value-card p {
-      color: #5f6c7a;
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-
-    /* Team Section Placeholder */
-    .team-section {
-      text-align: center;
-      margin: 5rem 0 3rem;
-    }
-
-    .team-section h2 {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 2.5rem);
-      font-weight: 700;
-      color: var(--snd-black);
-      margin-bottom: 1rem;
-    }
-
-    .team-section > p {
-      color: #5f6c7a;
-      max-width: 600px;
-      margin: 0 auto 3rem;
-    }
-
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-
-    .team-card {
-      text-align: center;
-    }
-
-    .team-image {
-      width: 150px;
-      height: 150px;
-      background: var(--snd-light);
-      border-radius: 50%;
-      margin: 0 auto 1rem;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-    }
-
-    .team-card h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .team-card p {
-      color: #8a9bb0;
-      font-size: 0.85rem;
-    }
-
     /* Responsive */
     @media (max-width: 900px) {
-      .about-content { padding: 3rem 1.5rem; }
+      .hero-tagline { padding: 6rem 1.5rem 2rem; }
+      .about-content { padding: 2rem 1.5rem 4rem; }
+      .mission-vision { grid-template-columns: 1fr; gap: 1.5rem; }
+      .areas-grid { grid-template-columns: 1fr; gap: 1.5rem; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
       .two-column { grid-template-columns: 1fr; gap: 2rem; }
-      .values-grid { grid-template-columns: 1fr; }
-      .team-grid { grid-template-columns: 1fr; max-width: 300px; margin: 0 auto; }
-      .about-hero { height: 50vh; min-height: 400px; }
     }
   </style>
 
-  <!-- Hero Section with img_section.jpg background -->
-  <div class="about-hero">
-    <img src="/img_section.jpg" alt="SND Studio" class="hero-background" onerror="this.src='https://placehold.co/1920x800/e2e8f0/475569?text=SND+Studio';" />
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1>About Us</h1>
-      <p>We turn ideas into reality through thoughtful design, innovative development, and genuine collaboration.</p>
-    </div>
+  <!-- Hero Tagline - Think It. Create It. -->
+  <div class="hero-tagline">
+    <h1>Think It.<br/>Create It.</h1>
+    <p>We turn ideas into reality through thoughtful design, innovative development, and genuine collaboration.</p>
   </div>
 
   <!-- Main Content -->
   <div class="about-content">
     
-    <!-- Mission Section -->
-    <div class="mission-section">
-      <div class="section-label">OUR MISSION</div>
-      <h2>Think It. Create It.</h2>
-      <div class="mission-text">
-        <p>We believe every great solution starts with a single thought. At SND, we're dedicated to helping individuals and businesses bring their ideas to life, whether through digital products, creative design, or tangible experiences.</p>
+    <!-- Mission & Vision Section -->
+    <div class="mission-vision">
+      <div class="vision-card">
+        <div class="section-label">OUR VISION</div>
+        <h2>To become a leading African brand</h2>
+        <p>Building intelligent, creative, and culturally relevant solutions through the integrated disciplines of technology, art, and design. The goal is to demonstrate that world-class digital products and design systems can originate from Uganda and serve both local and global audiences.</p>
+      </div>
+      <div class="mission-card">
+        <div class="section-label">OUR MISSION</div>
+        <h2>Simplify complex problems</h2>
+        <p>Through thoughtful, well-crafted systems that combine functional design, artificial intelligence, and genuine human understanding. Every product — whether a mobile application, a brand identity, or a physical notebook — must serve a clear purpose and provide a seamless user experience.</p>
+      </div>
+    </div>
+
+    <!-- Core Operating Areas with Background Images -->
+    <div class="operating-areas">
+      <div class="section-label">CORE OPERATING AREAS</div>
+      <h2>Three Interconnected Domains</h2>
+      <div class="areas-grid">
+        <div class="area-card area-card-1">
+          <div class="area-icon">
+            <img src="/icons/technology.svg" alt="Technology" onerror="this.style.display='none'; this.parentNode.innerHTML='📱';" />
+          </div>
+          <h3>Technology</h3>
+          <p>Building applications, tools, and platforms designed to solve real-world organizational and productivity problems. Full-cycle app development from concept through launch and ongoing maintenance. REMI represents the flagship product of this domain.</p>
+          <span class="area-tag">Digital Products · REMI · Software Tools</span>
+        </div>
+        <div class="area-card area-card-2">
+          <div class="area-icon">
+            <img src="/icons/art.svg" alt="Art & Design" onerror="this.style.display='none'; this.parentNode.innerHTML='🎨';" />
+          </div>
+          <h3>Art & Design</h3>
+          <p>Providing branding, user interface design, visual identity systems, motion graphics, and animation. Every product's user experience, iconography, color palette, and marketing materials are developed with professional design standards.</p>
+          <span class="area-tag">Branding · UI/UX · Motion Graphics</span>
+        </div>
+        <div class="area-card area-card-3">
+          <div class="area-icon">
+            <img src="/icons/fashion.svg" alt="Fashion & Physical Goods" onerror="this.style.display='none'; this.parentNode.innerHTML='👕';" />
+          </div>
+          <h3>Fashion & Physical Goods</h3>
+          <p>Producing physical merchandise including notebooks and branded apparel. This builds brand visibility when users wear or use SND merchandise in public, and creates an additional revenue channel independent of software subscription models.</p>
+          <span class="area-tag">Notebooks · Apparel · Merchandise</span>
+        </div>
       </div>
     </div>
 
@@ -374,28 +410,9 @@ import CTA from '../components/CTA.astro';
       </div>
     </div>
 
-    <!-- Values Section -->
-    <div class="values-section">
-      <h2>Our Core Values</h2>
-      <div class="values-grid">
-        <div class="value-card">
-          <h3>Curiosity</h3>
-          <p>We ask questions, challenge assumptions, and never stop learning.</p>
-        </div>
-        <div class="value-card">
-          <h3>Collaboration</h3>
-          <p>The best ideas come from working together with our clients and each other.</p>
-        </div>
-        <div class="value-card">
-          <h3>Excellence</h3>
-          <p>We take pride in our craft and never settle for "good enough."</p>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- CTA SECTION - Full width parallax banner -->
+  <!-- CTA SECTION -->
   <CTA />
 
   <Footer />
