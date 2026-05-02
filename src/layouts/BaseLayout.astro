@@ -37,7 +37,15 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
       margin: 0;
       padding: 0;
       width: 100%;
+      overflow-x: hidden;  /* Prevent horizontal scroll */
+      overflow-y: auto;    /* Allow vertical scroll */
+      position: relative;
+    }
+    
+    html {
       overflow-x: hidden;
+      width: 100%;
+      position: relative;
     }
   </style>
 </head>
