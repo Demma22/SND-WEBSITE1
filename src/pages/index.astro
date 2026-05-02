@@ -76,7 +76,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       color: var(--snd-dark); background: var(--snd-light);
       width: 44px; height: 44px;
       display: flex; align-items: center; justify-content: center;
-      border-radius: 12px;
+      border-radius: 8px;
     }
     .nav-links { display: flex; align-items: center; gap: 2.8rem; list-style: none; }
     .nav-links a { color: var(--snd-dark); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
@@ -84,7 +84,7 @@ const latestPosts = sortedPosts.slice(0, 3);
     .nav-cta {
       background: var(--snd-black); color: var(--snd-white);
       border: none; padding: 0.65rem 1.6rem;
-      border-radius: 40px; font-size: 0.85rem; font-weight: 600;
+      border-radius: 8px; font-size: 0.85rem; font-weight: 600;
       letter-spacing: 0.01em; cursor: pointer; text-decoration: none;
       transition: background 0.2s, transform 0.2s;
     }
@@ -92,75 +92,98 @@ const latestPosts = sortedPosts.slice(0, 3);
     .hamburger { display: none; flex-direction: column; gap: 6px; background: none; border: none; cursor: pointer; }
     .hamburger span { width: 24px; height: 2px; background: var(--snd-dark); border-radius: 2px; transition: 0.2s; }
 
-    /* ── HERO SECTION WITH PARALLAX ── */
+    /* ── HERO SECTION - SUBTLE GRID PATTERN ── */
     .hero {
       position: relative;
-      height: 90vh;
-      min-height: 600px;
+      min-height: 85vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
+      padding: 10rem 2rem 6rem;
+      background: var(--snd-white);
       overflow: hidden;
     }
 
-    .hero-bg-wrapper {
+    /* Subtle Grid Background Pattern */
+    .hero::before {
+      content: '';
       position: absolute;
-      top: -20%;
+      top: 0;
       left: 0;
       width: 100%;
-      height: 140%;
+      height: 100%;
+      background-image: 
+        linear-gradient(to right, rgba(52,57,64,0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(52,57,64,0.035) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
       z-index: 0;
-      overflow: hidden;
     }
 
-    .hero-background {
+    /* Optional: Subtle gradient overlay for depth */
+    .hero::after {
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      object-position: center;
-      will-change: transform;
-      transform: translateY(0px);
-    }
-
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
-      z-index: 1;
+      background: radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0.02) 100%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .hero-content {
       position: relative;
-      z-index: 2;
-      color: white;
-      padding: 2rem;
-      max-width: 800px;
-      margin: 0 auto;
+      z-index: 1;
     }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(52,57,64,0.05);
+      border: 1px solid rgba(52,57,64,0.1);
+      border-radius: 100px;
+      padding: 0.4rem 1.2rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--snd-dark);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    .hero-badge-dot { width: 6px; height: 6px; background: var(--snd-dark); border-radius: 50%; opacity: 0.7; }
 
     .hero-headline {
-      font-size: clamp(3.8rem, 8vw, 7rem);
+      font-size: clamp(3rem, 7vw, 5.5rem);
       font-weight: 700;
-      line-height: 1.05;
-      color: white;
-      margin-bottom: 1.2rem;
-      letter-spacing: -0.03em;
-      margin-top: 5.0rem;
+      line-height: 1.1;
+      color: var(--snd-black);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
     }
 
+    .line-1, .line-2 {
+      display: block;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    .line-1 { animation-delay: 0.1s; }
+    .line-2 { animation-delay: 0.3s; }
+
     .hero-sub {
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: rgba(255,255,255,0.8);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: #4a4e54;
       max-width: 540px;
-      margin: 0 auto 2.5rem;
+      margin: 0 auto 2rem;
       font-weight: 400;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease 0.5s forwards;
     }
 
     .hero-actions {
@@ -168,53 +191,76 @@ const latestPosts = sortedPosts.slice(0, 3);
       gap: 1rem;
       flex-wrap: wrap;
       justify-content: center;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease 0.7s forwards;
     }
 
     .btn-primary {
-      background: white;
-      color: var(--snd-black);
+      background: var(--snd-black);
+      color: white;
       padding: 0.85rem 2.2rem;
-      border-radius: 100px;
+      border-radius: 8px;
       font-weight: 600;
       font-size: 0.9rem;
       text-decoration: none;
       transition: transform 0.2s, background 0.2s;
     }
-    .btn-primary:hover { background: #f0f0f0; transform: translateY(-2px); }
+    .btn-primary:hover { background: #2c2c2c; transform: translateY(-2px); }
 
     .btn-secondary {
       background: transparent;
-      color: white;
+      color: var(--snd-black);
       padding: 0.85rem 2rem;
-      border-radius: 100px;
-      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 8px;
+      border: 1px solid #cfcfd3;
       font-weight: 500;
       text-decoration: none;
       transition: border 0.2s, background 0.2s;
     }
-    .btn-secondary:hover { border-color: white; background: rgba(255,255,255,0.1); }
+    .btn-secondary:hover { border-color: var(--snd-dark); background: rgba(52,57,64,0.04); }
 
     .scroll-hint {
       position: absolute;
       bottom: 2rem;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.3rem;
-      opacity: 0.7;
+      opacity: 0.6;
+      animation: fadeInUp 0.6s ease 0.9s forwards;
     }
     .scroll-hint span {
       font-size: 0.7rem;
       letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.7);
+      color: #6c7278;
     }
     .scroll-line {
       width: 1px;
       height: 32px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
+      background: linear-gradient(to bottom, #343940, transparent);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Grid pattern on hover? Optional interactive effect */
+    @media (min-width: 901px) {
+      .hero:hover::before {
+        background-image: 
+          linear-gradient(to right, rgba(52,57,64,0.05) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(52,57,64,0.05) 1px, transparent 1px);
+        transition: all 0.3s ease;
+      }
     }
 
     /* ══════════════ WHAT WE DO SECTION ══════════════ */
@@ -299,7 +345,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
       background: var(--snd-white);
-      border-radius: 0px;
+      border-radius: 8px;
       transition: transform 0.3s ease;
       cursor: pointer;
       border: 1px solid transparent;
@@ -316,6 +362,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       height: 160px;
       overflow: hidden;
       background: var(--snd-light);
+      border-radius: 8px;
     }
 
     .card-image img {
@@ -360,7 +407,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       color: var(--snd-dark);
       background: rgba(52,57,64,0.08);
       padding: 0.2rem 0.8rem;
-      border-radius: 40px;
+      border-radius: 8px;
       letter-spacing: 0.03em;
     }
 
@@ -374,7 +421,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       max-width: 1200px;
       margin: 0 auto;
       background: var(--remi-bg);
-      border-radius: 32px;
+      border-radius: 8px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 3rem;
@@ -394,7 +441,8 @@ const latestPosts = sortedPosts.slice(0, 3);
       color: var(--remi-blue);
       background: rgba(83,95,253,0.1);
       padding: 0.3rem 1rem;
-      border-radius: 100px;
+      border-radius: 8px;
+      width: fit-content;
       margin-bottom: 1.5rem;
     }
     
@@ -421,7 +469,7 @@ const latestPosts = sortedPosts.slice(0, 3);
     
     .remi-stats {
       background: rgba(83,95,253,0.08);
-      border-radius: 20px;
+      border-radius: 8px;
       padding: 1rem 1.5rem;
       display: inline-block;
       margin-bottom: 1.8rem;
@@ -444,7 +492,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       background: var(--remi-blue);
       color: white;
       padding: 0.8rem 1.8rem;
-      border-radius: 100px;
+      border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
       transition: transform 0.2s;
@@ -462,7 +510,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       background: transparent;
       color: var(--snd-black);
       padding: 0.8rem 1.8rem;
-      border-radius: 100px;
+      border-radius: 8px;
       border: 1px solid var(--snd-light);
       text-decoration: none;
       font-weight: 500;
@@ -483,14 +531,14 @@ const latestPosts = sortedPosts.slice(0, 3);
       width: 260px;
       height: 520px;
       background: #ffffff;
-      border-radius: 40px;
+      border-radius: 8px;
       box-shadow: 0 30px 40px -20px rgba(0,0,0,0.25);
       border: 1px solid rgba(255,255,255,0.3);
       overflow: hidden;
       position: relative;
     }
 
-    /* ── DYNAMIC BLOG SECTION ── */
+    /* ── BLOG SECTION - SMALLER CARDS, BLACK WITH IMAGE ── */
     .blog-section {
       padding: 7rem 4rem;
       background: var(--snd-white);
@@ -518,33 +566,31 @@ const latestPosts = sortedPosts.slice(0, 3);
     
     .blog-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2rem;
-      max-width: 1300px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
       margin: 0 auto;
     }
     
     .blog-card {
-      background: var(--snd-white);
-      border: 1px solid var(--snd-light);
-      border-radius: 24px;
+      background: #000000;
+      border-radius: 8px;
       overflow: hidden;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       text-decoration: none;
-      color: inherit;
+      color: white;
       display: block;
     }
     
     .blog-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 30px -12px rgba(0,0,0,0.08);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px -12px rgba(0,0,0,0.3);
     }
     
     .blog-image {
       width: 100%;
-      height: 220px;
+      height: 180px;
       overflow: hidden;
-      background: var(--snd-light);
     }
     
     .blog-image img {
@@ -559,12 +605,12 @@ const latestPosts = sortedPosts.slice(0, 3);
     }
     
     .blog-content {
-      padding: 1.5rem;
+      padding: 1.25rem;
     }
     
     .blog-date {
       font-size: 0.7rem;
-      color: #8a9bb0;
+      color: rgba(255,255,255,0.6);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 0.5rem;
@@ -572,126 +618,47 @@ const latestPosts = sortedPosts.slice(0, 3);
     
     .blog-content h3 {
       font-family: var(--font-display);
-      font-size: 1.3rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 0.75rem;
-      color: var(--snd-black);
+      margin-bottom: 0.5rem;
+      color: white;
       line-height: 1.3;
     }
     
     .blog-content p {
-      color: #5f6c7a;
-      font-size: 0.9rem;
-      line-height: 1.6;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+      line-height: 1.5;
       margin-bottom: 1rem;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
     
     .read-more {
-      color: var(--snd-dark);
+      color: white;
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
       transition: gap 0.2s;
+      opacity: 0.8;
     }
     
     .read-more:hover {
       gap: 0.5rem;
+      opacity: 1;
     }
 
     .empty-blog-state {
       text-align: center;
       padding: 3rem;
       background: #f9fafb;
-      border-radius: 24px;
+      border-radius: 8px;
       color: #8a9bb0;
-    }
-
-    /* ── CTA SECTION WITH PARALLAX BACKGROUND ── */
-    .cta-section {
-      position: relative;
-      text-align: center;
-      padding: 8rem 2rem;
-      overflow: hidden;
-      isolation: isolate;
-      min-height: 500px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .cta-bg-wrapper {
-      position: absolute;
-      top: 0%;
-      left: 0;
-      width: 100%;
-      height: 140%;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .cta-bg-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      will-change: transform;
-      transform: translateY(0px);
-    }
-
-    .cta-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: 1;
-    }
-
-    .cta-section .cta-container {
-      position: relative;
-      z-index: 2;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .cta-title {
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      font-weight: 700;
-      color: white;
-      margin-bottom: 1rem;
-    }
-
-    .cta-sub {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 1.1rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .cta-btn {
-      background: white;
-      color: var(--snd-black);
-      padding: 0.9rem 2.2rem;
-      border-radius: 60px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: transform 0.2s, background 0.2s;
-      display: inline-block;
-    }
-
-    .cta-btn:hover {
-      background: #f0f0f0;
-      transform: scale(1.02);
     }
 
     /* ── REVEAL ANIMATIONS ── */
@@ -701,7 +668,7 @@ const latestPosts = sortedPosts.slice(0, 3);
     /* View All Blog Link */
     .view-all-blog {
       text-align: center;
-      margin-top: 3rem;
+      margin-top: 2rem;
     }
     
     .view-all-blog-link {
@@ -723,7 +690,7 @@ const latestPosts = sortedPosts.slice(0, 3);
       nav { padding: 0.9rem 1.5rem; }
       .nav-links { display: none; }
       .hamburger { display: flex; }
-      .hero { height: 70vh; min-height: 500px; }
+      .hero { min-height: 70vh; padding: 8rem 1.5rem 4rem; }
       .complex-services { padding: 4rem 1.5rem; }
       .services-container { grid-template-columns: 1fr; gap: 2rem; }
       .services-cards-scroll { height: 450px; }
@@ -731,31 +698,30 @@ const latestPosts = sortedPosts.slice(0, 3);
       .remi-section-purple { padding: 4rem 1.5rem; }
       .remi-card-purple { grid-template-columns: 1fr; padding: 2rem; gap: 2rem; }
       .blog-section { padding: 4rem 1.5rem; }
-      .cta-section { padding: 5rem 1.5rem; }
+      .blog-grid { gap: 1rem; }
     }
     @media (max-width: 600px) {
-      .hero-headline { font-size: 3rem; }
+      .hero-headline { font-size: 2.8rem; }
       .card-image { width: 100px; height: 100px; }
       .service-scroll-card { padding: 1rem; gap: 1rem; }
+      .blog-grid { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
     }
   </style>
 
   <Navbar />
 
-  <!-- HERO SECTION WITH PARALLAX -->
-  <div class="hero" id="heroParallax">
-    <div class="hero-bg-wrapper">
-      <img 
-        src="/img_section.jpg" 
-        alt="SND Studio" 
-        class="hero-background" 
-        onerror="this.src='https://placehold.co/1920x1080/e2e8f0/475569?text=SND+Studio';" 
-      />
-    </div>
-    <div class="hero-overlay"></div>
+  <!-- HERO SECTION - SUBTLE GRID PATTERN -->
+  <div class="hero">
     <div class="hero-content">
-      <h1 class="hero-headline">Think It,<br/>Let's Create It.</h1>
-      <p class="hero-sub">Bring anything to life.</p>
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Digital Products · Design · Development
+      </div>
+      <h1 class="hero-headline">
+        <span class="line-1">Think It,</span>
+        <span class="line-2">Let's Create It.</span>
+      </h1>
+      <p class="hero-sub">SND is a brand for you to bring anything to life.</p>
       <div class="hero-actions">
         <a href="/about" class="btn-primary">Who We Are</a>
         <a href="/contact" class="btn-secondary">Start a Project</a>
@@ -852,7 +818,8 @@ const latestPosts = sortedPosts.slice(0, 3);
             alt="Remi App Screenshot" 
             style="width: 100%; padding-top: 1rem; height: 100%; object-fit: cover;"
             onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\"width:100%;height:100%;background:linear-gradient(145deg, #eeeeff, #f9fafb);display:flex;align-items:center;justify-content:center;flex-direction:column;\">
-            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>
+            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>'
+          ">
         </div>
       </div>
     </div>
@@ -902,13 +869,13 @@ const latestPosts = sortedPosts.slice(0, 3);
     }
   </section>
 
-  <!-- CTA SECTION WITH PARALLAX BACKGROUND -->
+  <!-- CTA SECTION -->
   <CTA />
 
   <Footer />
 
   <script>
-    // ── Scroll reveal ──
+    // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -917,60 +884,11 @@ const latestPosts = sortedPosts.slice(0, 3);
     }, { threshold: 0.12 });
     reveals.forEach(el => observer.observe(el));
 
-    // ── Navbar scroll ──
+    // Navbar scroll effect
     const nav = document.querySelector('nav');
     window.addEventListener('scroll', () => {
       if (nav) nav.classList.toggle('scrolled', window.scrollY > 30);
     });
-
-    // ── PARALLAX: shared rAF-based runner ──
-    // Uses requestAnimationFrame so motion is always silky smooth.
-    // Speed multiplier controls how far the image travels — higher = more visible effect.
-    const HERO_SPEED  = 0.45;   // image moves at 45% of scroll speed — clearly visible
-    const CTA_SPEED   = 0.45;
-
-    const heroSection  = document.getElementById('heroParallax');
-    const heroBgImage  = document.querySelector('.hero-background');
-    const ctaSection   = document.getElementById('ctaParallax');
-    const ctaBgImage   = document.querySelector('.cta-bg-image');
-
-    let ticking = false;
-
-    function applyParallax() {
-      const scrollY = window.scrollY;
-
-      // ── Hero ──
-      if (heroSection && heroBgImage) {
-        const rect = heroSection.getBoundingClientRect();
-        // Only calculate when section is near the viewport
-        if (rect.bottom > 0 && rect.top < window.innerHeight) {
-          // How far the top of the section is above the viewport top
-          const offset = scrollY - heroSection.offsetTop;
-          heroBgImage.style.transform = `translateY(${offset * HERO_SPEED}px)`;
-        }
-      }
-
-      // ── CTA ──
-      if (ctaSection && ctaBgImage) {
-        const rect = ctaSection.getBoundingClientRect();
-        if (rect.bottom > 0 && rect.top < window.innerHeight) {
-          const offset = scrollY - ctaSection.offsetTop;
-          ctaBgImage.style.transform = `translateY(${offset * CTA_SPEED}px)`;
-        }
-      }
-
-      ticking = false;
-    }
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(applyParallax);
-        ticking = true;
-      }
-    }, { passive: true });
-
-    // Run once on load so initial position is correct
-    applyParallax();
   </script>
 
 </BaseLayout>
