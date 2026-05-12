@@ -3,12 +3,17 @@
 // Place at: src/components/Navbar.astro
 ---
 
+<!-- Top Banner with rotating text animation -->
+<div class="top-banner">
+  <span class="banner-text" id="bannerText">Digital Products</span>
+</div>
+
 <nav id="navbar">
   <a href="/" class="nav-logo">
     <img src="/snd.png" alt="SND" class="nav-logo-img" id="navLogo" onerror="this.parentNode.innerHTML='<div class=\'logo-fallback\'>SND</div>';" />
   </a>
   
-  <!-- Desktop Navigation -->
+  <!-- Desktop Navigation - Centered -->
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
     <li><a href="/about">About Us</a></li>
@@ -16,7 +21,8 @@
     <li><a href="/products">Products</a></li> 
   </ul>
   
-  <a href="/contact" class="nav-cta">Get in Touch</a>
+  <!-- Empty div to balance centering with logo -->
+  <div class="nav-placeholder"></div>
   
   <!-- Mobile Hamburger Button -->
   <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
@@ -51,121 +57,98 @@
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <style>
-  /* Desktop Navbar Styles - Starts white/transparent, turns black on scroll */
-  nav {
+  /* Top Banner - Always Black with rotating text */
+  .top-banner {
     position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    background: #000000;
+    color: #ffffff;
+    text-align: center;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    z-index: 1002;
+    font-family: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+  }
+  
+  /* Navbar Styles - Reduced height like HURU */
+  nav {
+    position: fixed;
+    top: 20px; /* Height of top banner */
     left: 0;
     right: 0;
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 4rem;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
+    padding: 0.3rem 4rem; /* Reduced padding */
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    transition: box-shadow 0.25s;
+    min-height: 55px; /* Reduced navbar height */
   }
   
-  /* When scrolled - becomes black */
   nav.scrolled {
-    background: #000000;
-    backdrop-filter: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
   }
   
-  /* Adjust navbar padding for safe area (notch support) */
-  nav {
-    padding-top: max(1rem, env(safe-area-inset-top, 1rem));
-  }
-  
-  /* Logo - dark logo normally, white when scrolled */
+  /* Logo - smaller for shorter navbar */
   .nav-logo-img {
-    transition: filter 0.3s ease, opacity 0.3s ease;
+    transition: opacity 0.3s ease;
   }
   
-  nav.scrolled .nav-logo-img {
-    filter: brightness(0) invert(1);
+  .nav-logo { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    text-decoration: none; 
+    flex-shrink: 0;
   }
-  
-  .nav-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
-  .nav-logo img { height: 44px; width: auto; }
+  .nav-logo img { height: 36px; width: auto; } /* Smaller logo */
   
   .logo-fallback {
     font-family: var(--font-display);
-    font-weight: 700; font-size: 1.5rem;
-    color: #000000;
-    background: #e0e0e0;
-    width: 44px; height: 44px;
+    font-weight: 700; font-size: 1.2rem;
+    color: var(--snd-dark); background: var(--snd-light);
+    width: 32px; height: 32px;
     display: flex; align-items: center; justify-content: center;
-    border-radius: 8px;
+    border-radius: 6px;
   }
   
-  nav.scrolled .logo-fallback {
-    color: #ffffff;
-    background: #333;
+  /* Placeholder to balance centering */
+  .nav-placeholder {
+    width: 90px;
+    visibility: hidden;
   }
   
-  /* Nav links - dark text normally, white when scrolled */
+  /* Nav links - Centered */
   .nav-links { 
     display: flex; 
     align-items: center; 
+    justify-content: center;
     gap: 2rem; 
     list-style: none; 
+    margin: 0 auto;
   }
   
   .nav-links a { 
-    color: #000000; 
+    color: #333; 
     text-decoration: none; 
-    font-size: 0.9rem; 
+    font-size: 0.85rem; 
     font-weight: 500; 
-    transition: color 0.2s, opacity 0.2s; 
-    opacity: 0.8;
+    transition: color 0.2s; 
   }
   
-  nav.scrolled .nav-links a {
-    color: #ffffff;
-  }
+  .nav-links a:hover { color: #000; }
   
-  .nav-links a:hover { 
-    opacity: 1;
-  }
-  
-  /* CTA Button - dark style normally, light when scrolled */
-  .nav-cta {
-    background: #000000;
-    color: #ffffff;
-    border: none;
-    padding: 0.6rem 1.4rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.2s, transform 0.2s, color 0.2s;
-  }
-  
-  nav.scrolled .nav-cta {
-    background: #ffffff;
-    color: #000000;
-  }
-  
-  .nav-cta:hover { 
-    background: #333;
-    transform: scale(1.02);
-  }
-  
-  nav.scrolled .nav-cta:hover {
-    background: #e0e0e0;
-  }
-  
-  /* Hamburger Button - dark bars normally, white when scrolled */
+  /* Hamburger Button */
   .hamburger {
     display: none;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
     background: none;
     border: none;
     cursor: pointer;
@@ -174,18 +157,14 @@
   }
   
   .hamburger span {
-    width: 22px;
+    width: 20px;
     height: 2px;
-    background: #000000;
+    background: #333;
     border-radius: 2px;
-    transition: background 0.3s ease;
+    transition: 0.3s ease;
   }
   
-  nav.scrolled .hamburger span {
-    background: #ffffff;
-  }
-  
-  /* Mobile Menu Overlay - dark theme always */
+  /* Mobile Menu Overlay */
   .mobile-menu {
     position: fixed;
     top: 0;
@@ -193,14 +172,14 @@
     width: 85%;
     max-width: 320px;
     height: 100vh;
-    background: #000000;
+    background: var(--snd-white);
     z-index: 2000;
-    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.1);
     transition: right 0.3s ease;
     display: flex;
     flex-direction: column;
     padding: 1.2rem;
-    padding-top: max(1.2rem, env(safe-area-inset-top, 1.2rem));
+    padding-top: 4rem;
   }
   
   .mobile-menu.active {
@@ -211,9 +190,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid var(--snd-light);
   }
   
   .mobile-menu-logo img {
@@ -226,7 +205,7 @@
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #ffffff;
+    color: var(--snd-dark);
     padding: 5px;
     width: 36px;
     height: 36px;
@@ -244,22 +223,23 @@
   }
   
   .mobile-nav-links li {
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
   }
   
   .mobile-nav-links a {
-    color: rgba(255,255,255,0.8);
+    color: #333;
     text-decoration: none;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 500;
-    transition: all 0.2s;
+    transition: color 0.2s;
     display: block;
-    padding: 0.75rem 0;
+    padding: 0.6rem 0;
   }
   
   .mobile-nav-links a:hover {
-    color: #ffffff;
-    transform: translateX(8px);
+    color: #000;
+    transform: translateX(5px);
   }
   
   /* Overlay Background */
@@ -269,7 +249,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.4);
     z-index: 1999;
     opacity: 0;
     visibility: hidden;
@@ -281,15 +261,36 @@
     visibility: visible;
   }
   
+  /* Add padding to body content */
+  body {
+    padding-top: 84px;
+  }
+  
   /* Responsive */
   @media (max-width: 900px) {
-    nav { 
-      padding: 0.8rem 1.2rem; 
-      padding-top: max(0.8rem, env(safe-area-inset-top, 0.8rem));
-    }
+    nav { padding: 0.3rem 1.2rem; top: 29px; }
     .nav-links { display: none; }
-    .nav-cta { display: none; }
+    .nav-placeholder { display: none; }
     .hamburger { display: flex; }
+    .mobile-menu { padding-top: 4rem; }
+    .nav-logo img { height: 30px; }
+    body {
+      padding-top: 80px;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .top-banner {
+      font-size: 0.6rem;
+      padding: 0.25rem 0.5rem;
+    }
+    nav {
+      top: 26px;
+    }
+    .nav-logo img { height: 28px; }
+    body {
+      padding-top: 75px;
+    }
   }
   
   @media (min-width: 901px) {
@@ -301,27 +302,65 @@
 </style>
 
 <script>
-  // Mobile menu functionality
+  // ---- ROTATING BANNER TEXT - Fade only when changing ----
+  const bannerTexts = [
+    "Digital Products",
+    "Design",
+    "Development"
+  ];
+  
+  let currentIndex = 0;
+  const bannerElement = document.getElementById('bannerText');
+  let isTransitioning = false;
+  
+  if (bannerElement) {
+    function rotateBannerText() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      
+      // Calculate next index
+      const nextIndex = (currentIndex + 1) % bannerTexts.length;
+      
+      // Fade out current text (opacity reduces)
+      bannerElement.style.transition = 'opacity 0.4s ease';
+      bannerElement.style.opacity = '0';
+      
+      setTimeout(() => {
+        // Change text
+        bannerElement.textContent = bannerTexts[nextIndex];
+        currentIndex = nextIndex;
+        
+        // Fade in new text
+        bannerElement.style.opacity = '1';
+        
+        setTimeout(() => {
+          isTransitioning = false;
+        }, 400);
+      }, 400);
+    }
+    
+    // Rotate every 7 seconds
+    setInterval(rotateBannerText, 8000);
+  }
+  
+  // ---- MOBILE MENU FUNCTIONALITY ----
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobileMenu');
   const closeMenuBtn = document.getElementById('closeMenuBtn');
   const menuOverlay = document.getElementById('menuOverlay');
   
-  // Function to open menu
   function openMenu() {
     mobileMenu.classList.add('active');
     if (menuOverlay) menuOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
   
-  // Function to close menu
   function closeMenu() {
     mobileMenu.classList.remove('active');
     if (menuOverlay) menuOverlay.classList.remove('active');
     document.body.style.overflow = '';
   }
   
-  // Event listeners
   if (hamburgerBtn) {
     hamburgerBtn.addEventListener('click', openMenu);
   }
@@ -334,13 +373,11 @@
     menuOverlay.addEventListener('click', closeMenu);
   }
   
-  // Close menu when clicking on a link
   const mobileLinks = document.querySelectorAll('.mobile-nav-links a');
   mobileLinks.forEach(link => {
     link.addEventListener('click', closeMenu);
   });
   
-  // Close menu on escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) {
       closeMenu();

@@ -1,7 +1,5 @@
 ---
 // Base Layout Component - Only handles HTML structure, favicons, and title
-// Place at: src/layouts/BaseLayout.astro
-
 export interface Props {
   title: string;
   description?: string;
@@ -14,16 +12,13 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   
-  <!-- Theme color - Android uses this, changes with scroll -->
-  <meta name="theme-color" id="themeColor" content="#ffffff" />
-  
-  <!-- iOS specific status bar settings -->
+  <!-- Status bar colors - keeps black -->
+  <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="SND Studio" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   <!-- Favicons -->
   <link rel="icon" type="image/svg+xml" href="/favicon.png" />
@@ -55,66 +50,9 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
       width: 100%;
       position: relative;
     }
-    
-    /* iOS status bar spacer - changes color with scroll */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: env(safe-area-inset-top, 0px);
-      background: rgba(255, 255, 255, 0.95);
-      z-index: 999;
-      pointer-events: none;
-      transition: background 0.3s ease;
-    }
-    
-    /* When scrolled, status bar background becomes black */
-    body.scrolled::before {
-      background: #000000;
-    }
   </style>
 </head>
 <body>
   <slot />
-  
-  <script>
-    const themeColorMeta = document.getElementById('themeColor');
-    
-    const updateStatusBar = () => {
-      const isScrolled = window.scrollY > 30;
-      
-      // Update Android theme color
-      if (themeColorMeta) {
-        themeColorMeta.setAttribute('content', isScrolled ? '#000000' : '#ffffff');
-      }
-      
-      // Update iOS status bar via body class
-      if (isScrolled) {
-        document.body.classList.add('scrolled');
-      } else {
-        document.body.classList.remove('scrolled');
-      }
-    };
-    
-    // Listen for scroll events
-    window.addEventListener('scroll', updateStatusBar);
-    window.addEventListener('load', updateStatusBar);
-    updateStatusBar();
-    
-    // Watch for navbar class changes
-    const observer = new MutationObserver(() => {
-      updateStatusBar();
-    });
-    
-    const waitForNavbar = setInterval(() => {
-      const nav = document.querySelector('nav');
-      if (nav) {
-        observer.observe(nav, { attributes: true });
-        clearInterval(waitForNavbar);
-      }
-    }, 100);
-  </script>
 </body>
 </html>
