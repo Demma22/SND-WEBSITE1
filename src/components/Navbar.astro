@@ -4,6 +4,9 @@
 ---
 
 <nav id="navbar">
+  <!-- Status bar background that matches navbar -->
+  <div class="status-bar-bg"></div>
+  
   <a href="/" class="nav-logo">
     <img src="/snd.png" alt="SND" class="nav-logo-img" id="navLogo" onerror="this.parentNode.innerHTML='<div class=\'logo-fallback\'>SND</div>';" />
   </a>
@@ -54,7 +57,9 @@
   /* Desktop Navbar Styles */
   nav {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -64,6 +69,24 @@
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(52,57,64,0.08);
     transition: background 0.25s, box-shadow 0.25s;
+  }
+  
+  /* Status bar background that matches navbar */
+  .status-bar-bg {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    right: 0;
+    height: calc(40px + env(safe-area-inset-top, 0px));
+    background: inherit;
+    backdrop-filter: inherit;
+    z-index: -1;
+    transition: background 0.25s;
+  }
+  
+  /* Adjust navbar padding for safe area */
+  nav {
+    padding-top: max(1rem, env(safe-area-inset-top, 1rem));
   }
   
   nav.scrolled {
@@ -114,7 +137,7 @@
     color: #cccccc;
   }
   
-  /* CTA Button - 8px border radius */
+  /* CTA Button */
   .nav-cta {
     background: var(--snd-black); 
     color: var(--snd-white);
@@ -167,7 +190,7 @@
     background: #ffffff;
   }
   
-  /* Mobile Menu Overlay - Compact and Clean */
+  /* Mobile Menu Overlay */
   .mobile-menu {
     position: fixed;
     top: 0;
@@ -182,6 +205,7 @@
     display: flex;
     flex-direction: column;
     padding: 1.2rem;
+    padding-top: max(1.2rem, env(safe-area-inset-top, 1.2rem));
   }
   
   .mobile-menu.active {
@@ -216,7 +240,7 @@
     justify-content: center;
   }
   
-  /* Mobile Navigation Links - Tight Spacing */
+  /* Mobile Navigation Links */
   .mobile-nav-links {
     list-style: none;
     flex: 1;
@@ -265,7 +289,7 @@
   
   /* Responsive */
   @media (max-width: 900px) {
-    nav { padding: 0.8rem 1.2rem; }
+    nav { padding: 0.8rem 1.2rem; padding-top: max(0.8rem, env(safe-area-inset-top, 0.8rem)); }
     .nav-links { display: none; }
     .nav-cta { display: none; }
     .hamburger { display: flex; }

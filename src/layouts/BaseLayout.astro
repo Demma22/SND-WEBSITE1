@@ -14,11 +14,12 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content={description} />
   
   <!-- Theme color - changes with scroll to match navbar -->
   <meta name="theme-color" id="themeColor" content="#ffffff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" id="statusBarStyle" content="default" />
   
   <!-- Favicons -->
@@ -41,8 +42,8 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
       margin: 0;
       padding: 0;
       width: 100%;
-      overflow-x: hidden;  /* Prevent horizontal scroll */
-      overflow-y: auto;    /* Allow vertical scroll */
+      overflow-x: hidden;
+      overflow-y: auto;
       position: relative;
     }
     
@@ -50,6 +51,19 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
       overflow-x: hidden;
       width: 100%;
       position: relative;
+    }
+    
+    /* Status bar spacer - ensures content doesn't go under status bar */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: env(safe-area-inset-top, 0px);
+      background: transparent;
+      z-index: 1001;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -68,12 +82,16 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
         if (statusBarStyle) {
           statusBarStyle.setAttribute('content', 'black-translucent');
         }
+        // Update status bar background color via CSS variable
+        document.documentElement.style.setProperty('--status-bar-bg', '#000000');
       } else {
         // When at top - white/light status bar
         themeColorMeta.setAttribute('content', '#ffffff');
         if (statusBarStyle) {
           statusBarStyle.setAttribute('content', 'default');
         }
+        // Update status bar background color via CSS variable
+        document.documentElement.style.setProperty('--status-bar-bg', '#ffffff');
       }
     };
     
@@ -81,6 +99,25 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
     window.addEventListener('scroll', updateThemeColor);
     // Call once on load
     updateThemeColor();
+    
+    // Also handle when navbar is toggled with scroll
+    // Create an observer to watch for navbar class changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          updateThemeColor();
+        }
+      });
+    });
+    
+    // Wait for navbar to exist
+    const waitForNavbar = setInterval(() => {
+      const nav = document.querySelector('nav');
+      if (nav) {
+        observer.observe(nav, { attributes: true });
+        clearInterval(waitForNavbar);
+      }
+    }, 100);
   </script>
 </body>
 </html>
