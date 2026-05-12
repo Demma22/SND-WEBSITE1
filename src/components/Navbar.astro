@@ -72,23 +72,37 @@
     font-weight: 500;
     z-index: 1002;
     font-family: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   /* Navbar Styles - Reduced height like HURU */
   nav {
     position: fixed;
-    top: 20px; /* Height of top banner */
+    top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.3rem 4rem; /* Reduced padding */
+    padding: 0.3rem 4rem;
     background: #ffffff;
     border-bottom: 1px solid rgba(0,0,0,0.06);
     transition: box-shadow 0.25s;
-    min-height: 55px; /* Reduced navbar height */
+    min-height: 55px;
+    margin-top: 29px; /* Push navbar down by banner height */
+  }
+  
+  /* Alternative: Use a wrapper approach for perfect connection */
+  .navbar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
   }
   
   nav.scrolled {
@@ -107,7 +121,7 @@
     text-decoration: none; 
     flex-shrink: 0;
   }
-  .nav-logo img { height: 36px; width: auto; } /* Smaller logo */
+  .nav-logo img { height: 32px; width: auto; }
   
   .logo-fallback {
     font-family: var(--font-display);
@@ -266,37 +280,53 @@
     padding-top: 84px;
   }
   
-  /* Responsive */
-  @media (max-width: 900px) {
-    nav { padding: 0.3rem 1.2rem; top: 29px; }
-    .nav-links { display: none; }
-    .nav-placeholder { display: none; }
-    .hamburger { display: flex; }
-    .mobile-menu { padding-top: 4rem; }
-    .nav-logo img { height: 30px; }
-    body {
-      padding-top: 80px;
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .top-banner {
-      font-size: 0.6rem;
-      padding: 0.25rem 0.5rem;
-    }
-    nav {
-      top: 26px;
-    }
-    .nav-logo img { height: 28px; }
-    body {
-      padding-top: 75px;
-    }
-  }
-  
+  /* Desktop */
   @media (min-width: 901px) {
     .mobile-menu,
     .menu-overlay {
       display: none;
+    }
+  }
+  
+  /* Tablet */
+  @media (max-width: 900px) and (min-width: 601px) {
+    .top-banner {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.7rem;
+      white-space: normal;
+    }
+    nav {
+      padding: 0.3rem 1.5rem;
+      margin-top: 32px;
+    }
+    .nav-links { display: none; }
+    .nav-placeholder { display: none; }
+    .hamburger { display: flex; }
+    .nav-logo img { height: 30px; }
+    body {
+      padding-top: 87px;
+    }
+  }
+  
+  /* Mobile */
+  @media (max-width: 600px) {
+    .top-banner {
+      font-size: 0.6rem;
+      padding: 0.35rem 0.5rem;
+      line-height: 1.3;
+      white-space: normal;
+    }
+    nav {
+      padding: 0.3rem 1rem;
+      margin-top: 34px; /* Adjusted for mobile banner height */
+      min-height: 50px;
+    }
+    .nav-links { display: none; }
+    .nav-placeholder { display: none; }
+    .hamburger { display: flex; }
+    .nav-logo img { height: 28px; }
+    body {
+      padding-top: 84px;
     }
   }
 </style>
@@ -318,19 +348,14 @@
       if (isTransitioning) return;
       isTransitioning = true;
       
-      // Calculate next index
       const nextIndex = (currentIndex + 1) % bannerTexts.length;
       
-      // Fade out current text (opacity reduces)
       bannerElement.style.transition = 'opacity 0.4s ease';
       bannerElement.style.opacity = '0';
       
       setTimeout(() => {
-        // Change text
         bannerElement.textContent = bannerTexts[nextIndex];
         currentIndex = nextIndex;
-        
-        // Fade in new text
         bannerElement.style.opacity = '1';
         
         setTimeout(() => {
@@ -339,9 +364,27 @@
       }, 400);
     }
     
-    // Rotate every 7 seconds
-    setInterval(rotateBannerText, 8000);
+    setInterval(rotateBannerText, 7000);
   }
+  
+  // ---- DYNAMIC BANNER HEIGHT CALCULATION ----
+  function adjustNavbarPosition() {
+    const topBanner = document.querySelector('.top-banner');
+    const navbar = document.querySelector('nav');
+    
+    if (topBanner && navbar) {
+      const bannerHeight = topBanner.offsetHeight;
+      navbar.style.marginTop = bannerHeight + 'px';
+      
+      // Update body padding
+      const totalHeight = bannerHeight + navbar.offsetHeight;
+      document.body.style.paddingTop = totalHeight + 'px';
+    }
+  }
+  
+  // Run on load and resize
+  window.addEventListener('load', adjustNavbarPosition);
+  window.addEventListener('resize', adjustNavbarPosition);
   
   // ---- MOBILE MENU FUNCTIONALITY ----
   const hamburgerBtn = document.getElementById('hamburgerBtn');
