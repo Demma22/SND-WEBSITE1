@@ -17,6 +17,10 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   
+  <!-- Theme color - changes with scroll to match navbar -->
+  <meta name="theme-color" id="themeColor" content="#ffffff" />
+  <meta name="apple-mobile-web-app-status-bar-style" id="statusBarStyle" content="default" />
+  
   <!-- Favicons -->
   <link rel="icon" type="image/svg+xml" href="/favicon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="/SND1.png" />
@@ -51,5 +55,32 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
 </head>
 <body>
   <slot />
+  
+  <script>
+    // Update theme color based on scroll to match navbar
+    const themeColorMeta = document.getElementById('themeColor');
+    const statusBarStyle = document.getElementById('statusBarStyle');
+    
+    const updateThemeColor = () => {
+      if (window.scrollY > 30) {
+        // When scrolled - black/dark status bar to match black navbar
+        themeColorMeta.setAttribute('content', '#000000');
+        if (statusBarStyle) {
+          statusBarStyle.setAttribute('content', 'black-translucent');
+        }
+      } else {
+        // When at top - white/light status bar
+        themeColorMeta.setAttribute('content', '#ffffff');
+        if (statusBarStyle) {
+          statusBarStyle.setAttribute('content', 'default');
+        }
+      }
+    };
+    
+    // Listen for scroll events
+    window.addEventListener('scroll', updateThemeColor);
+    // Call once on load
+    updateThemeColor();
+  </script>
 </body>
 </html>
