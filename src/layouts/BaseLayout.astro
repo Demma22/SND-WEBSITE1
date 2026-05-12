@@ -17,10 +17,13 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content={description} />
   
-  <!-- Theme color - changes with scroll to match navbar -->
+  <!-- Theme color - Android uses this, changes with scroll -->
   <meta name="theme-color" id="themeColor" content="#ffffff" />
+  
+  <!-- iOS specific status bar settings -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" id="statusBarStyle" content="default" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="SND Studio" />
   
   <!-- Favicons -->
   <link rel="icon" type="image/svg+xml" href="/favicon.png" />
@@ -31,7 +34,7 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
   <title>{title}</title>
   
   <style>
-    /* Global reset - remove all default margins and padding */
+    /* Global reset */
     * {
       margin: 0;
       padding: 0;
@@ -53,7 +56,7 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
       position: relative;
     }
     
-    /* Status bar spacer - ensures content doesn't go under status bar */
+    /* iOS status bar spacer - changes color with scroll */
     body::before {
       content: '';
       position: fixed;
@@ -61,9 +64,15 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
       left: 0;
       right: 0;
       height: env(safe-area-inset-top, 0px);
-      background: transparent;
-      z-index: 1001;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 999;
       pointer-events: none;
+      transition: background 0.3s ease;
+    }
+    
+    /* When scrolled, status bar background becomes black */
+    body.scrolled::before {
+      background: #000000;
     }
   </style>
 </head>
@@ -71,46 +80,34 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
   <slot />
   
   <script>
-    // Update theme color based on scroll to match navbar
     const themeColorMeta = document.getElementById('themeColor');
-    const statusBarStyle = document.getElementById('statusBarStyle');
     
-    const updateThemeColor = () => {
-      if (window.scrollY > 30) {
-        // When scrolled - black/dark status bar to match black navbar
-        themeColorMeta.setAttribute('content', '#000000');
-        if (statusBarStyle) {
-          statusBarStyle.setAttribute('content', 'black-translucent');
-        }
-        // Update status bar background color via CSS variable
-        document.documentElement.style.setProperty('--status-bar-bg', '#000000');
+    const updateStatusBar = () => {
+      const isScrolled = window.scrollY > 30;
+      
+      // Update Android theme color
+      if (themeColorMeta) {
+        themeColorMeta.setAttribute('content', isScrolled ? '#000000' : '#ffffff');
+      }
+      
+      // Update iOS status bar via body class
+      if (isScrolled) {
+        document.body.classList.add('scrolled');
       } else {
-        // When at top - white/light status bar
-        themeColorMeta.setAttribute('content', '#ffffff');
-        if (statusBarStyle) {
-          statusBarStyle.setAttribute('content', 'default');
-        }
-        // Update status bar background color via CSS variable
-        document.documentElement.style.setProperty('--status-bar-bg', '#ffffff');
+        document.body.classList.remove('scrolled');
       }
     };
     
     // Listen for scroll events
-    window.addEventListener('scroll', updateThemeColor);
-    // Call once on load
-    updateThemeColor();
+    window.addEventListener('scroll', updateStatusBar);
+    window.addEventListener('load', updateStatusBar);
+    updateStatusBar();
     
-    // Also handle when navbar is toggled with scroll
-    // Create an observer to watch for navbar class changes
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'class') {
-          updateThemeColor();
-        }
-      });
+    // Watch for navbar class changes
+    const observer = new MutationObserver(() => {
+      updateStatusBar();
     });
     
-    // Wait for navbar to exist
     const waitForNavbar = setInterval(() => {
       const nav = document.querySelector('nav');
       if (nav) {

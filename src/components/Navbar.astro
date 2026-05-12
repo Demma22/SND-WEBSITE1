@@ -4,9 +4,6 @@
 ---
 
 <nav id="navbar">
-  <!-- Status bar background that matches navbar -->
-  <div class="status-bar-bg"></div>
-  
   <a href="/" class="nav-logo">
     <img src="/snd.png" alt="SND" class="nav-logo-img" id="navLogo" onerror="this.parentNode.innerHTML='<div class=\'logo-fallback\'>SND</div>';" />
   </a>
@@ -54,7 +51,7 @@
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <style>
-  /* Desktop Navbar Styles */
+  /* Desktop Navbar Styles - Starts white/transparent, turns black on scroll */
   nav {
     position: fixed;
     top: 0;
@@ -65,38 +62,31 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 4rem;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(52,57,64,0.08);
-    transition: background 0.25s, box-shadow 0.25s;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
   }
   
-  /* Status bar background that matches navbar */
-  .status-bar-bg {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    right: 0;
-    height: calc(40px + env(safe-area-inset-top, 0px));
-    background: inherit;
-    backdrop-filter: inherit;
-    z-index: -1;
-    transition: background 0.25s;
+  /* When scrolled - becomes black */
+  nav.scrolled {
+    background: #000000;
+    backdrop-filter: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   
-  /* Adjust navbar padding for safe area */
+  /* Adjust navbar padding for safe area (notch support) */
   nav {
     padding-top: max(1rem, env(safe-area-inset-top, 1rem));
   }
   
-  nav.scrolled {
-    background: #000000;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  /* Logo - dark logo normally, white when scrolled */
+  .nav-logo-img {
+    transition: filter 0.3s ease, opacity 0.3s ease;
   }
   
-  /* Logo transition */
-  .nav-logo-img {
-    transition: opacity 0.3s ease;
+  nav.scrolled .nav-logo-img {
+    filter: brightness(0) invert(1);
   }
   
   .nav-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
@@ -105,13 +95,19 @@
   .logo-fallback {
     font-family: var(--font-display);
     font-weight: 700; font-size: 1.5rem;
-    color: var(--snd-dark); background: var(--snd-light);
+    color: #000000;
+    background: #e0e0e0;
     width: 44px; height: 44px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 8px;
   }
   
-  /* Nav links - white text when scrolled */
+  nav.scrolled .logo-fallback {
+    color: #ffffff;
+    background: #333;
+  }
+  
+  /* Nav links - dark text normally, white when scrolled */
   .nav-links { 
     display: flex; 
     align-items: center; 
@@ -120,36 +116,35 @@
   }
   
   .nav-links a { 
-    color: var(--snd-dark); 
+    color: #000000; 
     text-decoration: none; 
     font-size: 0.9rem; 
     font-weight: 500; 
-    transition: color 0.2s; 
+    transition: color 0.2s, opacity 0.2s; 
+    opacity: 0.8;
   }
   
   nav.scrolled .nav-links a {
     color: #ffffff;
   }
   
-  .nav-links a:hover { color: var(--snd-black); }
-  
-  nav.scrolled .nav-links a:hover {
-    color: #cccccc;
+  .nav-links a:hover { 
+    opacity: 1;
   }
   
-  /* CTA Button */
+  /* CTA Button - dark style normally, light when scrolled */
   .nav-cta {
-    background: var(--snd-black); 
-    color: var(--snd-white);
-    border: none; 
+    background: #000000;
+    color: #ffffff;
+    border: none;
     padding: 0.6rem 1.4rem;
-    border-radius: 6px; 
-    font-size: 0.85rem; 
+    border-radius: 6px;
+    font-size: 0.85rem;
     font-weight: 600;
-    letter-spacing: 0.01em; 
-    cursor: pointer; 
+    letter-spacing: 0.01em;
+    cursor: pointer;
     text-decoration: none;
-    transition: background 0.2s, transform 0.2s;
+    transition: background 0.2s, transform 0.2s, color 0.2s;
   }
   
   nav.scrolled .nav-cta {
@@ -158,15 +153,15 @@
   }
   
   .nav-cta:hover { 
-    background: #2c2c2c; 
-    transform: scale(1.02); 
+    background: #333;
+    transform: scale(1.02);
   }
   
   nav.scrolled .nav-cta:hover {
     background: #e0e0e0;
   }
   
-  /* Hamburger Button */
+  /* Hamburger Button - dark bars normally, white when scrolled */
   .hamburger {
     display: none;
     flex-direction: column;
@@ -181,16 +176,16 @@
   .hamburger span {
     width: 22px;
     height: 2px;
-    background: var(--snd-dark);
+    background: #000000;
     border-radius: 2px;
-    transition: 0.3s ease;
+    transition: background 0.3s ease;
   }
   
   nav.scrolled .hamburger span {
     background: #ffffff;
   }
   
-  /* Mobile Menu Overlay */
+  /* Mobile Menu Overlay - dark theme always */
   .mobile-menu {
     position: fixed;
     top: 0;
@@ -198,9 +193,9 @@
     width: 85%;
     max-width: 320px;
     height: 100vh;
-    background: var(--snd-white);
+    background: #000000;
     z-index: 2000;
-    box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
     transition: right 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -216,9 +211,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--snd-light);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
   }
   
   .mobile-menu-logo img {
@@ -231,7 +226,7 @@
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--snd-dark);
+    color: #ffffff;
     padding: 5px;
     width: 36px;
     height: 36px;
@@ -249,23 +244,22 @@
   }
   
   .mobile-nav-links li {
-    margin-bottom: 0.8rem;
-    border-bottom: 1px solid rgba(52,57,64,0.05);
+    margin-bottom: 1rem;
   }
   
   .mobile-nav-links a {
-    color: var(--snd-dark);
+    color: rgba(255,255,255,0.8);
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 500;
-    transition: color 0.2s;
+    transition: all 0.2s;
     display: block;
-    padding: 0.6rem 0;
+    padding: 0.75rem 0;
   }
   
   .mobile-nav-links a:hover {
-    color: var(--snd-black);
-    transform: translateX(5px);
+    color: #ffffff;
+    transform: translateX(8px);
   }
   
   /* Overlay Background */
@@ -275,7 +269,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.5);
     z-index: 1999;
     opacity: 0;
     visibility: hidden;
@@ -289,7 +283,10 @@
   
   /* Responsive */
   @media (max-width: 900px) {
-    nav { padding: 0.8rem 1.2rem; padding-top: max(0.8rem, env(safe-area-inset-top, 0.8rem)); }
+    nav { 
+      padding: 0.8rem 1.2rem; 
+      padding-top: max(0.8rem, env(safe-area-inset-top, 0.8rem));
+    }
     .nav-links { display: none; }
     .nav-cta { display: none; }
     .hamburger { display: flex; }
@@ -309,11 +306,6 @@
   const mobileMenu = document.getElementById('mobileMenu');
   const closeMenuBtn = document.getElementById('closeMenuBtn');
   const menuOverlay = document.getElementById('menuOverlay');
-  
-  // Logo swap functionality
-  const navLogo = document.getElementById('navLogo');
-  const originalLogoSrc = '/snd.png';
-  const whiteLogoSrc = '/sndwhite.png';
   
   // Function to open menu
   function openMenu() {
@@ -355,21 +347,11 @@
     }
   });
   
-  // Navbar scroll effect with logo swap
+  // Navbar scroll effect
   const nav = document.querySelector('nav');
   window.addEventListener('scroll', () => {
     if (nav) {
-      const isScrolled = window.scrollY > 30;
-      nav.classList.toggle('scrolled', isScrolled);
-      
-      // Swap logo based on scroll state
-      if (navLogo) {
-        if (isScrolled) {
-          navLogo.src = whiteLogoSrc;
-        } else {
-          navLogo.src = originalLogoSrc;
-        }
-      }
+      nav.classList.toggle('scrolled', window.scrollY > 30);
     }
   });
 </script>
