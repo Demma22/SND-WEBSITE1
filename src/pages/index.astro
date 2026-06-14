@@ -512,11 +512,6 @@ const sortedPosts = allPosts.sort((a, b) =>
 
   .card:hover { z-index: 10; }
 
-  .card.repositioning {
-    transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1),
-                top  1.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
   .card.dragging {
     z-index: 100;
     cursor: grabbing !important;
@@ -936,7 +931,6 @@ const sortedPosts = allPosts.sort((a, b) =>
   cards.forEach((card) => {
     card.addEventListener('mousedown', (e: MouseEvent) => {
       if (e.button !== 0) return;
-      if (card.classList.contains('repositioning')) return;
 
       const rect = card.getBoundingClientRect();
       const canvasRect = canvasWrap.getBoundingClientRect();
@@ -994,52 +988,6 @@ const sortedPosts = allPosts.sort((a, b) =>
     dragCard = null;
     hasDragged = false;
   });
-
-  // ── Auto-reposition every 30 seconds ──
-  const slots = [
-    { cx: '18%', cy: '30%', rot: '-3deg', w: '225px', speed: '0.068' },
-    { cx: '82%', cy: '30%', rot: '4deg',  w: '235px', speed: '0.042' },
-    { cx: '20%', cy: '70%', rot: '-2deg', w: '220px', speed: '0.072' },
-    { cx: '80%', cy: '70%', rot: '2deg',  w: '215px', speed: '0.048' },
-  ];
-
-  let currentAssignment = [0, 1, 2, 3];
-
-  function shuffled(): number[] {
-    const a = [0, 1, 2, 3];
-    for (let i = 3; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
-  function autoReposition() {
-    if (dragCard) return;
-
-    // Pick a new arrangement that differs from current
-    let next: number[];
-    do { next = shuffled(); }
-    while (next.every((v, i) => v === currentAssignment[i]));
-    currentAssignment = next;
-
-    cards.forEach((card, i) => {
-      const s = slots[next[i]];
-      card.classList.add('repositioning');
-      card.style.left = '';
-      card.style.top  = '';
-      card.style.setProperty('--cx',  s.cx);
-      card.style.setProperty('--cy',  s.cy);
-      card.style.setProperty('--rot', s.rot);
-      card.style.setProperty('--w',   s.w);
-      card.style.setProperty('--px',  '0px');
-      card.style.setProperty('--py',  '0px');
-      card.dataset.speed = s.speed;
-      setTimeout(() => card.classList.remove('repositioning'), 1500);
-    });
-  }
-
-  setInterval(autoReposition, 30000);
 
   requestAnimationFrame(tick);
 })();

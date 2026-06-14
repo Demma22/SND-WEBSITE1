@@ -1,11 +1,17 @@
 ---
-// Base Layout Component - Only handles HTML structure, favicons, and title
 export interface Props {
   title: string;
   description?: string;
+  image?: string;
 }
 
-const { title, description = "SND Studio — Think It, Let's Create It" } = Astro.props;
+const {
+  title,
+  description = "SND Studio — A creative studio from Uganda building digital products, brand identities, and physical goods. Think It. Create It.",
+  image = "/SND1.png"
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!DOCTYPE html>
@@ -14,28 +20,38 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
-  
-  <!-- Status bar colors - keeps black -->
-  <meta name="theme-color" content="#000000" />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content={canonicalURL} />
+  <meta property="og:title"       content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image"       content={new URL(image, Astro.site)} />
+  <meta property="og:site_name"   content="SND Studio" />
+  <meta property="og:locale"      content="en_UG" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image"       content={new URL(image, Astro.site)} />
+
+  <!-- Status bar -->
+  <meta name="theme-color" content="#ffffff" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  
-  <!-- Favicons -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/SND1.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/SND1.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  
+
+  <!-- Favicons — correct MIME types so Googlebot picks up the logo -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+  <link rel="icon" type="image/png" sizes="180x180" href="/SND1.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/SND1.png" />
+
   <title>{title}</title>
-  
+
   <style>
-    /* Global reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       margin: 0;
       padding: 0;
@@ -44,7 +60,7 @@ const { title, description = "SND Studio — Think It, Let's Create It" } = Astr
       overflow-y: auto;
       position: relative;
     }
-    
+
     html {
       overflow-x: hidden;
       width: 100%;
