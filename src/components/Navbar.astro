@@ -16,9 +16,8 @@
   <!-- Desktop Navigation - Centered -->
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
-    <li><a href="/about">About Us</a></li>
     <li><a href="/blog">Blog</a></li>
-    <li><a href="/products">Products</a></li> 
+    <li><a href="/contact">Contact</a></li>
   </ul>
   
   <!-- Empty div to balance centering with logo -->
@@ -344,63 +343,62 @@
   let isTransitioning = false;
   
   if (bannerElement) {
+    const el = bannerElement as HTMLElement;
     function rotateBannerText() {
       if (isTransitioning) return;
       isTransitioning = true;
-      
+
       const nextIndex = (currentIndex + 1) % bannerTexts.length;
-      
-      bannerElement.style.transition = 'opacity 0.4s ease';
-      bannerElement.style.opacity = '0';
-      
+
+      el.style.transition = 'opacity 0.4s ease';
+      el.style.opacity = '0';
+
       setTimeout(() => {
-        bannerElement.textContent = bannerTexts[nextIndex];
+        el.textContent = bannerTexts[nextIndex];
         currentIndex = nextIndex;
-        bannerElement.style.opacity = '1';
-        
+        el.style.opacity = '1';
+
         setTimeout(() => {
           isTransitioning = false;
         }, 400);
       }, 400);
     }
-    
+
     setInterval(rotateBannerText, 7000);
   }
-  
+
   // ---- DYNAMIC BANNER HEIGHT CALCULATION ----
   function adjustNavbarPosition() {
-    const topBanner = document.querySelector('.top-banner');
-    const navbar = document.querySelector('nav');
-    
+    const topBanner = document.querySelector<HTMLElement>('.top-banner');
+    const navbar = document.querySelector<HTMLElement>('nav');
+
     if (topBanner && navbar) {
       const bannerHeight = topBanner.offsetHeight;
       navbar.style.marginTop = bannerHeight + 'px';
-      
-      // Update body padding
+
       const totalHeight = bannerHeight + navbar.offsetHeight;
       document.body.style.paddingTop = totalHeight + 'px';
     }
   }
-  
-  // Run on load and resize
+
   window.addEventListener('load', adjustNavbarPosition);
   window.addEventListener('resize', adjustNavbarPosition);
-  
+
   // ---- MOBILE MENU FUNCTIONALITY ----
   const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileMenu = document.getElementById('mobileMenu') as HTMLElement | null;
   const closeMenuBtn = document.getElementById('closeMenuBtn');
   const menuOverlay = document.getElementById('menuOverlay');
-  
+
   function openMenu() {
-    mobileMenu.classList.add('active');
-    if (menuOverlay) menuOverlay.classList.add('active');
+    mobileMenu?.classList.add('active');
+    menuOverlay?.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
-  
+
   function closeMenu() {
-    mobileMenu.classList.remove('active');
-    if (menuOverlay) menuOverlay.classList.remove('active');
+    mobileMenu?.classList.remove('active');
+    menuOverlay?.classList.remove('active');
     document.body.style.overflow = '';
   }
   

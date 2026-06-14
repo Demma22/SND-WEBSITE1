@@ -1,5 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) =>
+  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
 ---
 
 <BaseLayout title="SND — Think It, Let's Create It">
@@ -14,13 +20,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     --snd-light:  #CFCFD3;
     --snd-black:  #0d0d0d;
     --snd-white:  #ffffff;
-    --remi-blue:  #535FFD;
     --font-display: 'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
     --font-body:    'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
     --header-h:   52px;
   }
 
-  /* ─── MINIMAL HEADER ─── */
+  /* ─── HEADER ─── */
   .site-header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -28,10 +33,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(52,57,64,0.07);
+    background: #ffffff;
+    border-bottom: 1px solid rgba(52,57,64,0.14);
     z-index: 100;
   }
 
@@ -45,16 +48,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     left: 0; right: 0;
     z-index: 95;
     background: #ffffff;
-    border-bottom: 1px solid rgba(52,57,64,0.08);
-    box-shadow: 0 32px 80px rgba(0,0,0,0.08);
+    border-bottom: 1px solid rgba(52,57,64,0.14);
+    box-shadow: none;
+    max-height: 82vh;
+    overflow-y: auto;
     transform: translateY(-102%);
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.48s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .info-panel.open {
-    transform: translateY(0);
-  }
+  .info-panel.open { transform: translateY(0); }
 
   .panel-backdrop {
     position: fixed;
@@ -67,93 +71,390 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .panel-backdrop.active {
-    background: rgba(0,0,0,0.12);
+    background: rgba(0,0,0,0.08);
     pointer-events: auto;
   }
 
   .panel-inner {
     max-width: 1160px;
     margin: 0 auto;
-    padding: 2.8rem 3rem 2.8rem;
+    padding: 2.6rem 3rem 3rem;
     position: relative;
   }
 
   .panel-close {
-    position: absolute;
-    top: 1.6rem;
-    right: 2rem;
-    background: none;
+    position: sticky;
+    top: 0;
+    float: right;
+    margin-bottom: -30px;
+    background: rgba(255,255,255,0.9);
     border: 1px solid rgba(52,57,64,0.14);
     cursor: pointer;
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--snd-dark);
-    font-size: 1rem;
-    line-height: 1;
-    opacity: 0.55;
+    font-size: 0.95rem;
+    opacity: 0.6;
     transition: opacity 0.2s, background 0.2s;
-    padding: 0;
+    z-index: 10;
   }
 
   .panel-close:hover { opacity: 1; background: rgba(52,57,64,0.06); }
 
-  /* Each panel section — hidden until active */
-  .panel-content {
-    display: none;
+  .panel-content { display: none; }
+  .panel-content.active { display: block; }
+
+  /* ── Shared panel label/link ── */
+  .panel-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #aaa;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
   }
 
-  .panel-content.active {
+  .panel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--snd-black);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(13,13,13,0.3);
+    padding-bottom: 0.12rem;
+    transition: opacity 0.2s;
+  }
+
+  .panel-link:hover { opacity: 0.5; border-color: transparent; }
+
+  /* ══ ABOUT PANEL ══ */
+  .about-hero {
+    margin-bottom: 2.4rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(52,57,64,0.08);
+  }
+
+  .about-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 4vw, 3.6rem);
+    font-weight: 400;
+    color: var(--snd-black);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 0.75rem;
+  }
+
+  .about-hero p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    max-width: 540px;
+    line-height: 1.7;
+  }
+
+  .about-mv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .about-mv-card {
+    background: #ffffff;
+    border: 1px solid rgba(52,57,64,0.12);
+    border-radius: 4px;
+    padding: 1.4rem 1.6rem;
+  }
+
+  .about-mv-card .mv-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #aaa;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+
+  .about-mv-card h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--snd-black);
+    margin-bottom: 0.55rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .about-mv-card p {
+    font-size: 0.8rem;
+    color: #6b7280;
+    line-height: 1.7;
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(52,57,64,0.09);
+    border-bottom: 1px solid rgba(52,57,64,0.09);
+    margin-bottom: 2.2rem;
+  }
+
+  .about-stat { text-align: center; }
+
+  .about-stat .stat-n {
+    display: block;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--snd-black);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .about-stat .stat-l {
+    font-size: 0.65rem;
+    color: #b0b8c4;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .about-areas-header {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #aaa;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .about-areas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .about-area-card {
+    border: 1px solid rgba(52,57,64,0.12);
+    border-radius: 4px;
+    padding: 1.4rem;
+    background: #ffffff;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .about-area-card:hover {
+    background: #0d0d0d;
+    border-color: #0d0d0d;
+  }
+
+  .about-area-card:hover .area-num,
+  .about-area-card:hover h4,
+  .about-area-card:hover p { color: #fff; }
+
+  .area-num {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #c0c0c0;
+    margin-bottom: 0.9rem;
+    transition: color 0.3s;
+  }
+
+  .about-area-card h4 {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--snd-black);
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.02em;
+    transition: color 0.3s;
+  }
+
+  .about-area-card p {
+    font-size: 0.78rem;
+    color: #6b7280;
+    line-height: 1.65;
+    margin-bottom: 0.9rem;
+    transition: color 0.3s;
+  }
+
+  /* ══ JOURNAL PANEL ══ */
+  .journal-header {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 3rem;
+    align-items: start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(52,57,64,0.08);
+  }
+
+  .journal-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 400;
+    color: var(--snd-black);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    display: block;
+    margin-bottom: 1.2rem;
+  }
+
+  .journal-desc {
+    font-size: 0.82rem;
+    color: #6b7280;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  .journal-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .journal-post-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid rgba(52,57,64,0.12);
+    border-radius: 4px;
+    padding: 1.3rem 1.4rem;
+    transition: border-color 0.2s;
+  }
+
+  .journal-post-link:hover {
+    border-color: var(--snd-black);
+  }
+
+  .journal-post-date {
+    font-size: 0.62rem;
+    color: #b0b8c4;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .journal-post-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--snd-black);
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .journal-post-desc {
+    font-size: 0.75rem;
+    color: #8a9bb0;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .journal-empty {
+    padding: 2rem;
+    text-align: center;
+    color: #aaa;
+    font-size: 0.82rem;
+    border: 1px dashed rgba(52,57,64,0.15);
+    border-radius: 8px;
+  }
+
+  /* ══ PRODUCTS PANEL ══ */
+  .products-header {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 3rem;
+    align-items: start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(52,57,64,0.08);
+  }
+
+  .products-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 400;
+    color: var(--snd-black);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    display: block;
+    margin-bottom: 1.2rem;
+  }
+
+  .products-desc {
+    font-size: 0.82rem;
+    color: #6b7280;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .product-panel-card {
+    border: 1px solid rgba(52,57,64,0.12);
+    border-radius: 4px;
+    padding: 1.4rem;
+    background: #ffffff;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .product-panel-card:hover {
+    background: #0d0d0d;
+    border-color: #0d0d0d;
+  }
+
+  .product-panel-card:hover h4,
+  .product-panel-card:hover p { color: #fff; }
+
+  .product-panel-card h4 {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--snd-black);
+    margin-bottom: 0.55rem;
+    letter-spacing: -0.02em;
+    transition: color 0.3s;
+  }
+
+  .product-panel-card p {
+    font-size: 0.78rem;
+    color: #6b7280;
+    line-height: 1.65;
+    margin-bottom: 0.9rem;
+    transition: color 0.3s;
+  }
+
+  /* ══ DESIGN PANEL ══ */
+  .design-panel-layout {
     display: grid;
     grid-template-columns: 210px 1fr;
     gap: 3.5rem;
     align-items: start;
   }
 
-  /* Left column */
-  .panel-left {}
+  .design-panel-left {}
 
-  .panel-tag {
-    display: block;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #aaa;
-    font-weight: 600;
-    margin-bottom: 0.8rem;
-  }
-
-  .panel-title {
-    display: block;
+  .design-panel-title {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-size: clamp(2rem, 3vw, 2.8rem);
     font-weight: 400;
     color: var(--snd-black);
     line-height: 1.05;
     letter-spacing: -0.04em;
-    margin-bottom: 1.8rem;
+    display: block;
+    margin-bottom: 1.2rem;
   }
 
-  .panel-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--snd-black);
-    text-decoration: none;
-    letter-spacing: 0.01em;
-    border-bottom: 1px solid rgba(13,13,13,0.3);
-    padding-bottom: 0.15rem;
-    transition: border-color 0.2s, opacity 0.2s;
-  }
-
-  .panel-link:hover { opacity: 0.6; border-color: transparent; }
-
-  /* Right column grid */
   .panel-cols {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -166,7 +467,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .panel-col h4 {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--snd-black);
     margin-bottom: 0.55rem;
@@ -179,37 +480,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     line-height: 1.7;
   }
 
-  .panel-tags-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.75rem;
-  }
-
-  .ptag {
-    font-size: 0.68rem;
-    padding: 0.25rem 0.6rem;
-    background: rgba(52,57,64,0.06);
-    border-radius: 100px;
-    color: var(--snd-dark);
-  }
-
-  /* Stat variant */
-  .panel-stat .stat-n {
-    font-size: 1.9rem;
-    font-weight: 400;
-    color: var(--snd-black);
-    letter-spacing: -0.05em;
-    line-height: 1;
-    margin-bottom: 0.3rem;
-  }
-
-  .panel-stat .stat-l {
-    font-size: 0.68rem;
-    color: #b0b8c4;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
 
   /* ─── CANVAS WRAP ─── */
   .canvas-wrap {
@@ -217,12 +487,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     top: var(--header-h);
     left: 0; right: 0; bottom: 0;
     overflow: hidden;
-    background-color: #f9f9f9;
-    background-image: radial-gradient(circle, rgba(52,57,64,0.11) 1px, transparent 1px);
-    background-size: 28px 28px;
+    background-color: #ffffff;
+    background-image: radial-gradient(circle, rgba(52,57,64,0.28) 1px, transparent 0);
+    background-size: 18px 18px;
   }
 
-  /* ─── CARDS CONTAINER ─── */
   .cards-grid {
     position: relative;
     width: 100%;
@@ -254,8 +523,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .card-inner {
     display: block;
-    text-decoration: none;
-    color: inherit;
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
@@ -265,10 +532,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .card-img-wrap {
     width: 100%;
     aspect-ratio: 4 / 3;
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
     background: var(--snd-light);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.09);
+    border: 1px solid rgba(52,57,64,0.13);
+    box-shadow: none;
+  }
+
+  .card:hover .card-img-wrap {
+    border-color: rgba(52,57,64,0.3);
+  }
+
+  .card.dragging .card-img-wrap {
+    box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+    border-color: rgba(52,57,64,0.2);
   }
 
   .card-img-wrap img {
@@ -279,19 +556,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     transition: transform 0.5s ease;
   }
 
-  .card:hover .card-img-wrap img { transform: scale(1.06); }
+  .card:hover .card-img-wrap img { transform: scale(1.04); }
 
   .card-body { padding: 0.5rem 0.05rem 0; text-align: center; }
 
   .card-title {
-    display: block;
+    display: -webkit-box;
     font-family: var(--font-display);
     font-size: 0.88rem;
     font-weight: 400;
     color: var(--snd-black);
     line-height: 1.25;
     overflow: hidden;
-    display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
@@ -306,22 +582,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     pointer-events: none;
   }
 
-  .canvas-center-canvas {
-    display: block;
-  }
+  .canvas-center-canvas { display: block; }
 
-  /* ─── CANVAS BOTTOM BAR ─── */
+  /* ─── BOTTOM BAR ─── */
   .canvas-bottom-bar {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     z-index: 5;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding-bottom: 1.2rem;
-    gap: 0.75rem;
     pointer-events: none;
   }
 
@@ -379,27 +650,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       pointer-events: auto;
     }
 
-    .canvas-credit {
-      justify-content: center;
-      pointer-events: auto;
-    }
+    .canvas-credit { pointer-events: auto; }
 
-    .info-panel { position: fixed; }
+    .panel-inner { padding: 1.5rem 1.2rem 2rem; }
+    .panel-close { margin-bottom: -24px; }
 
-    .panel-content.active {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
+    .about-mv-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .about-stats { grid-template-columns: repeat(3, 1fr); }
+    .about-areas-grid { grid-template-columns: 1fr; gap: 1rem; }
 
-    .panel-inner { padding: 1.8rem 1.2rem; }
+    .journal-header { grid-template-columns: 1fr; gap: 1rem; }
+    .journal-posts-grid { grid-template-columns: 1fr; }
 
+    .products-header { grid-template-columns: 1fr; gap: 1rem; }
+    .products-grid { grid-template-columns: 1fr; gap: 1rem; }
+
+    .design-panel-layout { grid-template-columns: 1fr; gap: 1.5rem; }
     .panel-cols { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-
-    .panel-close { top: 1rem; right: 1rem; }
   }
 </style>
 
-<!-- ─── MINIMAL HEADER ─── -->
+<!-- ─── HEADER ─── -->
 <header class="site-header">
   <a href="/" class="logo-link">
     <img src="/snd.png" alt="SND" class="logo-img" onerror="this.style.display='none';" />
@@ -411,110 +682,138 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="panel-inner">
     <button class="panel-close" id="panelClose" aria-label="Close">&#x2715;</button>
 
-    <!-- About SND -->
+    <!-- ── ABOUT SND ── -->
     <div class="panel-content" data-panel="about">
-      <div class="panel-left">
+      <div class="about-hero">
         <span class="panel-tag">Studio</span>
-        <span class="panel-title">About SND</span>
-        <a href="/about" class="panel-link">Full story &#x2192;</a>
+        <h1>Think It.<br/>Create It.</h1>
+        <p>We turn ideas into reality through thoughtful design, innovative development, and genuine collaboration.</p>
       </div>
-      <div class="panel-cols">
-        <div class="panel-col">
-          <h4>Our Vision</h4>
-          <p>To become a leading African brand — building intelligent, creative, and culturally relevant solutions through design, technology, and art.</p>
+
+      <div class="about-mv-grid">
+        <div class="about-mv-card">
+          <div class="mv-label">Our Vision</div>
+          <h3>To become a leading African brand</h3>
+          <p>Building intelligent, creative, and culturally relevant solutions through the integrated disciplines of technology, art, and design — demonstrating that world-class digital products can originate from Uganda and serve both local and global audiences.</p>
         </div>
-        <div class="panel-col">
-          <h4>Our Mission</h4>
-          <p>Simplify complex problems through thoughtful, well-crafted systems that combine functional design, AI, and genuine human understanding.</p>
+        <div class="about-mv-card">
+          <div class="mv-label">Our Mission</div>
+          <h3>Simplify complex problems</h3>
+          <p>Through thoughtful, well-crafted systems that combine functional design, artificial intelligence, and genuine human understanding. Every product — whether a mobile application, a brand identity, or a physical notebook — must serve a clear purpose and provide a seamless user experience.</p>
         </div>
-        <div class="panel-col panel-stat">
-          <div class="stat-n">10+</div>
-          <div class="stat-l">Projects</div>
-          <div class="stat-n" style="margin-top:1rem;">15+</div>
-          <div class="stat-l">Happy Clients</div>
+      </div>
+
+      <div class="about-stats">
+        <div class="about-stat">
+          <span class="stat-n">10+</span>
+          <span class="stat-l">Projects Completed</span>
+        </div>
+        <div class="about-stat">
+          <span class="stat-n">15+</span>
+          <span class="stat-l">Happy Clients</span>
+        </div>
+        <div class="about-stat">
+          <span class="stat-n">3+</span>
+          <span class="stat-l">Years of Experience</span>
+        </div>
+      </div>
+
+      <div class="about-areas-header">Core Operating Areas</div>
+      <div class="about-areas-grid">
+        <div class="about-area-card">
+          <div class="area-num">01</div>
+          <h4>Technology</h4>
+          <p>Building applications, tools, and platforms designed to solve real-world organizational and productivity problems. From concept to launch, SND develops scalable digital systems with long-term usability in mind.</p>
+        </div>
+        <div class="about-area-card">
+          <div class="area-num">02</div>
+          <h4>Art &amp; Design</h4>
+          <p>Creating visual identity systems, interfaces, motion graphics, and brand experiences that combine clarity with aesthetics. Every design decision is made to strengthen usability, communication, and perception.</p>
+        </div>
+        <div class="about-area-card">
+          <div class="area-num">03</div>
+          <h4>Fashion &amp; Physical Goods</h4>
+          <p>Expanding the SND ecosystem through thoughtfully designed merchandise and physical products that increase visibility, strengthen identity, and create additional revenue channels.</p>
         </div>
       </div>
     </div>
 
-    <!-- Design & Creative -->
+    <!-- ── DESIGN & CREATIVE ── -->
     <div class="panel-content" data-panel="design">
-      <div class="panel-left">
-        <span class="panel-tag">Services</span>
-        <span class="panel-title">Design &amp; Creative</span>
-        <a href="/about" class="panel-link">See our work &#x2192;</a>
-      </div>
-      <div class="panel-cols">
-        <div class="panel-col">
-          <h4>Branding</h4>
-          <p>Visual identity systems, logos, and brand experiences that communicate clearly and build lasting recognition.</p>
-          <div class="panel-tags-row">
-            <span class="ptag">Identity</span>
-            <span class="ptag">Typography</span>
-          </div>
+      <div class="design-panel-layout">
+        <div class="design-panel-left">
+          <span class="panel-tag">Services</span>
+          <span class="design-panel-title">Design &amp; Creative</span>
         </div>
-        <div class="panel-col">
-          <h4>UI / UX</h4>
-          <p>Interfaces designed for humans first — intuitive, accessible, and built to serve a clear purpose on every screen.</p>
-          <div class="panel-tags-row">
-            <span class="ptag">Mobile</span>
-            <span class="ptag">Web</span>
+        <div class="panel-cols">
+          <div class="panel-col">
+            <h4>Branding</h4>
+            <p>Visual identity systems, logos, and brand experiences that communicate clearly and build lasting recognition.</p>
           </div>
-        </div>
-        <div class="panel-col">
-          <h4>Motion</h4>
-          <p>Bring ideas to life through animation, motion graphics, and dynamic storytelling that captures attention.</p>
-          <div class="panel-tags-row">
-            <span class="ptag">Animation</span>
-            <span class="ptag">Video</span>
+          <div class="panel-col">
+            <h4>UI / UX</h4>
+            <p>Interfaces designed for humans first — intuitive, accessible, and built to serve a clear purpose on every screen.</p>
+          </div>
+          <div class="panel-col">
+            <h4>Motion</h4>
+            <p>Bring ideas to life through animation, motion graphics, and dynamic storytelling that captures attention.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Products -->
+    <!-- ── PRODUCTS ── -->
     <div class="panel-content" data-panel="products">
-      <div class="panel-left">
-        <span class="panel-tag">Physical Goods</span>
-        <span class="panel-title">Products</span>
-        <a href="/products" class="panel-link">Explore &#x2192;</a>
+      <div class="products-header">
+        <div>
+          <span class="panel-tag">Physical Goods</span>
+          <span class="products-title">Products</span>
+        </div>
+        <p class="products-desc">The SND ecosystem in physical form — thoughtfully designed objects that extend the studio's identity into the world. Each product is crafted with the same care and intentionality as our digital work.</p>
       </div>
-      <div class="panel-cols">
-        <div class="panel-col">
+      <div class="products-grid">
+        <div class="product-panel-card">
           <h4>Notebooks</h4>
           <p>Crafted for thinkers and makers. Clean layouts and quality materials that make the act of writing feel considered.</p>
         </div>
-        <div class="panel-col">
+        <div class="product-panel-card">
           <h4>Apparel</h4>
           <p>Wear the brand. Minimal pieces that carry the SND aesthetic — designed to be worn, not just seen.</p>
         </div>
-        <div class="panel-col">
+        <div class="product-panel-card">
           <h4>Merchandise</h4>
-          <p>The SND ecosystem in your hands. Objects that extend the studio's identity into the physical world.</p>
+          <p>Objects that extend the studio's identity into the physical world and create touchpoints beyond the screen.</p>
         </div>
       </div>
     </div>
 
-    <!-- The Journal -->
+    <!-- ── THE JOURNAL ── -->
     <div class="panel-content" data-panel="journal">
-      <div class="panel-left">
-        <span class="panel-tag">Blog</span>
-        <span class="panel-title">The Journal</span>
-        <a href="/blog" class="panel-link">Read &#x2192;</a>
+      <div class="journal-header">
+        <div>
+          <span class="panel-tag">Blog</span>
+          <span class="journal-title">The Journal</span>
+          <a href="/blog" class="panel-link">All posts &#x2192;</a>
+        </div>
+        <p class="journal-desc">Stories, ideas, and perspectives from the SND team — on design, technology, culture, and the process of building things that matter.</p>
       </div>
-      <div class="panel-cols">
-        <div class="panel-col">
-          <h4>Design</h4>
-          <p>Perspectives on visual systems, craft decisions, and what it means to design with intention in 2025.</p>
+
+      {sortedPosts.length === 0 ? (
+        <div class="journal-empty">No posts yet — check back soon.</div>
+      ) : (
+        <div class="journal-posts-grid">
+          {sortedPosts.map((post) => {
+            const slug = post.id.replace(/\.md$/, '');
+            return (
+              <a href={`/blog/${slug}`} class="journal-post-link">
+                <div class="journal-post-date">{post.data.pubDate}</div>
+                <div class="journal-post-title">{post.data.title}</div>
+                <div class="journal-post-desc">{post.data.description}</div>
+              </a>
+            );
+          })}
         </div>
-        <div class="panel-col">
-          <h4>Technology</h4>
-          <p>How SND builds — tools, processes, and the reasoning behind technical choices in our products.</p>
-        </div>
-        <div class="panel-col">
-          <h4>Culture</h4>
-          <p>Stories, influences, and ideas from the studio — the people, places, and things that shape our work.</p>
-        </div>
-      </div>
+      )}
     </div>
 
   </div>
@@ -535,66 +834,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
 
     <!-- About SND (top-right) -->
-    <div class="card"
-         data-speed="0.042"
-         data-panel="about"
+    <div class="card" data-speed="0.042" data-panel="about"
          style="--cx: 82%; --cy: 30%; --rot: 4deg; --w: 235px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/art_tech.jpg" alt="About SND" />
         </div>
-        <div class="card-body">
-          <span class="card-title">About SND</span>
-        </div>
+        <div class="card-body"><span class="card-title">About SND</span></div>
       </div>
     </div>
 
     <!-- Design & Creative (upper-left) -->
-    <div class="card"
-         data-speed="0.068"
-         data-panel="design"
+    <div class="card" data-speed="0.068" data-panel="design"
          style="--cx: 18%; --cy: 30%; --rot: -3deg; --w: 225px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/design.jpg" alt="Design & Creative" />
         </div>
-        <div class="card-body">
-          <span class="card-title">Design &amp; Creative</span>
-        </div>
+        <div class="card-body"><span class="card-title">Design &amp; Creative</span></div>
       </div>
     </div>
 
     <!-- Products (lower-left) -->
-    <div class="card"
-         data-speed="0.072"
-         data-panel="products"
+    <div class="card" data-speed="0.072" data-panel="products"
          style="--cx: 20%; --cy: 70%; --rot: -2deg; --w: 220px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/fashion.jpg" alt="Products" />
         </div>
-        <div class="card-body">
-          <span class="card-title">Products</span>
-        </div>
+        <div class="card-body"><span class="card-title">Products</span></div>
       </div>
     </div>
 
     <!-- The Journal (lower-right) -->
-    <div class="card"
-         data-speed="0.048"
-         data-panel="journal"
+    <div class="card" data-speed="0.048" data-panel="journal"
          style="--cx: 80%; --cy: 70%; --rot: 2deg; --w: 215px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/art.jpg" alt="The Journal" />
         </div>
-        <div class="card-body">
-          <span class="card-title">The Journal</span>
-        </div>
+        <div class="card-body"><span class="card-title">The Journal</span></div>
       </div>
     </div>
 
-  </div><!-- /cards-grid -->
+  </div>
 
   <div class="canvas-bottom-bar">
     <div class="canvas-credit">
@@ -603,7 +886,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <a href="/privacy">Privacy</a>
     </div>
   </div>
-</div><!-- /canvas-wrap -->
+</div>
 
 <script>
 (function () {
@@ -612,13 +895,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   if (!cards.length || window.innerWidth <= 768 || !canvasWrap) return;
 
-  // ── Parallax state ──
   let mouseX = window.innerWidth  / 2;
   let mouseY = window.innerHeight / 2;
   let smoothX = mouseX;
   let smoothY = mouseY;
 
-  // ── Drag state ──
   let dragCard: HTMLElement | null = null;
   let dragOffsetX = 0;
   let dragOffsetY = 0;
@@ -628,7 +909,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   function lerp(a: number, b: number, t: number): number { return a + (b - a) * t; }
 
-  // ── Parallax loop ──
   function tick() {
     smoothX = lerp(smoothX, mouseX, 0.07);
     smoothY = lerp(smoothY, mouseY, 0.07);
@@ -648,7 +928,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     requestAnimationFrame(tick);
   }
 
-  // ── Drag: start ──
   cards.forEach((card) => {
     card.addEventListener('mousedown', (e: MouseEvent) => {
       if (e.button !== 0) return;
@@ -673,7 +952,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     });
   });
 
-  // ── Drag: move ──
   document.addEventListener('mousemove', (e: MouseEvent) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
@@ -693,7 +971,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     dragCard.style.top  = (e.clientY - dragOffsetY - canvasRect.top)  + 'px';
   });
 
-  // ── Drag: end ──
   document.addEventListener('mouseup', () => {
     if (!dragCard) return;
 
@@ -717,11 +994,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </script>
 
 <script>
-// ─── INFO PANEL CONTROLLER ───
 (function () {
-  const panel    = document.getElementById('infoPanel')    as HTMLElement;
+  const panel    = document.getElementById('infoPanel')     as HTMLElement;
   const backdrop = document.getElementById('panelBackdrop') as HTMLElement;
-  const closeBtn = document.getElementById('panelClose')   as HTMLButtonElement;
+  const closeBtn = document.getElementById('panelClose')    as HTMLButtonElement;
 
   if (!panel || !backdrop) return;
 
@@ -732,6 +1008,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     target.classList.add('active');
     panel.classList.add('open');
     backdrop.classList.add('active');
+    panel.scrollTop = 0;
   }
 
   function closePanel() {
@@ -739,7 +1016,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     backdrop.classList.remove('active');
   }
 
-  // Card clicks
   document.querySelectorAll<HTMLElement>('#cardsGrid .card[data-panel]').forEach(card => {
     card.addEventListener('click', () => {
       const id = card.dataset.panel;
@@ -756,7 +1032,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </script>
 
 <script>
-// ─── LOGO VIDEO ───
 (function () {
   const video  = document.getElementById('logoVideo')  as HTMLVideoElement;
   const canvas = document.getElementById('logoCanvas') as HTMLCanvasElement;
@@ -786,9 +1061,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const d = img.data;
         for (let i = 0; i < d.length; i += 4) {
-          if (d[i] > 230 && d[i + 1] > 230 && d[i + 2] > 230) {
-            d[i + 3] = 0;
-          }
+          if (d[i] > 230 && d[i + 1] > 230 && d[i + 2] > 230) d[i + 3] = 0;
         }
         ctx.putImageData(img, 0, 0);
       }
