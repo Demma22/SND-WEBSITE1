@@ -1,889 +1,808 @@
 ---
-// SND Website — Home Page
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Navbar from '../components/Navbar.astro';
-import Footer from '../components/Footer.astro';
-import CTA from '../components/CTA.astro';
-import { getCollection } from 'astro:content';
-
-// Get all blog posts and sort by date (newest first)
-const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort((a, b) => 
-  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
-);
-// Get only the latest 3 posts for the homepage
-const latestPosts = sortedPosts.slice(0, 3);
 ---
 
 <BaseLayout title="SND — Think It, Let's Create It">
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --snd-dark:   #343940;
-      --snd-light:  #CFCFD3;
-      --snd-black:  #000;
-      --snd-white:  #ffffff;
-      --remi-blue:  #535FFD;
-      --remi-amber: #FDAC1B;
-      --remi-bg:    #FAFAFA;
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-remi:    'Athelas', 'Palatino Linotype', Palatino, Georgia, serif;
-      --font-body:    'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+  :root {
+    --snd-dark:   #343940;
+    --snd-light:  #CFCFD3;
+    --snd-black:  #0d0d0d;
+    --snd-white:  #ffffff;
+    --remi-blue:  #535FFD;
+    --font-display: 'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    --font-body:    'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    --header-h:   52px;
+  }
+
+  /* ─── MINIMAL HEADER ─── */
+  .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(52,57,64,0.07);
+    z-index: 100;
+  }
+
+  .logo-link { display: flex; align-items: center; text-decoration: none; }
+  .logo-img  { height: 30px; width: auto; }
+
+  /* ─── INFO PANEL ─── */
+  .info-panel {
+    position: fixed;
+    top: var(--header-h);
+    left: 0; right: 0;
+    z-index: 95;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(52,57,64,0.08);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.08);
+    transform: translateY(-102%);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .info-panel.open {
+    transform: translateY(0);
+  }
+
+  .panel-backdrop {
+    position: fixed;
+    inset: 0;
+    top: var(--header-h);
+    z-index: 94;
+    background: rgba(0,0,0,0);
+    pointer-events: none;
+    transition: background 0.45s ease;
+  }
+
+  .panel-backdrop.active {
+    background: rgba(0,0,0,0.12);
+    pointer-events: auto;
+  }
+
+  .panel-inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 2.8rem 3rem 2.8rem;
+    position: relative;
+  }
+
+  .panel-close {
+    position: absolute;
+    top: 1.6rem;
+    right: 2rem;
+    background: none;
+    border: 1px solid rgba(52,57,64,0.14);
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--snd-dark);
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0.55;
+    transition: opacity 0.2s, background 0.2s;
+    padding: 0;
+  }
+
+  .panel-close:hover { opacity: 1; background: rgba(52,57,64,0.06); }
+
+  /* Each panel section — hidden until active */
+  .panel-content {
+    display: none;
+  }
+
+  .panel-content.active {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 3.5rem;
+    align-items: start;
+  }
+
+  /* Left column */
+  .panel-left {}
+
+  .panel-tag {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #aaa;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+  }
+
+  .panel-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-weight: 400;
+    color: var(--snd-black);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.8rem;
+  }
+
+  .panel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--snd-black);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    border-bottom: 1px solid rgba(13,13,13,0.3);
+    padding-bottom: 0.15rem;
+    transition: border-color 0.2s, opacity 0.2s;
+  }
+
+  .panel-link:hover { opacity: 0.6; border-color: transparent; }
+
+  /* Right column grid */
+  .panel-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem 2.5rem;
+  }
+
+  .panel-col {
+    border-top: 1px solid rgba(52,57,64,0.1);
+    padding-top: 1rem;
+  }
+
+  .panel-col h4 {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--snd-black);
+    margin-bottom: 0.55rem;
+    letter-spacing: -0.01em;
+  }
+
+  .panel-col p {
+    font-size: 0.78rem;
+    color: #7a828c;
+    line-height: 1.7;
+  }
+
+  .panel-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+
+  .ptag {
+    font-size: 0.68rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(52,57,64,0.06);
+    border-radius: 100px;
+    color: var(--snd-dark);
+  }
+
+  /* Stat variant */
+  .panel-stat .stat-n {
+    font-size: 1.9rem;
+    font-weight: 400;
+    color: var(--snd-black);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .panel-stat .stat-l {
+    font-size: 0.68rem;
+    color: #b0b8c4;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── CANVAS WRAP ─── */
+  .canvas-wrap {
+    position: fixed;
+    top: var(--header-h);
+    left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    background-image: radial-gradient(circle, rgba(52,57,64,0.11) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* ─── CARDS CONTAINER ─── */
+  .cards-grid {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ─── CARD BASE ─── */
+  .card {
+    position: absolute;
+    left: var(--cx);
+    top: var(--cy);
+    width: var(--w, 160px);
+    transform: translate(calc(-50% + var(--px, 0px)), calc(-50% + var(--py, 0px))) rotate(var(--rot, 0deg));
+    z-index: 1;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .card:hover { z-index: 10; }
+
+  .card.dragging {
+    z-index: 100;
+    cursor: grabbing !important;
+  }
+
+  .card.dragging .card-img-wrap {
+    box-shadow: 0 24px 56px rgba(0,0,0,0.2);
+  }
+
+  .card-inner {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .card.dragging .card-inner { transition: none; }
+  .card:hover .card-inner { transform: translateY(-6px); }
+
+  .card-img-wrap {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--snd-light);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.09);
+  }
+
+  .card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .card:hover .card-img-wrap img { transform: scale(1.06); }
+
+  .card-body { padding: 0.5rem 0.05rem 0; text-align: center; }
+
+  .card-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--snd-black);
+    line-height: 1.25;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  /* ─── CENTER LOGO ─── */
+  .canvas-logo-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .canvas-center-canvas {
+    display: block;
+  }
+
+  /* ─── CANVAS BOTTOM BAR ─── */
+  .canvas-bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 1.2rem;
+    gap: 0.75rem;
+    pointer-events: none;
+  }
+
+  .canvas-credit {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    font-size: 0.58rem;
+    color: rgba(52,57,64,0.28);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .canvas-credit a {
+    color: rgba(52,57,64,0.28);
+    text-decoration: none;
+    pointer-events: auto;
+    transition: color 0.2s;
+  }
+
+  .canvas-credit a:hover { color: rgba(52,57,64,0.6); }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 768px) {
+    .canvas-wrap {
+      position: static;
+      overflow: visible;
+      background-image: none;
+      background-color: #f9f9f9;
+      padding: calc(var(--header-h) + 1.5rem) 1.2rem 2rem;
     }
 
-    body {
-      background: var(--snd-white);
-      color: var(--snd-black);
-      font-family: var(--font-body);
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
-
-    h1, h2, h3, h4 {
-      font-family: var(--font-display);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    /* ── NAVBAR ────────────────────────────────────────────── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 4rem;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(52,57,64,0.08);
-      transition: background 0.25s, box-shadow 0.25s;
-    }
-    nav.scrolled {
-      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
-      background: rgba(255,255,255,0.98);
-    }
-    .nav-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
-    .nav-logo img { height: 44px; width: auto; }
-    .logo-fallback {
-      font-family: var(--font-display);
-      font-weight: 700; font-size: 1.5rem;
-      color: var(--snd-dark); background: var(--snd-light);
-      width: 44px; height: 44px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 8px;
-    }
-    .nav-links { display: flex; align-items: center; gap: 2.8rem; list-style: none; }
-    .nav-links a { color: var(--snd-dark); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--snd-black); }
-    .nav-cta {
-      background: var(--snd-black); color: var(--snd-white);
-      border: none; padding: 0.65rem 1.6rem;
-      border-radius: 8px; font-size: 0.85rem; font-weight: 600;
-      letter-spacing: 0.01em; cursor: pointer; text-decoration: none;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .nav-cta:hover { background: #2c2c2c; transform: scale(1.02); }
-    .hamburger { display: none; flex-direction: column; gap: 6px; background: none; border: none; cursor: pointer; }
-    .hamburger span { width: 24px; height: 2px; background: var(--snd-dark); border-radius: 2px; transition: 0.2s; }
-
-    /* ── HERO SECTION - SUBTLE GRID PATTERN ── */
-    .hero {
-      position: relative;
-      min-height: 85vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 10rem 2rem 6rem;
-      background: var(--snd-white);
-      overflow: hidden;
-    }
-
-    /* Subtle Grid Background Pattern */
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        linear-gradient(to right, rgba(52,57,64,0.035) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(52,57,64,0.035) 1px, transparent 1px);
-      background-size: 50px 50px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Optional: Subtle gradient overlay for depth */
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0.02) 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(52,57,64,0.05);
-      border: 1px solid rgba(52,57,64,0.1);
-      border-radius: 100px;
-      padding: 0.4rem 1.2rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--snd-dark);
-      margin-bottom: 2rem;
-      opacity: 0;
-      animation: fadeInUp 0.6s ease forwards;
-    }
-    .hero-badge-dot { width: 6px; height: 6px; background: var(--snd-dark); border-radius: 50%; opacity: 0.7; }
-
-    .hero-headline {
-      font-size: clamp(3rem, 7vw, 5.5rem);
-      font-weight: 700;
-      line-height: 1.1;
-      color: var(--snd-black);
-      margin-bottom: 1.5rem;
-      letter-spacing: -0.02em;
-    }
-
-    .line-1, .line-2 {
-      display: block;
-      opacity: 0;
-      animation: fadeInUp 0.6s ease forwards;
-    }
-    .line-1 { animation-delay: 0.1s; }
-    .line-2 { animation-delay: 0.3s; }
-
-    .hero-sub {
-      font-size: clamp(1rem, 2vw, 1.2rem);
-      color: #4a4e54;
-      max-width: 540px;
-      margin: 0 auto 2rem;
-      font-weight: 400;
-      opacity: 0;
-      animation: fadeInUp 0.6s ease 0.5s forwards;
-    }
-
-    .hero-actions {
-      display: flex;
+    .cards-grid {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
-      flex-wrap: wrap;
+      height: auto;
+    }
+
+    .card {
+      position: static !important;
+      left: auto !important;
+      top: auto !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+
+    .canvas-logo-center { display: none; }
+    .card:hover .card-inner { transform: none; }
+
+    .canvas-bottom-bar {
+      position: static;
+      padding: 2rem 0 1rem;
+      pointer-events: auto;
+    }
+
+    .canvas-credit {
       justify-content: center;
-      opacity: 0;
-      animation: fadeInUp 0.6s ease 0.7s forwards;
+      pointer-events: auto;
     }
 
-    .btn-primary {
-      background: var(--snd-black);
-      color: white;
-      padding: 0.85rem 2.2rem;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-      transition: transform 0.2s, background 0.2s;
-    }
-    .btn-primary:hover { background: #2c2c2c; transform: translateY(-2px); }
+    .info-panel { position: fixed; }
 
-    .btn-secondary {
-      background: transparent;
-      color: var(--snd-black);
-      padding: 0.85rem 2rem;
-      border-radius: 8px;
-      border: 1px solid #cfcfd3;
-      font-weight: 500;
-      text-decoration: none;
-      transition: border 0.2s, background 0.2s;
-    }
-    .btn-secondary:hover { border-color: var(--snd-dark); background: rgba(52,57,64,0.04); }
-
-    .scroll-hint {
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.3rem;
-      opacity: 0.6;
-      animation: fadeInUp 0.6s ease 0.9s forwards;
-    }
-    .scroll-hint span {
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      color: #6c7278;
-    }
-    .scroll-line {
-      width: 1px;
-      height: 32px;
-      background: linear-gradient(to bottom, #343940, transparent);
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Grid pattern on hover? Optional interactive effect */
-    @media (min-width: 901px) {
-      .hero:hover::before {
-        background-image: 
-          linear-gradient(to right, rgba(52,57,64,0.05) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(52,57,64,0.05) 1px, transparent 1px);
-        transition: all 0.3s ease;
-      }
-    }
-
-    /* ══════════════ WHAT WE DO SECTION ══════════════ */
-    .complex-services {
-      padding: 7rem 4rem;
-      background: var(--snd-white);
-      position: relative;
-    }
-
-    .services-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
-    }
-
-    .services-static-text {
-      position: sticky;
-      top: 120px;
-    }
-
-    .services-static-text .section-label {
-      color: var(--snd-dark);
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      margin-bottom: 1rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      opacity: 0.7;
-    }
-
-    .services-static-text h2 {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      font-weight: 700;
-      color: var(--snd-black);
-      margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-
-    .services-static-text > p {
-      color: #5f6c7a;
-      font-size: 1rem;
-      line-height: 1.7;
-      margin-bottom: 2rem;
-    }
-
-    .view-all-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--snd-dark);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.2s;
-    }
-
-    .view-all-link:hover {
-      border-bottom-color: var(--snd-dark);
-    }
-
-    .services-cards-scroll {
-      height: 600px;
-      overflow-y: auto;
-      padding-right: 0.5rem;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    
-    .services-cards-scroll::-webkit-scrollbar {
-      display: none;
-    }
-
-    .service-scroll-card {
-      display: flex;
+    .panel-content.active {
+      grid-template-columns: 1fr;
       gap: 1.5rem;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      background: var(--snd-white);
-      border-radius: 8px;
-      transition: transform 0.3s ease;
-      cursor: pointer;
-      border: 1px solid transparent;
-      border-bottom: 1px solid var(--snd-light);
     }
 
-    .service-scroll-card:hover {
-      transform: translateX(-4px);
-    }
+    .panel-inner { padding: 1.8rem 1.2rem; }
 
-    .card-image {
-      flex-shrink: 0;
-      width: 160px;
-      height: 160px;
-      overflow: hidden;
-      background: var(--snd-light);
-      border-radius: 8px;
-    }
+    .panel-cols { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 
-    .card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s ease;
-    }
+    .panel-close { top: 1rem; right: 1rem; }
+  }
+</style>
 
-    .service-scroll-card:hover .card-image img {
-      transform: scale(1.08);
-    }
+<!-- ─── MINIMAL HEADER ─── -->
+<header class="site-header">
+  <a href="/" class="logo-link">
+    <img src="/snd.png" alt="SND" class="logo-img" onerror="this.style.display='none';" />
+  </a>
+</header>
 
-    .card-content {
-      flex: 1;
-    }
+<!-- ─── INFO PANEL ─── -->
+<div class="info-panel" id="infoPanel" role="region" aria-label="Section info">
+  <div class="panel-inner">
+    <button class="panel-close" id="panelClose" aria-label="Close">&#x2715;</button>
 
-    .card-content h3 {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: var(--snd-black);
-      transition: color 0.2s ease;
-    }
-
-    .service-scroll-card:hover .card-content h3 {
-      color: var(--snd-dark);
-    }
-
-    .card-content p {
-      color: #5f6c7a;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin-bottom: 0.75rem;
-    }
-
-    .card-badge {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--snd-dark);
-      background: rgba(52,57,64,0.08);
-      padding: 0.2rem 0.8rem;
-      border-radius: 8px;
-      letter-spacing: 0.03em;
-    }
-
-    /* ── REMI SECTION ── */
-    .remi-section-purple {
-      background: var(--remi-blue);
-      padding: 6rem 4rem;
-    }
-    
-    .remi-card-purple {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: var(--remi-bg);
-      border-radius: 8px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
-      padding: 3rem 4rem;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    }
-    
-    .remi-card-content .remi-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--remi-blue);
-      background: rgba(83,95,253,0.1);
-      padding: 0.3rem 1rem;
-      border-radius: 8px;
-      width: fit-content;
-      margin-bottom: 1.5rem;
-    }
-    
-    .remi-label-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--remi-amber);
-      border-radius: 50%;
-    }
-    
-    .remi-card-content h2 {
-      font-family: var(--font-remi);
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 700;
-      color: var(--snd-black);
-      margin-bottom: 1rem;
-    }
-    
-    .remi-card-content p {
-      color: #4b5563;
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-    }
-    
-    .remi-stats {
-      background: rgba(83,95,253,0.08);
-      border-radius: 8px;
-      padding: 1rem 1.5rem;
-      display: inline-block;
-      margin-bottom: 1.8rem;
-    }
-    
-    .remi-stats .stat-number {
-      font-family: var(--font-remi);
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--remi-blue);
-    }
-    
-    .remi-actions {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    
-    .btn-remi-dark {
-      background: var(--remi-blue);
-      color: white;
-      padding: 0.8rem 1.8rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: transform 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .btn-remi-dark:hover {
-      transform: translateY(-2px);
-      opacity: 0.9;
-    }
-    
-    .btn-remi-outline-dark {
-      background: transparent;
-      color: var(--snd-black);
-      padding: 0.8rem 1.8rem;
-      border-radius: 8px;
-      border: 1px solid var(--snd-light);
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    
-    .btn-remi-outline-dark:hover {
-      border-color: var(--remi-blue);
-      background: rgba(83,95,253,0.05);
-    }
-    
-    .remi-card-mockup {
-      display: flex;
-      justify-content: center;
-    }
-    
-    .phone-frame-purple {
-      width: 260px;
-      height: 520px;
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 30px 40px -20px rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.3);
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* ── BLOG SECTION - SMALLER CARDS, BLACK WITH IMAGE ── */
-    .blog-section {
-      padding: 7rem 4rem;
-      background: var(--snd-white);
-    }
-    
-    .blog-header {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-    
-    .blog-header .section-label {
-      color: var(--snd-dark);
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      margin-bottom: 1rem;
-      opacity: 0.7;
-    }
-    
-    .blog-header h2 {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      font-weight: 700;
-      color: var(--snd-black);
-    }
-    
-    .blog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .blog-card {
-      background: #000000;
-      border-radius: 8px;
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      text-decoration: none;
-      color: white;
-      display: block;
-    }
-    
-    .blog-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px -12px rgba(0,0,0,0.3);
-    }
-    
-    .blog-image {
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
-    }
-    
-    .blog-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s ease;
-    }
-    
-    .blog-card:hover .blog-image img {
-      transform: scale(1.05);
-    }
-    
-    .blog-content {
-      padding: 1.25rem;
-    }
-    
-    .blog-date {
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.6);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
-    }
-    
-    .blog-content h3 {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: white;
-      line-height: 1.3;
-    }
-    
-    .blog-content p {
-      color: rgba(255,255,255,0.7);
-      font-size: 0.8rem;
-      line-height: 1.5;
-      margin-bottom: 1rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    
-    .read-more {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.8rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: gap 0.2s;
-      opacity: 0.8;
-    }
-    
-    .read-more:hover {
-      gap: 0.5rem;
-      opacity: 1;
-    }
-
-    .empty-blog-state {
-      text-align: center;
-      padding: 3rem;
-      background: #f9fafb;
-      border-radius: 8px;
-      color: #8a9bb0;
-    }
-
-    /* ── REVEAL ANIMATIONS ── */
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.2,0.9,0.4,1), transform 0.7s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    /* View All Blog Link */
-    .view-all-blog {
-      text-align: center;
-      margin-top: 2rem;
-    }
-    
-    .view-all-blog-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--snd-dark);
-      text-decoration: none;
-      font-weight: 600;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.2s;
-    }
-    
-    .view-all-blog-link:hover {
-      border-bottom-color: var(--snd-dark);
-    }
-
-    @media (max-width: 900px) {
-      nav { padding: 0.9rem 1.5rem; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      .hero { min-height: 70vh; padding: 8rem 1.5rem 4rem; }
-      .complex-services { padding: 4rem 1.5rem; }
-      .services-container { grid-template-columns: 1fr; gap: 2rem; }
-      .services-cards-scroll { height: 450px; }
-      .services-static-text { position: relative; top: 0; }
-      .remi-section-purple { padding: 4rem 1.5rem; }
-      .remi-card-purple { grid-template-columns: 1fr; padding: 2rem; gap: 2rem; }
-      .blog-section { padding: 4rem 1.5rem; }
-      .blog-grid { gap: 1rem; }
-    }
-    @media (max-width: 600px) {
-      .hero-headline { font-size: 2.8rem; }
-      .card-image { width: 100px; height: 100px; }
-      .service-scroll-card { padding: 1rem; gap: 1rem; }
-      .blog-grid { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
-    }
-  </style>
-
-  <Navbar />
-
-  <!-- HERO SECTION - SUBTLE GRID PATTERN -->
-  <div class="hero">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="hero-badge-dot"></span>
-        Digital Products · Design · Development
+    <!-- About SND -->
+    <div class="panel-content" data-panel="about">
+      <div class="panel-left">
+        <span class="panel-tag">Studio</span>
+        <span class="panel-title">About SND</span>
+        <a href="/about" class="panel-link">Full story &#x2192;</a>
       </div>
-      <h1 class="hero-headline">
-        <span class="line-1">Think It,</span>
-        <span class="line-2">Let's Create It.</span>
-      </h1>
-      <p class="hero-sub">SND is a brand for you to bring anything to life.</p>
-      <div class="hero-actions">
-        <a href="/about" class="btn-primary">Who We Are</a>
-        <a href="/contact" class="btn-secondary">Start a Project</a>
+      <div class="panel-cols">
+        <div class="panel-col">
+          <h4>Our Vision</h4>
+          <p>To become a leading African brand — building intelligent, creative, and culturally relevant solutions through design, technology, and art.</p>
+        </div>
+        <div class="panel-col">
+          <h4>Our Mission</h4>
+          <p>Simplify complex problems through thoughtful, well-crafted systems that combine functional design, AI, and genuine human understanding.</p>
+        </div>
+        <div class="panel-col panel-stat">
+          <div class="stat-n">10+</div>
+          <div class="stat-l">Projects</div>
+          <div class="stat-n" style="margin-top:1rem;">15+</div>
+          <div class="stat-l">Happy Clients</div>
+        </div>
       </div>
+    </div>
+
+    <!-- Design & Creative -->
+    <div class="panel-content" data-panel="design">
+      <div class="panel-left">
+        <span class="panel-tag">Services</span>
+        <span class="panel-title">Design &amp; Creative</span>
+        <a href="/about" class="panel-link">See our work &#x2192;</a>
+      </div>
+      <div class="panel-cols">
+        <div class="panel-col">
+          <h4>Branding</h4>
+          <p>Visual identity systems, logos, and brand experiences that communicate clearly and build lasting recognition.</p>
+          <div class="panel-tags-row">
+            <span class="ptag">Identity</span>
+            <span class="ptag">Typography</span>
+          </div>
+        </div>
+        <div class="panel-col">
+          <h4>UI / UX</h4>
+          <p>Interfaces designed for humans first — intuitive, accessible, and built to serve a clear purpose on every screen.</p>
+          <div class="panel-tags-row">
+            <span class="ptag">Mobile</span>
+            <span class="ptag">Web</span>
+          </div>
+        </div>
+        <div class="panel-col">
+          <h4>Motion</h4>
+          <p>Bring ideas to life through animation, motion graphics, and dynamic storytelling that captures attention.</p>
+          <div class="panel-tags-row">
+            <span class="ptag">Animation</span>
+            <span class="ptag">Video</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="panel-content" data-panel="products">
+      <div class="panel-left">
+        <span class="panel-tag">Physical Goods</span>
+        <span class="panel-title">Products</span>
+        <a href="/products" class="panel-link">Explore &#x2192;</a>
+      </div>
+      <div class="panel-cols">
+        <div class="panel-col">
+          <h4>Notebooks</h4>
+          <p>Crafted for thinkers and makers. Clean layouts and quality materials that make the act of writing feel considered.</p>
+        </div>
+        <div class="panel-col">
+          <h4>Apparel</h4>
+          <p>Wear the brand. Minimal pieces that carry the SND aesthetic — designed to be worn, not just seen.</p>
+        </div>
+        <div class="panel-col">
+          <h4>Merchandise</h4>
+          <p>The SND ecosystem in your hands. Objects that extend the studio's identity into the physical world.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Journal -->
+    <div class="panel-content" data-panel="journal">
+      <div class="panel-left">
+        <span class="panel-tag">Blog</span>
+        <span class="panel-title">The Journal</span>
+        <a href="/blog" class="panel-link">Read &#x2192;</a>
+      </div>
+      <div class="panel-cols">
+        <div class="panel-col">
+          <h4>Design</h4>
+          <p>Perspectives on visual systems, craft decisions, and what it means to design with intention in 2025.</p>
+        </div>
+        <div class="panel-col">
+          <h4>Technology</h4>
+          <p>How SND builds — tools, processes, and the reasoning behind technical choices in our products.</p>
+        </div>
+        <div class="panel-col">
+          <h4>Culture</h4>
+          <p>Stories, influences, and ideas from the studio — the people, places, and things that shape our work.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div class="panel-backdrop" id="panelBackdrop"></div>
+
+<!-- ─── CANVAS ─── -->
+<div class="canvas-wrap">
+  <div class="cards-grid" id="cardsGrid">
+
+    <!-- ★ CENTER: SND Logo Animation -->
+    <div class="canvas-logo-center" aria-label="SND">
+      <video id="logoVideo" src="/snd-logo.mov" autoplay muted playsinline
+        style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;top:0;left:0;"></video>
+      <canvas id="logoCanvas" class="canvas-center-canvas"></canvas>
+    </div>
+
+    <!-- About SND (top-right) -->
+    <div class="card"
+         data-speed="0.042"
+         data-panel="about"
+         style="--cx: 82%; --cy: 30%; --rot: 4deg; --w: 235px;">
+      <div class="card-inner">
+        <div class="card-img-wrap">
+          <img src="/art_tech.jpg" alt="About SND" />
+        </div>
+        <div class="card-body">
+          <span class="card-title">About SND</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Design & Creative (upper-left) -->
+    <div class="card"
+         data-speed="0.068"
+         data-panel="design"
+         style="--cx: 18%; --cy: 30%; --rot: -3deg; --w: 225px;">
+      <div class="card-inner">
+        <div class="card-img-wrap">
+          <img src="/design.jpg" alt="Design & Creative" />
+        </div>
+        <div class="card-body">
+          <span class="card-title">Design &amp; Creative</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products (lower-left) -->
+    <div class="card"
+         data-speed="0.072"
+         data-panel="products"
+         style="--cx: 20%; --cy: 70%; --rot: -2deg; --w: 220px;">
+      <div class="card-inner">
+        <div class="card-img-wrap">
+          <img src="/fashion.jpg" alt="Products" />
+        </div>
+        <div class="card-body">
+          <span class="card-title">Products</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Journal (lower-right) -->
+    <div class="card"
+         data-speed="0.048"
+         data-panel="journal"
+         style="--cx: 80%; --cy: 70%; --rot: 2deg; --w: 215px;">
+      <div class="card-inner">
+        <div class="card-img-wrap">
+          <img src="/art.jpg" alt="The Journal" />
+        </div>
+        <div class="card-body">
+          <span class="card-title">The Journal</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cards-grid -->
+
+  <div class="canvas-bottom-bar">
+    <div class="canvas-credit">
+      <span>© 2026 SND</span>
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
     </div>
   </div>
+</div><!-- /canvas-wrap -->
 
-  <!-- WHAT WE DO SECTION -->
-  <section class="complex-services reveal">
-    <div class="services-container">
-      <div class="services-static-text">
-        <div class="section-label">WHAT WE DO</div>
-        <h2>Building Solutions<br/>with Purpose</h2>
-        <p>SND Studio offers a range of customizable services to cater to your specific needs. From digital products to physical builds we turn ideas into real, working solutions people actually use.</p>
-        <a href="/about" class="view-all-link">ABOUT US →</a>
-      </div>
+<script>
+(function () {
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('#cardsGrid .card'));
+  const canvasWrap = document.querySelector<HTMLElement>('.canvas-wrap');
 
-      <div class="services-cards-scroll">
-        <div class="service-scroll-card">
-          <div class="card-image">
-            <img src="/digital.jpg" alt="Digital Products" onerror="this.src='https://placehold.co/160x160/f3f4f6/475569?text=📱';" />
-          </div>
-          <div class="card-content">
-            <h3>Digital Products</h3>
-            <p>Apps, tools, and platforms built to solve real problems. From concept to launch, we ship things that work.</p>
-            <span class="card-badge">Apps · Tools · Platforms</span>
-          </div>
-        </div>
+  if (!cards.length || window.innerWidth <= 768 || !canvasWrap) return;
 
-        <div class="service-scroll-card">
-          <div class="card-image">
-            <img src="/design.jpg" alt="Design & Creative" onerror="this.src='https://placehold.co/160x160/f3f4f6/475569?text=🎨';" />
-          </div>
-          <div class="card-content">
-            <h3>Design & Creative</h3>
-            <p>Branding, graphics, and visual systems that give ideas a face. Design that communicates before you say a word.</p>
-            <span class="card-badge">Branding · Graphics · Visuals</span>
-          </div>
-        </div>
+  // ── Parallax state ──
+  let mouseX = window.innerWidth  / 2;
+  let mouseY = window.innerHeight / 2;
+  let smoothX = mouseX;
+  let smoothY = mouseY;
 
-        <div class="service-scroll-card">
-          <div class="card-image">
-            <img src="/development.jpg" alt="Development" onerror="this.src='https://placehold.co/160x160/f3f4f6/475569?text=⚙️';" />
-          </div>
-          <div class="card-content">
-            <h3>Development</h3>
-            <p>Websites, systems, and animations crafted with precision. Modern builds that perform as well as they look.</p>
-            <span class="card-badge">Websites · Systems · Motion</span>
-          </div>
-        </div>
+  // ── Drag state ──
+  let dragCard: HTMLElement | null = null;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let hasDragged = false;
 
-        <div class="service-scroll-card">
-          <div class="card-image">
-            <img src="/physical.jpg" alt="Physical Products" onerror="this.src='https://placehold.co/160x160/f3f4f6/475569?text=📦';" />
-          </div>
-          <div class="card-content">
-            <h3>Physical Products</h3>
-            <p>Notebooks, merchandise, and future tangible builds. Because great ideas don't always stay on a screen.</p>
-            <span class="card-badge">Notebooks · T-Shirts · Merch</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  function lerp(a: number, b: number, t: number): number { return a + (b - a) * t; }
 
-  <!-- REMI SECTION -->
-  <div class="remi-section-purple reveal">
-    <div class="remi-card-purple">
-      <div class="remi-card-content">
-        <div class="remi-label">
-          <span class="remi-label-dot"></span>
-          Featured Product
-        </div>
-        <h2>Meet Remi.</h2>
-        <p>Remi is a powerful digital assistant for anyone with a busy schedule. From students tracking coursework to professionals managing meetings, Remi helps you organize tasks, plan your time, and stay productive—all in one simple, fast, and reliable app.</p>
-        <div class="remi-stats">
-          <span class="stat-number">60+</span>
-          <span style="color: #5f6c7a;"> App installs and growing</span>
-        </div>
-        <div class="remi-actions">
-          <a href="https://play.google.com/store/apps/details?id=com.anonymous.remi" target="_blank" rel="noopener noreferrer" class="btn-remi-dark">↓ Install on Android</a>
-          <a href="/remi" class="btn-remi-outline-dark">Learn More</a>
-        </div>
-      </div>
-      <div class="remi-card-mockup">
-        <div class="phone-frame-purple">
-          <div class="phone-notch" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 80px; height: 20px; background: #111; border-radius: 40px; z-index: 2;"></div>
-          <img 
-            src="/remi_screenshot.png" 
-            alt="Remi App Screenshot" 
-            style="width: 100%; padding-top: 1rem; height: 100%; object-fit: cover;"
-            onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\"width:100%;height:100%;background:linear-gradient(145deg, #eeeeff, #f9fafb);display:flex;align-items:center;justify-content:center;flex-direction:column;\">
-            <div style=\"font-family:var(--font-remi);font-size:2rem;font-weight:700;color:var(--remi-blue);margin-bottom:0.5rem;\">Remi</div><p style=\"font-size:0.7rem;color:#94a3b8;\">Screenshot preview<br/>Place remi_screenshot.png in /public/</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  // ── Parallax loop ──
+  function tick() {
+    smoothX = lerp(smoothX, mouseX, 0.07);
+    smoothY = lerp(smoothY, mouseY, 0.07);
 
-  <!-- BLOG SECTION -->
-  <section class="blog-section reveal">
-    <div class="blog-header">
-      <div class="section-label">INSIGHTS & UPDATES</div>
-      <h2>Latest from the Journal</h2>
-    </div>
-    
-    {
-      latestPosts.length === 0 ? (
-        <div class="empty-blog-state">
-          <p>No blog posts yet. Check back soon for insights and updates!</p>
-        </div>
-      ) : (
-        <>
-          <div class="blog-grid">
-            {latestPosts.map((post) => {
-              const postSlug = post.id.replace(/\.md$/, '');
-              return (
-                <a href={`/blog/${postSlug}`} class="blog-card">
-                  <div class="blog-image">
-                    <img 
-                      src={post.data.image || '/blog-placeholder.jpg'} 
-                      alt={post.data.title}
-                      onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=' + encodeURIComponent(post.data.title)"
-                    />
-                  </div>
-                  <div class="blog-content">
-                    <div class="blog-date">{post.data.pubDate}</div>
-                    <h3>{post.data.title}</h3>
-                    <p>{post.data.description}</p>
-                    <span class="read-more">Read More →</span>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-          <div class="view-all-blog">
-            <a href="/blog" class="view-all-blog-link">View All Articles →</a>
-          </div>
-        </>
-      )
-    }
-  </section>
+    const cx = window.innerWidth  / 2;
+    const cy = window.innerHeight / 2;
+    const dx = (smoothX - cx) / cx;
+    const dy = (smoothY - cy) / cy;
 
-  <!-- CTA SECTION -->
-  <CTA />
-
-  <Footer />
-
-  <script>
-    // Scroll reveal
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    }, { threshold: 0.12 });
-    reveals.forEach(el => observer.observe(el));
-
-    // Navbar scroll effect
-    const nav = document.querySelector('nav');
-    window.addEventListener('scroll', () => {
-      if (nav) nav.classList.toggle('scrolled', window.scrollY > 30);
+    cards.forEach((card) => {
+      if (card === dragCard) return;
+      const speed = parseFloat(card.dataset.speed ?? '0.04');
+      card.style.setProperty('--px', (dx * speed * 280) + 'px');
+      card.style.setProperty('--py', (dy * speed * 280) + 'px');
     });
-  </script>
+
+    requestAnimationFrame(tick);
+  }
+
+  // ── Drag: start ──
+  cards.forEach((card) => {
+    card.addEventListener('mousedown', (e: MouseEvent) => {
+      if (e.button !== 0) return;
+
+      const rect = card.getBoundingClientRect();
+      const canvasRect = canvasWrap.getBoundingClientRect();
+
+      dragCard   = card;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      hasDragged = false;
+
+      dragOffsetX = e.clientX - (rect.left + rect.width  / 2);
+      dragOffsetY = e.clientY - (rect.top  + rect.height / 2);
+
+      card.style.left = (rect.left + rect.width  / 2 - canvasRect.left) + 'px';
+      card.style.top  = (rect.top  + rect.height / 2 - canvasRect.top)  + 'px';
+      card.style.setProperty('--px', '0px');
+      card.style.setProperty('--py', '0px');
+
+      e.preventDefault();
+    });
+  });
+
+  // ── Drag: move ──
+  document.addEventListener('mousemove', (e: MouseEvent) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    if (!dragCard) return;
+
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+
+    if (!hasDragged && Math.sqrt(dx * dx + dy * dy) < 5) return;
+    hasDragged = true;
+
+    dragCard.classList.add('dragging');
+
+    const canvasRect = canvasWrap.getBoundingClientRect();
+    dragCard.style.left = (e.clientX - dragOffsetX - canvasRect.left) + 'px';
+    dragCard.style.top  = (e.clientY - dragOffsetY - canvasRect.top)  + 'px';
+  });
+
+  // ── Drag: end ──
+  document.addEventListener('mouseup', () => {
+    if (!dragCard) return;
+
+    if (hasDragged) {
+      const captured = dragCard;
+      const blockClick = (ev: Event) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        captured.removeEventListener('click', blockClick, true);
+      };
+      dragCard.addEventListener('click', blockClick, true);
+    }
+
+    dragCard.classList.remove('dragging');
+    dragCard = null;
+    hasDragged = false;
+  });
+
+  requestAnimationFrame(tick);
+})();
+</script>
+
+<script>
+// ─── INFO PANEL CONTROLLER ───
+(function () {
+  const panel    = document.getElementById('infoPanel')    as HTMLElement;
+  const backdrop = document.getElementById('panelBackdrop') as HTMLElement;
+  const closeBtn = document.getElementById('panelClose')   as HTMLButtonElement;
+
+  if (!panel || !backdrop) return;
+
+  function openPanel(id: string) {
+    panel.querySelectorAll<HTMLElement>('.panel-content').forEach(el => el.classList.remove('active'));
+    const target = panel.querySelector<HTMLElement>(`.panel-content[data-panel="${id}"]`);
+    if (!target) return;
+    target.classList.add('active');
+    panel.classList.add('open');
+    backdrop.classList.add('active');
+  }
+
+  function closePanel() {
+    panel.classList.remove('open');
+    backdrop.classList.remove('active');
+  }
+
+  // Card clicks
+  document.querySelectorAll<HTMLElement>('#cardsGrid .card[data-panel]').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.dataset.panel;
+      if (id) openPanel(id);
+    });
+  });
+
+  closeBtn?.addEventListener('click', closePanel);
+  backdrop.addEventListener('click', closePanel);
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Escape') closePanel();
+  });
+})();
+</script>
+
+<script>
+// ─── LOGO VIDEO ───
+(function () {
+  const video  = document.getElementById('logoVideo')  as HTMLVideoElement;
+  const canvas = document.getElementById('logoCanvas') as HTMLCanvasElement;
+  if (!video || !canvas) return;
+
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  if (!ctx) return;
+
+  const DISPLAY_H = 520;
+  let ready = false;
+
+  function setup() {
+    if (ready || !video.videoWidth) return;
+    ready = true;
+    const aspect = video.videoWidth / video.videoHeight;
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.style.height = DISPLAY_H + 'px';
+    canvas.style.width  = Math.round(DISPLAY_H * aspect) + 'px';
+  }
+
+  function drawFrame(): void {
+    if (video.readyState >= 2) {
+      if (!ready) setup();
+      if (ready) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const d = img.data;
+        for (let i = 0; i < d.length; i += 4) {
+          if (d[i] > 230 && d[i + 1] > 230 && d[i + 2] > 230) {
+            d[i + 3] = 0;
+          }
+        }
+        ctx.putImageData(img, 0, 0);
+      }
+    }
+    requestAnimationFrame(drawFrame);
+  }
+
+  video.addEventListener('ended', () => {
+    setTimeout(() => { video.play().catch(() => {}); }, 10000);
+  });
+
+  video.play().catch(() => {});
+  requestAnimationFrame(drawFrame);
+})();
+</script>
 
 </BaseLayout>
