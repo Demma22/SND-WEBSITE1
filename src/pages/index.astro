@@ -8,7 +8,7 @@ const sortedPosts = allPosts.sort((a, b) =>
 );
 ---
 
-<BaseLayout title="SND — Think It, Let's Create It">
+<BaseLayout title="SND: Think It, Let's Create It">
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
@@ -488,8 +488,8 @@ const sortedPosts = allPosts.sort((a, b) =>
     left: 0; right: 0; bottom: 0;
     overflow: hidden;
     background-color: #f9f9f9;
-    background-image: radial-gradient(circle, rgba(52,57,64,0.11) 1px, transparent 1px);
-    background-size: 28px 28px;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem;
   }
 
   .cards-grid {
@@ -788,9 +788,23 @@ const sortedPosts = allPosts.sort((a, b) =>
     pointer-events: none;
   }
 
+  /* Mobile highlight: hidden on desktop, shown above card grid on mobile */
+  .mobile-highlight {
+    display: none;
+  }
+
   /* On desktop the left-col social row handles it; hide bottom-bar one */
   @media (min-width: 769px) {
     .social-row-bottom { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    .mobile-highlight {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-bottom: 1.5rem;
+    }
   }
 
   .canvas-credit {
@@ -826,7 +840,7 @@ const sortedPosts = allPosts.sort((a, b) =>
       position: static;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      gap: 5rem;
       height: auto;
     }
 
@@ -891,12 +905,12 @@ const sortedPosts = allPosts.sort((a, b) =>
         <div class="about-mv-card">
           <div class="mv-label">Our Vision</div>
           <h3>To become a leading African brand</h3>
-          <p>Building intelligent, creative, and culturally relevant solutions through the integrated disciplines of technology, art, and design — demonstrating that world-class digital products can originate from Uganda and serve both local and global audiences.</p>
+          <p>Building intelligent, creative, and culturally relevant solutions through the integrated disciplines of technology, art, and design. Demonstrating that world-class digital products can originate from Uganda and serve both local and global audiences.</p>
         </div>
         <div class="about-mv-card">
           <div class="mv-label">Our Mission</div>
           <h3>Simplify complex problems</h3>
-          <p>Through thoughtful, well-crafted systems that combine functional design, artificial intelligence, and genuine human understanding. Every product — whether a mobile application, a brand identity, or a physical notebook — must serve a clear purpose and provide a seamless user experience.</p>
+          <p>Through thoughtful, well-crafted systems that combine functional design, artificial intelligence, and genuine human understanding. Every product, whether a mobile application, a brand identity, or a physical notebook, must serve a clear purpose and provide a seamless user experience.</p>
         </div>
       </div>
 
@@ -949,7 +963,7 @@ const sortedPosts = allPosts.sort((a, b) =>
           </div>
           <div class="panel-col">
             <h4>UI / UX</h4>
-            <p>Interfaces designed for humans first — intuitive, accessible, and built to serve a clear purpose on every screen.</p>
+            <p>Interfaces designed for humans first: intuitive, accessible, and built to serve a clear purpose on every screen.</p>
           </div>
           <div class="panel-col">
             <h4>Motion</h4>
@@ -966,7 +980,7 @@ const sortedPosts = allPosts.sort((a, b) =>
           <span class="panel-tag">Physical Goods</span>
           <span class="products-title">Products</span>
         </div>
-        <p class="products-desc">The SND ecosystem in physical form — thoughtfully designed objects that extend the studio's identity into the world. Each product is crafted with the same care and intentionality as our digital work.</p>
+        <p class="products-desc">The SND ecosystem in physical form. Thoughtfully designed objects that extend the studio's identity into the world. Each product is crafted with the same care and intentionality as our digital work.</p>
       </div>
       <div class="products-grid">
         <div class="product-panel-card">
@@ -975,7 +989,7 @@ const sortedPosts = allPosts.sort((a, b) =>
         </div>
         <div class="product-panel-card">
           <h4>Apparel</h4>
-          <p>Wear the brand. Minimal pieces that carry the SND aesthetic — designed to be worn, not just seen.</p>
+          <p>Wear the brand. Minimal pieces that carry the SND aesthetic, designed to be worn, not just seen.</p>
         </div>
         <div class="product-panel-card">
           <h4>Merchandise</h4>
@@ -992,11 +1006,11 @@ const sortedPosts = allPosts.sort((a, b) =>
           <span class="journal-title">The Journal</span>
           <a href="/blog" class="panel-link">All posts &#x2192;</a>
         </div>
-        <p class="journal-desc">Stories, ideas, and perspectives from the SND team — on design, technology, culture, and the process of building things that matter.</p>
+        <p class="journal-desc">Stories, ideas, and perspectives from the SND team on design, technology, culture, and the process of building things that matter.</p>
       </div>
 
       {sortedPosts.length === 0 ? (
-        <div class="journal-empty">No posts yet — check back soon.</div>
+        <div class="journal-empty">No posts yet. Check back soon.</div>
       ) : (
         <div class="journal-posts-grid">
           {sortedPosts.map((post) => {
@@ -1021,6 +1035,23 @@ const sortedPosts = allPosts.sort((a, b) =>
 
 <!-- ─── CANVAS ─── -->
 <div class="canvas-wrap">
+
+  <!-- Mobile-only highlight (desktop uses left-col version) -->
+  <div class="mobile-highlight">
+    <span class="highlight-label">Today's Highlight</span>
+    <a href="#" class="highlight-card">
+      <div class="highlight-img-wrap">
+        <img src="/physical.jpg" alt="Lineless Notebook" />
+      </div>
+      <div class="highlight-body">
+        <span class="highlight-meta">Physical Goods · Stationery</span>
+        <span class="highlight-name">The Lineless Notebook</span>
+        <span class="highlight-desc">No rules, just space. A clean, minimal notebook designed for creative minds. Sketch, write, and think freely without constraints.</span>
+        <span class="highlight-cta">Shop Now</span>
+      </div>
+    </a>
+  </div>
+
   <div class="cards-grid" id="cardsGrid">
 
     <!-- ★ LEFT COLUMN: logo above typewriter -->
@@ -1042,13 +1073,13 @@ const sortedPosts = allPosts.sort((a, b) =>
         <span class="highlight-label">Today's Highlight</span>
         <a href="#" class="highlight-card">
           <div class="highlight-img-wrap">
-            <img src="/remi_screenshot.png" alt="Remi" />
+            <img src="/physical.jpg" alt="Lineless Notebook" />
           </div>
           <div class="highlight-body">
-            <span class="highlight-meta">Product · AI Tools</span>
-            <span class="highlight-name">Remi</span>
-            <span class="highlight-desc">An AI-powered review and feedback tool built for creative teams. Share work, collect structured feedback, and ship faster.</span>
-            <span class="highlight-cta">Explore Remi</span>
+            <span class="highlight-meta">Physical Goods · Stationery</span>
+            <span class="highlight-name">The Lineless Notebook</span>
+            <span class="highlight-desc">No rules, just space. A clean, minimal notebook designed for creative minds. Sketch, write, and think freely without constraints.</span>
+            <span class="highlight-cta">Shop Now</span>
           </div>
         </a>
       </div>
