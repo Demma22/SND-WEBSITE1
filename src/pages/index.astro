@@ -572,13 +572,22 @@ const sortedPosts = allPosts.sort((a, b) =>
     -webkit-box-orient: vertical;
   }
 
-  /* ─── CENTER LOGO ─── */
-  .canvas-logo-center {
+  /* ─── LEFT COLUMN (logo + typewriter stacked) ─── */
+  .canvas-left-col {
     position: absolute;
-    left: 50%;
+    left: 6%;
     top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
+    transform: translateY(-50%);
+    width: 36%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .canvas-logo-center {
+    display: block;
     pointer-events: none;
   }
 
@@ -586,11 +595,8 @@ const sortedPosts = allPosts.sort((a, b) =>
 
   /* ─── TYPEWRITER ─── */
   .canvas-typewriter {
-    position: absolute;
-    left: 6%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 36%;
+    pointer-events: none;
+    width: 100%;
     pointer-events: none;
     user-select: none;
     z-index: 3;
@@ -873,24 +879,25 @@ const sortedPosts = allPosts.sort((a, b) =>
 <div class="canvas-wrap">
   <div class="cards-grid" id="cardsGrid">
 
-    <!-- ★ CENTER: SND Logo Animation -->
-    <div class="canvas-logo-center" aria-label="SND">
-      <video id="logoVideo" src="/snd-logo.mov" autoplay muted playsinline
-        style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;top:0;left:0;"></video>
-      <canvas id="logoCanvas" class="canvas-center-canvas"></canvas>
-    </div>
+    <!-- ★ LEFT COLUMN: logo above typewriter -->
+    <div class="canvas-left-col">
+      <div class="canvas-logo-center" aria-label="SND">
+        <video id="logoVideo" src="/snd-logo.mov" autoplay muted playsinline
+          style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;top:0;left:0;"></video>
+        <canvas id="logoCanvas" class="canvas-center-canvas"></canvas>
+      </div>
 
-    <!-- ★ TYPEWRITER — right half -->
-    <div class="canvas-typewriter" aria-live="polite">
-      <span class="typewriter-label">SND Studio</span>
-      <div class="typewriter-text">
-        <span id="typewriterText"></span><span class="typewriter-cursor"></span>
+      <div class="canvas-typewriter" aria-live="polite">
+        <span class="typewriter-label">SND Studio</span>
+        <div class="typewriter-text">
+          <span id="typewriterText"></span><span class="typewriter-cursor"></span>
+        </div>
       </div>
     </div>
 
     <!-- About SND (upper-right cluster) -->
     <div class="card" data-panel="about"
-         style="--cx: 68%; --cy: 37%; --w: 225px;">
+         style="--cx: 83%; --cy: 32%; --w: 215px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/art_tech.jpg" alt="About SND" />
@@ -901,7 +908,7 @@ const sortedPosts = allPosts.sort((a, b) =>
 
     <!-- Design & Creative (upper-left of right cluster) -->
     <div class="card" data-panel="design"
-         style="--cx: 55%; --cy: 35%; --w: 215px;">
+         style="--cx: 62%; --cy: 32%; --w: 215px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/design.jpg" alt="Design & Creative" />
@@ -912,7 +919,7 @@ const sortedPosts = allPosts.sort((a, b) =>
 
     <!-- Products (lower-left of right cluster) -->
     <div class="card" data-panel="products"
-         style="--cx: 55%; --cy: 70%; --w: 215px;">
+         style="--cx: 62%; --cy: 68%; --w: 215px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/fashion.jpg" alt="Products" />
@@ -923,7 +930,7 @@ const sortedPosts = allPosts.sort((a, b) =>
 
     <!-- The Journal (lower-right of right cluster) -->
     <div class="card" data-panel="journal"
-         style="--cx: 68%; --cy: 70%; --w: 215px;">
+         style="--cx: 83%; --cy: 68%; --w: 215px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/art.jpg" alt="The Journal" />
@@ -1062,7 +1069,7 @@ const sortedPosts = allPosts.sort((a, b) =>
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   if (!ctx) return;
 
-  const DISPLAY_H = 520;
+  const DISPLAY_H = 200;
   let ready = false;
 
   function setup() {
