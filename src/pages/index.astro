@@ -564,14 +564,15 @@ const sortedPosts = allPosts.sort((a, b) =>
     align-items: center;
     justify-content: center;
     background: #efefef;
+    border: none;
   }
 
   .card-img-wrap.icon-wrap img { width: auto; height: auto; }
 
   .journal-icon {
     position: absolute;
-    width: 72px;
-    height: 72px;
+    width: 110px;
+    height: 110px;
     object-fit: contain;
     transition: opacity 0.2s ease;
   }
@@ -718,7 +719,10 @@ const sortedPosts = allPosts.sort((a, b) =>
       transform: none !important;
     }
 
-    .canvas-logo-center { display: none; }
+    /* Icon card on mobile — ensure it fills correctly */
+    .card-img-wrap.icon-wrap { aspect-ratio: 4 / 3; }
+
+    .canvas-left-col { display: none; }
     .card:hover .card-inner { transform: none; }
 
     .canvas-bottom-bar {
