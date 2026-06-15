@@ -558,6 +558,30 @@ const sortedPosts = allPosts.sort((a, b) =>
 
   .card:hover .card-img-wrap img { transform: scale(1.04); }
 
+  /* Journal icon card */
+  .card-img-wrap.icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #efefef;
+  }
+
+  .card-img-wrap.icon-wrap img { width: auto; height: auto; }
+
+  .journal-icon {
+    position: absolute;
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+  }
+
+  .journal-icon-default { opacity: 1; }
+  .journal-icon-hover   { opacity: 0; }
+
+  .card:hover .journal-icon-default { opacity: 0; }
+  .card:hover .journal-icon-hover   { opacity: 1; }
+
   .card-body { padding: 0.5rem 0.05rem 0; text-align: center; }
 
   .card-title {
@@ -932,8 +956,9 @@ const sortedPosts = allPosts.sort((a, b) =>
     <div class="card" data-panel="journal"
          style="--cx: 83%; --cy: 68%; --w: 215px;">
       <div class="card-inner">
-        <div class="card-img-wrap">
-          <img src="/art.jpg" alt="The Journal" />
+        <div class="card-img-wrap icon-wrap">
+          <img src="/icons/folder-fill.svg"      alt="" class="journal-icon journal-icon-default" />
+          <img src="/icons/folder-open-fill.svg" alt="" class="journal-icon journal-icon-hover" />
         </div>
         <div class="card-body"><span class="card-title">The Journal</span></div>
       </div>
