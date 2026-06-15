@@ -504,7 +504,7 @@ const sortedPosts = allPosts.sort((a, b) =>
     left: var(--cx);
     top: var(--cy);
     width: var(--w, 160px);
-    transform: translate(calc(-50% + var(--px, 0px)), calc(-50% + var(--py, 0px))) rotate(var(--rot, 0deg));
+    transform: translate(-50%, -50%);
     z-index: 1;
     cursor: pointer;
     user-select: none;
@@ -583,6 +583,53 @@ const sortedPosts = allPosts.sort((a, b) =>
   }
 
   .canvas-center-canvas { display: block; }
+
+  /* ─── TYPEWRITER ─── */
+  .canvas-typewriter {
+    position: absolute;
+    left: 6%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36%;
+    pointer-events: none;
+    user-select: none;
+    z-index: 3;
+  }
+
+  .typewriter-label {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #b0b8c4;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .typewriter-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 1.9vw, 1.65rem);
+    font-weight: 300;
+    color: var(--snd-black);
+    line-height: 1.45;
+    letter-spacing: -0.025em;
+    min-height: 3em;
+  }
+
+  .typewriter-cursor {
+    display: inline-block;
+    width: 1.5px;
+    height: 0.9em;
+    background: var(--snd-black);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 0.75s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
 
   /* ─── BOTTOM BAR ─── */
   .canvas-bottom-bar {
@@ -833,9 +880,17 @@ const sortedPosts = allPosts.sort((a, b) =>
       <canvas id="logoCanvas" class="canvas-center-canvas"></canvas>
     </div>
 
-    <!-- About SND (top-right) -->
-    <div class="card" data-speed="0.042" data-panel="about"
-         style="--cx: 82%; --cy: 30%; --rot: 4deg; --w: 235px;">
+    <!-- ★ TYPEWRITER — right half -->
+    <div class="canvas-typewriter" aria-live="polite">
+      <span class="typewriter-label">SND Studio</span>
+      <div class="typewriter-text">
+        <span id="typewriterText"></span><span class="typewriter-cursor"></span>
+      </div>
+    </div>
+
+    <!-- About SND (upper-right cluster) -->
+    <div class="card" data-panel="about"
+         style="--cx: 68%; --cy: 37%; --w: 225px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/art_tech.jpg" alt="About SND" />
@@ -844,9 +899,9 @@ const sortedPosts = allPosts.sort((a, b) =>
       </div>
     </div>
 
-    <!-- Design & Creative (upper-left) -->
-    <div class="card" data-speed="0.068" data-panel="design"
-         style="--cx: 18%; --cy: 30%; --rot: -3deg; --w: 225px;">
+    <!-- Design & Creative (upper-left of right cluster) -->
+    <div class="card" data-panel="design"
+         style="--cx: 55%; --cy: 35%; --w: 215px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/design.jpg" alt="Design & Creative" />
@@ -855,9 +910,9 @@ const sortedPosts = allPosts.sort((a, b) =>
       </div>
     </div>
 
-    <!-- Products (lower-left) -->
-    <div class="card" data-speed="0.072" data-panel="products"
-         style="--cx: 20%; --cy: 70%; --rot: -2deg; --w: 220px;">
+    <!-- Products (lower-left of right cluster) -->
+    <div class="card" data-panel="products"
+         style="--cx: 55%; --cy: 70%; --w: 215px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/fashion.jpg" alt="Products" />
@@ -866,9 +921,9 @@ const sortedPosts = allPosts.sort((a, b) =>
       </div>
     </div>
 
-    <!-- The Journal (lower-right) -->
-    <div class="card" data-speed="0.048" data-panel="journal"
-         style="--cx: 80%; --cy: 70%; --rot: 2deg; --w: 215px;">
+    <!-- The Journal (lower-right of right cluster) -->
+    <div class="card" data-panel="journal"
+         style="--cx: 68%; --cy: 70%; --w: 215px;">
       <div class="card-inner">
         <div class="card-img-wrap">
           <img src="/art.jpg" alt="The Journal" />
@@ -895,38 +950,12 @@ const sortedPosts = allPosts.sort((a, b) =>
 
   if (!cards.length || window.innerWidth <= 768 || !canvasWrap) return;
 
-  let mouseX = window.innerWidth  / 2;
-  let mouseY = window.innerHeight / 2;
-  let smoothX = mouseX;
-  let smoothY = mouseY;
-
   let dragCard: HTMLElement | null = null;
   let dragOffsetX = 0;
   let dragOffsetY = 0;
   let dragStartX = 0;
   let dragStartY = 0;
   let hasDragged = false;
-
-  function lerp(a: number, b: number, t: number): number { return a + (b - a) * t; }
-
-  function tick() {
-    smoothX = lerp(smoothX, mouseX, 0.07);
-    smoothY = lerp(smoothY, mouseY, 0.07);
-
-    const cx = window.innerWidth  / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (smoothX - cx) / cx;
-    const dy = (smoothY - cy) / cy;
-
-    cards.forEach((card) => {
-      if (card === dragCard) return;
-      const speed = parseFloat(card.dataset.speed ?? '0.04');
-      card.style.setProperty('--px', (dx * speed * 280) + 'px');
-      card.style.setProperty('--py', (dy * speed * 280) + 'px');
-    });
-
-    requestAnimationFrame(tick);
-  }
 
   cards.forEach((card) => {
     card.addEventListener('mousedown', (e: MouseEvent) => {
@@ -945,17 +974,12 @@ const sortedPosts = allPosts.sort((a, b) =>
 
       card.style.left = (rect.left + rect.width  / 2 - canvasRect.left) + 'px';
       card.style.top  = (rect.top  + rect.height / 2 - canvasRect.top)  + 'px';
-      card.style.setProperty('--px', '0px');
-      card.style.setProperty('--py', '0px');
 
       e.preventDefault();
     });
   });
 
   document.addEventListener('mousemove', (e: MouseEvent) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
     if (!dragCard) return;
 
     const dx = e.clientX - dragStartX;
@@ -988,8 +1012,6 @@ const sortedPosts = allPosts.sort((a, b) =>
     dragCard = null;
     hasDragged = false;
   });
-
-  requestAnimationFrame(tick);
 })();
 </script>
 
@@ -1075,6 +1097,58 @@ const sortedPosts = allPosts.sort((a, b) =>
 
   video.play().catch(() => {});
   requestAnimationFrame(drawFrame);
+})();
+</script>
+
+<script>
+(function () {
+  const el = document.getElementById('typewriterText') as HTMLElement | null;
+  if (!el) return;
+  const span = el;
+
+  const lines = [
+    "Think It. Create It.",
+    "A creative studio from Uganda.",
+    "Building intelligent, creative, and culturally relevant solutions.",
+    "Technology · Art & Design · Physical Goods.",
+    "10+ projects completed.",
+    "15+ happy clients.",
+    "Simplifying complex problems through thoughtful design.",
+    "World-class digital products originating from Uganda.",
+    "Every product must serve a clear purpose.",
+    "Design · Development · Physical Goods.",
+    "3+ years of building things that matter.",
+  ];
+
+  let lineIndex = 0;
+  let charIndex = 0;
+  let deleting = false;
+
+  function tick() {
+    const current = lines[lineIndex];
+
+    if (deleting) {
+      charIndex--;
+      span.textContent = current.slice(0, charIndex);
+      if (charIndex === 0) {
+        deleting = false;
+        lineIndex = (lineIndex + 1) % lines.length;
+        setTimeout(tick, 480);
+      } else {
+        setTimeout(tick, 22);
+      }
+    } else {
+      charIndex++;
+      span.textContent = current.slice(0, charIndex);
+      if (charIndex === current.length) {
+        setTimeout(() => { deleting = true; tick(); }, 2800);
+      } else {
+        setTimeout(tick, 52);
+      }
+    }
+  }
+
+  setTimeout(tick, 900);
 })();
 </script>
 
