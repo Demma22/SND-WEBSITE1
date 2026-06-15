@@ -558,30 +558,6 @@ const sortedPosts = allPosts.sort((a, b) =>
 
   .card:hover .card-img-wrap img { transform: scale(1.04); }
 
-  /* Journal icon card */
-  .card-img-wrap.icon-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #efefef;
-    border: none;
-  }
-
-  .card-img-wrap.icon-wrap img { width: auto; height: auto; }
-
-  .journal-icon {
-    position: absolute;
-    width: 110px;
-    height: 110px;
-    object-fit: contain;
-    transition: opacity 0.2s ease;
-  }
-
-  .journal-icon-default { opacity: 1; }
-  .journal-icon-hover   { opacity: 0; }
-
-  .card:hover .journal-icon-default { opacity: 0; }
-  .card:hover .journal-icon-hover   { opacity: 1; }
 
   .card-body { padding: 0.5rem 0.05rem 0; text-align: center; }
 
@@ -612,7 +588,8 @@ const sortedPosts = allPosts.sort((a, b) =>
   }
 
   .canvas-logo-center {
-    display: block;
+    display: flex;
+    justify-content: center;
     pointer-events: none;
   }
 
@@ -629,12 +606,13 @@ const sortedPosts = allPosts.sort((a, b) =>
 
   .typewriter-label {
     display: block;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #b0b8c4;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    text-transform: none;
+    color: rgba(52,57,64,0.45);
     margin-bottom: 1rem;
-    font-weight: 600;
+    font-weight: 400;
   }
 
   .typewriter-text {
@@ -662,16 +640,157 @@ const sortedPosts = allPosts.sort((a, b) =>
     50%       { opacity: 0; }
   }
 
+  /* ─── TODAY'S HIGHLIGHT ─── */
+  .today-highlight {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    pointer-events: auto;
+  }
+
+  .highlight-label {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    text-transform: none;
+    color: rgba(52,57,64,0.45);
+    font-weight: 400;
+  }
+
+  .highlight-card {
+    display: flex;
+    flex-direction: row;
+    text-decoration: none;
+    border: 1px solid rgba(52,57,64,0.11);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(6px);
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    width: 100%;
+  }
+
+  .highlight-card:hover {
+    border-color: rgba(52,57,64,0.26);
+    box-shadow: 0 4px 18px rgba(52,57,64,0.07);
+  }
+
+  .highlight-img-wrap {
+    width: 110px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #f0f0f0;
+  }
+
+  .highlight-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    transition: transform 0.35s ease;
+  }
+
+  .highlight-card:hover .highlight-img-wrap img {
+    transform: scale(1.04);
+  }
+
+  .highlight-body {
+    padding: 0.85rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .highlight-meta {
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(52,57,64,0.3);
+  }
+
+  .highlight-name {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--snd-dark);
+    line-height: 1.2;
+  }
+
+  .highlight-desc {
+    font-size: 0.73rem;
+    color: rgba(52,57,64,0.52);
+    line-height: 1.55;
+    margin-top: 0.1rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .highlight-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.55rem;
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--snd-dark);
+    letter-spacing: 0.04em;
+  }
+
+  .highlight-cta::after {
+    content: '→';
+    transition: transform 0.2s;
+  }
+
+  .highlight-card:hover .highlight-cta::after {
+    transform: translateX(3px);
+  }
+
+  /* ─── SOCIAL ROW ─── */
+  .social-row {
+    display: flex;
+    gap: 1.1rem;
+    align-items: center;
+    pointer-events: auto;
+  }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.28;
+    transition: opacity 0.2s;
+    text-decoration: none;
+  }
+
+  .social-link:hover { opacity: 0.75; }
+
+  .social-link img {
+    width: 17px;
+    height: 17px;
+    display: block;
+  }
+
   /* ─── BOTTOM BAR ─── */
   .canvas-bottom-bar {
     position: absolute;
     bottom: 0; left: 0; right: 0;
     z-index: 5;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 0.7rem;
     padding-bottom: 1.2rem;
     pointer-events: none;
+  }
+
+  /* On desktop the left-col social row handles it; hide bottom-bar one */
+  @media (min-width: 769px) {
+    .social-row-bottom { display: none; }
   }
 
   .canvas-credit {
@@ -718,9 +837,6 @@ const sortedPosts = allPosts.sort((a, b) =>
       width: 100% !important;
       transform: none !important;
     }
-
-    /* Icon card on mobile — ensure it fills correctly */
-    .card-img-wrap.icon-wrap { aspect-ratio: 4 / 3; }
 
     .canvas-left-col { display: none; }
     .card:hover .card-inner { transform: none; }
@@ -921,6 +1037,39 @@ const sortedPosts = allPosts.sort((a, b) =>
           <span id="typewriterText"></span><span class="typewriter-cursor"></span>
         </div>
       </div>
+
+      <div class="today-highlight">
+        <span class="highlight-label">Today's Highlight</span>
+        <a href="#" class="highlight-card">
+          <div class="highlight-img-wrap">
+            <img src="/remi_screenshot.png" alt="Remi" />
+          </div>
+          <div class="highlight-body">
+            <span class="highlight-meta">Product · AI Tools</span>
+            <span class="highlight-name">Remi</span>
+            <span class="highlight-desc">An AI-powered review and feedback tool built for creative teams. Share work, collect structured feedback, and ship faster.</span>
+            <span class="highlight-cta">Explore Remi</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="social-row">
+        <a href="https://instagram.com/sndstudio.ug" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
+          <img src="/instagram.svg" alt="Instagram" />
+        </a>
+        <a href="https://tiktok.com/@sndstudio.ug" class="social-link" aria-label="TikTok" target="_blank" rel="noopener">
+          <img src="/tiktok.svg" alt="TikTok" />
+        </a>
+        <a href="https://x.com/sndstudio_ug" class="social-link" aria-label="X" target="_blank" rel="noopener">
+          <img src="/x.svg" alt="X" />
+        </a>
+        <a href="https://threads.net/@sndstudio.ug" class="social-link" aria-label="Threads" target="_blank" rel="noopener">
+          <img src="/threads.svg" alt="Threads" />
+        </a>
+        <a href="https://pinterest.com/sndstudio_ug" class="social-link" aria-label="Pinterest" target="_blank" rel="noopener">
+          <img src="/pinterest.svg" alt="Pinterest" />
+        </a>
+      </div>
     </div>
 
     <!-- About SND (upper-right cluster) -->
@@ -960,9 +1109,8 @@ const sortedPosts = allPosts.sort((a, b) =>
     <div class="card" data-panel="journal"
          style="--cx: 83%; --cy: 68%; --w: 215px;">
       <div class="card-inner">
-        <div class="card-img-wrap icon-wrap">
-          <img src="/icons/folder-fill.svg"      alt="" class="journal-icon journal-icon-default" />
-          <img src="/icons/folder-open-fill.svg" alt="" class="journal-icon journal-icon-hover" />
+        <div class="card-img-wrap">
+          <img src="/digital.jpg" alt="The Journal" />
         </div>
         <div class="card-body"><span class="card-title">The Journal</span></div>
       </div>
@@ -971,6 +1119,23 @@ const sortedPosts = allPosts.sort((a, b) =>
   </div>
 
   <div class="canvas-bottom-bar">
+    <div class="social-row social-row-bottom">
+      <a href="https://instagram.com/sndstudio.ug" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
+        <img src="/instagram.svg" alt="Instagram" />
+      </a>
+      <a href="https://tiktok.com/@sndstudio.ug" class="social-link" aria-label="TikTok" target="_blank" rel="noopener">
+        <img src="/tiktok.svg" alt="TikTok" />
+      </a>
+      <a href="https://x.com/sndstudio_ug" class="social-link" aria-label="X" target="_blank" rel="noopener">
+        <img src="/x.svg" alt="X" />
+      </a>
+      <a href="https://threads.net/@sndstudio.ug" class="social-link" aria-label="Threads" target="_blank" rel="noopener">
+        <img src="/threads.svg" alt="Threads" />
+      </a>
+      <a href="https://pinterest.com/sndstudio_ug" class="social-link" aria-label="Pinterest" target="_blank" rel="noopener">
+        <img src="/pinterest.svg" alt="Pinterest" />
+      </a>
+    </div>
     <div class="canvas-credit">
       <span>© 2026 SND</span>
       <a href="/terms">Terms</a>
@@ -1098,7 +1263,7 @@ const sortedPosts = allPosts.sort((a, b) =>
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   if (!ctx) return;
 
-  const DISPLAY_H = 200;
+  const DISPLAY_H = 155;
   let ready = false;
 
   function setup() {
