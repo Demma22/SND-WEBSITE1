@@ -1,1387 +1,893 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
 import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('blog');
 const sortedPosts = allPosts.sort((a, b) =>
   new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
 );
+
+const journalPanelCards = [
+  ...sortedPosts.slice(0, 2).map((p, i) => ({
+    num: String(i + 1).padStart(2, '0'),
+    h: p.data.title,
+    p: p.data.description ?? '',
+    href: `/blog/${p.id}`,
+  })),
+  { num: '03', h: 'More coming soon', p: 'New perspectives on design, technology, and culture drop regularly.', href: null },
+];
 ---
 
-<BaseLayout title="SND: Think It, Let's Create It">
+<BaseLayout title="SND: Think It. Create It.">
+
+<!-- ── HEADER ── -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="/" class="logo-link">
+      <img src="/snd.png" alt="SND" class="logo-img" />
+    </a>
+    <nav class="nav-links">
+      <a href="#work"     class="nav-link">Work</a>
+      <a href="#services" class="nav-link">Services</a>
+      <a href="#studio"   class="nav-link">Studio</a>
+      <a href="#journal"  class="nav-link">Journal</a>
+      <a href="#contact"  class="nav-link">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="#contact" class="btn btn--dark btn--small">Start a project</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile nav -->
+<nav class="mobile-nav" id="mobileNav">
+  <a href="#work">Work</a>
+  <a href="#services">Services</a>
+  <a href="#studio">Studio</a>
+  <a href="#journal">Journal</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- Panel backdrop + panel -->
+<div class="panel-backdrop" id="panelBackdrop"></div>
+<aside class="panel" id="panel" aria-label="Section details">
+  <button class="panel-close" id="panelClose" aria-label="Close">&#x2715;</button>
+  <div class="panel-inner" id="panelInner"></div>
+</aside>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="container hero-inner">
+    <div class="hero-content reveal">
+      <span class="eyebrow">A creative studio from Uganda</span>
+      <h1 class="hero-title">Think It.<br />Create It.</h1>
+      <p class="hero-subtitle">
+        We turn ideas into reality through thoughtful design, innovative development,
+        and genuine collaboration. Building intelligent, creative, and culturally relevant solutions.
+      </p>
+      <div class="hero-cta">
+        <a href="#work"    class="btn btn--dark">View our work <span class="arrow">&#8594;</span></a>
+        <a href="#contact" class="btn btn--ghost-dark">Work with us</a>
+      </div>
+    </div>
+    <div class="hero-visual reveal">
+      <div class="hero-img-wrap">
+        <img src="/art_tech.jpg" alt="SND creative work" />
+      </div>
+      <div class="hero-badge">
+        <span class="hero-badge-num">10+</span>
+        <span class="hero-badge-label">Projects shipped</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <span class="scroll-line"></span>
+  </div>
+</section>
+
+<!-- ── FEATURE STRIP ── -->
+<section class="feature-strip">
+  <div class="container feature-strip-inner">
+    <div class="feature-strip-item">
+      <span class="fs-label">Design</span>
+      <span class="fs-value">Human-first</span>
+    </div>
+    <div class="feature-strip-item">
+      <span class="fs-label">Built in</span>
+      <span class="fs-value">Uganda</span>
+    </div>
+    <div class="feature-strip-item">
+      <span class="fs-label">Disciplines</span>
+      <span class="fs-value">Tech &middot; Art &middot; Goods</span>
+    </div>
+    <div class="feature-strip-item">
+      <span class="fs-label">Since</span>
+      <span class="fs-value">2023</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORK / CARDS ── -->
+<section class="work" id="work">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Selected work</span>
+      <h2 class="section-title">Explore the studio.</h2>
+      <p class="section-desc">Three disciplines, one philosophy. Click any card to dive in.</p>
+    </div>
+    <div class="work-grid">
+      <article class="work-card reveal" data-panel="studio">
+        <div class="work-card-img">
+          <img src="/art_tech.jpg" alt="About SND" />
+          <span class="work-card-num">01</span>
+        </div>
+        <div class="work-card-body">
+          <h3>About SND</h3>
+          <p>The story, the mission, the people behind the studio.</p>
+          <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
+        </div>
+      </article>
+      <article class="work-card reveal" data-panel="services">
+        <div class="work-card-img">
+          <img src="/design.jpg" alt="Design & Creative" />
+          <span class="work-card-num">02</span>
+        </div>
+        <div class="work-card-body">
+          <h3>Design &amp; Creative</h3>
+          <p>Branding, UI/UX, and motion that communicates clearly.</p>
+          <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
+        </div>
+      </article>
+      <article class="work-card reveal" data-panel="products">
+        <div class="work-card-img">
+          <img src="/fashion.jpg" alt="Products" />
+          <span class="work-card-num">03</span>
+        </div>
+        <div class="work-card-body">
+          <h3>Products</h3>
+          <p>Physical goods that extend the studio into the world.</p>
+          <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
+        </div>
+      </article>
+      <article class="work-card reveal" data-panel="journal">
+        <div class="work-card-img">
+          <img src="/digital.jpg" alt="The Journal" />
+          <span class="work-card-num">04</span>
+        </div>
+        <div class="work-card-body">
+          <h3>The Journal</h3>
+          <p>Ideas and perspectives on design, technology, and culture.</p>
+          <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ── STUDIO ── -->
+<section class="studio" id="studio">
+  <div class="container studio-inner">
+    <div class="studio-copy reveal">
+      <span class="eyebrow eyebrow--light">The studio</span>
+      <h2 class="section-title section-title--light">
+        Building world-class<br />products from Uganda.
+      </h2>
+      <p class="studio-lead">
+        SND is a creative studio combining technology, art, and design to build
+        intelligent, culturally relevant solutions. We believe world-class digital
+        products can originate from anywhere and serve both local and global audiences.
+      </p>
+      <div class="studio-mv">
+        <div class="mv-card">
+          <span class="mv-label">Our Vision</span>
+          <h4>To become a leading African brand</h4>
+          <p>Demonstrating that world-class digital products can originate from Uganda and serve both local and global audiences.</p>
+        </div>
+        <div class="mv-card">
+          <span class="mv-label">Our Mission</span>
+          <h4>Simplify complex problems</h4>
+          <p>Through thoughtful, well-crafted systems that combine functional design, artificial intelligence, and genuine human understanding.</p>
+        </div>
+      </div>
+    </div>
+    <div class="studio-visual reveal">
+      <div class="studio-img-main">
+        <img src="/physical.jpg" alt="SND physical goods" />
+      </div>
+      <div class="studio-stats">
+        <div class="stat">
+          <span class="stat-n" data-target="10">0</span><span class="stat-plus">+</span>
+          <span class="stat-l">Projects</span>
+        </div>
+        <div class="stat">
+          <span class="stat-n" data-target="15">0</span><span class="stat-plus">+</span>
+          <span class="stat-l">Clients</span>
+        </div>
+        <div class="stat">
+          <span class="stat-n" data-target="3">0</span><span class="stat-plus">+</span>
+          <span class="stat-l">Years</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">What we do</span>
+      <h2 class="section-title">Three disciplines, one standard.</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <span class="service-num">01</span>
+        <div class="service-icon-wrap"><img src="/tech.jpg" alt="Technology" /></div>
+        <h3>Technology</h3>
+        <p>Building applications, tools, and platforms designed to solve real-world organizational and productivity problems. From concept to launch, scalable digital systems with long-term usability.</p>
+      </div>
+      <div class="service-card reveal">
+        <span class="service-num">02</span>
+        <div class="service-icon-wrap"><img src="/design.jpg" alt="Art & Design" /></div>
+        <h3>Art &amp; Design</h3>
+        <p>Creating visual identity systems, interfaces, motion graphics, and brand experiences that combine clarity with aesthetics. Every decision strengthens usability, communication, and perception.</p>
+      </div>
+      <div class="service-card reveal">
+        <span class="service-num">03</span>
+        <div class="service-icon-wrap"><img src="/fashion.jpg" alt="Fashion & Physical Goods" /></div>
+        <h3>Fashion &amp; Physical Goods</h3>
+        <p>Expanding the SND ecosystem through thoughtfully designed merchandise and physical products that increase visibility, strengthen identity, and create additional revenue channels.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HIGHLIGHT / NOTEBOOK ── -->
+<section class="highlight">
+  <div class="container highlight-inner">
+    <div class="highlight-img reveal">
+      <img src="/physical.jpg" alt="The Lineless Notebook" />
+    </div>
+    <div class="highlight-copy reveal">
+      <span class="eyebrow">Today's highlight &middot; Physical Goods</span>
+      <h2 class="section-title">The Lineless Notebook.</h2>
+      <p class="highlight-desc">
+        No rules, just space. A clean, minimal notebook designed for creative minds.
+        Sketch, write, and think freely without constraints.
+      </p>
+      <a href="#contact" class="btn btn--dark">Shop now <span class="arrow">&#8594;</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ── JOURNAL ── -->
+<section class="journal" id="journal">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Journal</span>
+      <h2 class="section-title">Ideas worth sharing.</h2>
+      <p class="section-desc">Stories and perspectives on design, technology, and culture.</p>
+    </div>
+    <div class="journal-grid">
+      {sortedPosts.map((post) => (
+        <a href={`/blog/${post.id}`} class="journal-card reveal">
+          <div class="journal-card-img">
+            <img src={post.data.image ?? '/digital.jpg'} alt={post.data.title} />
+          </div>
+          <div class="journal-card-body">
+            <span class="journal-date">{post.data.pubDate} &middot; SND Team</span>
+            <h3>{post.data.title}</h3>
+            <p>{post.data.description}</p>
+            <span class="journal-cta">Read more <span class="arrow">&#8594;</span></span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta" id="contact">
+  <div class="container cta-inner reveal">
+    <span class="eyebrow eyebrow--light">Let's build something</span>
+    <h2 class="cta-title">Have a project<br />in mind?</h2>
+    <p class="cta-desc">Think it. Let's create it together.</p>
+    <div class="cta-actions">
+      <a href="mailto:hello@sndstudio-ug.com" class="btn btn--light">hello@sndstudio-ug.com <span class="arrow">&#8594;</span></a>
+      <a href="tel:+256742072661" class="btn btn--ghost-light">+256 742 072 661</a>
+    </div>
+    <div class="cta-socials">
+      <a href="https://instagram.com/sndstudio.ug" aria-label="Instagram" target="_blank" rel="noopener"><img src="/instagram.svg" alt="Instagram" /></a>
+      <a href="https://tiktok.com/@sndstudio.ug"   aria-label="TikTok"    target="_blank" rel="noopener"><img src="/tiktok.svg"    alt="TikTok" /></a>
+      <a href="https://x.com/sndstudio_ug"          aria-label="X"         target="_blank" rel="noopener"><img src="/x.svg"         alt="X" /></a>
+      <a href="https://threads.net/@sndstudio.ug"   aria-label="Threads"   target="_blank" rel="noopener"><img src="/threads.svg"   alt="Threads" /></a>
+      <a href="https://pinterest.com/sndstudio_ug"  aria-label="Pinterest" target="_blank" rel="noopener"><img src="/pinterest.svg" alt="Pinterest" /></a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<Footer />
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+  /* ── TOKENS ── */
   :root {
-    --snd-dark:   #343940;
-    --snd-light:  #CFCFD3;
-    --snd-black:  #0d0d0d;
-    --snd-white:  #ffffff;
-    --font-display: 'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
-    --font-body:    'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
-    --header-h:   52px;
+    --black:    #0a0a0a;
+    --white:    #ffffff;
+    --gray-50:  #fafafa;
+    --gray-100: #f5f5f5;
+    --gray-200: #e5e5e5;
+    --gray-400: #a3a3a3;
+    --gray-600: #525252;
+    --gray-900: #171717;
+    --font:     'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    --ease:     cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --maxw:     1240px;
+    --r:        2px;
+    --header-h: 60px;
   }
 
-  /* ─── HEADER ─── */
+  /* ── RESET ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--white);
+    color: var(--black);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+
+  /* ── HEADER ── */
   .site-header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
+    position: fixed; top: 0; left: 0; right: 0;
     height: var(--header-h);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(52,57,64,0.14);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
     z-index: 100;
-  }
-
-  .logo-link { display: flex; align-items: center; text-decoration: none; }
-  .logo-img  { height: 30px; width: auto; }
-
-  /* ─── INFO PANEL ─── */
-  .info-panel {
-    position: fixed;
-    top: var(--header-h);
-    left: 0; right: 0;
-    z-index: 95;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(52,57,64,0.14);
-    box-shadow: none;
-    max-height: 82vh;
-    overflow-y: auto;
-    transform: translateY(-102%);
-    transition: transform 0.48s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .info-panel.open { transform: translateY(0); }
-
-  .panel-backdrop {
-    position: fixed;
-    inset: 0;
-    top: var(--header-h);
-    z-index: 94;
-    background: rgba(0,0,0,0);
-    pointer-events: none;
-    transition: background 0.45s ease;
-  }
-
-  .panel-backdrop.active {
-    background: rgba(0,0,0,0.08);
-    pointer-events: auto;
-  }
-
-  .panel-inner {
-    max-width: 1160px;
-    margin: 0 auto;
-    padding: 2.6rem 3rem 3rem;
-    position: relative;
-  }
-
-  .panel-close {
-    position: sticky;
-    top: 0;
-    float: right;
-    margin-bottom: -30px;
-    background: rgba(255,255,255,0.9);
-    border: 1px solid rgba(52,57,64,0.14);
-    cursor: pointer;
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--snd-dark);
-    font-size: 0.95rem;
-    opacity: 0.6;
-    transition: opacity 0.2s, background 0.2s;
-    z-index: 10;
-  }
-
-  .panel-close:hover { opacity: 1; background: rgba(52,57,64,0.06); }
-
-  .panel-content { display: none; }
-  .panel-content.active { display: block; }
-
-  /* ── Shared panel label/link ── */
-  .panel-tag {
-    display: inline-block;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #aaa;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-
-  .panel-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--snd-black);
-    text-decoration: none;
-    border-bottom: 1px solid rgba(13,13,13,0.3);
-    padding-bottom: 0.12rem;
-    transition: opacity 0.2s;
-  }
-
-  .panel-link:hover { opacity: 0.5; border-color: transparent; }
-
-  /* ══ ABOUT PANEL ══ */
-  .about-hero {
-    margin-bottom: 2.4rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid rgba(52,57,64,0.08);
-  }
-
-  .about-hero h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2.4rem, 4vw, 3.6rem);
-    font-weight: 400;
-    color: var(--snd-black);
-    line-height: 1.05;
-    letter-spacing: -0.04em;
-    margin-bottom: 0.75rem;
-  }
-
-  .about-hero p {
-    font-size: 0.9rem;
-    color: #6b7280;
-    max-width: 540px;
-    line-height: 1.7;
-  }
-
-  .about-mv-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .about-mv-card {
-    background: #ffffff;
-    border: 1px solid rgba(52,57,64,0.12);
-    border-radius: 4px;
-    padding: 1.4rem 1.6rem;
-  }
-
-  .about-mv-card .mv-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #aaa;
-    font-weight: 600;
-    margin-bottom: 0.6rem;
-  }
-
-  .about-mv-card h3 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--snd-black);
-    margin-bottom: 0.55rem;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-  }
-
-  .about-mv-card p {
-    font-size: 0.8rem;
-    color: #6b7280;
-    line-height: 1.7;
-  }
-
-  .about-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    padding: 1.5rem 0;
-    border-top: 1px solid rgba(52,57,64,0.09);
-    border-bottom: 1px solid rgba(52,57,64,0.09);
-    margin-bottom: 2.2rem;
-  }
-
-  .about-stat { text-align: center; }
-
-  .about-stat .stat-n {
-    display: block;
-    font-size: 2rem;
-    font-weight: 400;
-    color: var(--snd-black);
-    letter-spacing: -0.05em;
-    line-height: 1;
-    margin-bottom: 0.3rem;
-  }
-
-  .about-stat .stat-l {
-    font-size: 0.65rem;
-    color: #b0b8c4;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .about-areas-header {
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #aaa;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .about-areas-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-  }
-
-  .about-area-card {
-    border: 1px solid rgba(52,57,64,0.12);
-    border-radius: 4px;
-    padding: 1.4rem;
-    background: #ffffff;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  .about-area-card:hover {
-    background: #0d0d0d;
-    border-color: #0d0d0d;
-  }
-
-  .about-area-card:hover .area-num,
-  .about-area-card:hover h4,
-  .about-area-card:hover p { color: #fff; }
-
-  .area-num {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #c0c0c0;
-    margin-bottom: 0.9rem;
-    transition: color 0.3s;
-  }
-
-  .about-area-card h4 {
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: var(--snd-black);
-    margin-bottom: 0.6rem;
-    letter-spacing: -0.02em;
-    transition: color 0.3s;
-  }
-
-  .about-area-card p {
-    font-size: 0.78rem;
-    color: #6b7280;
-    line-height: 1.65;
-    margin-bottom: 0.9rem;
-    transition: color 0.3s;
-  }
-
-  /* ══ JOURNAL PANEL ══ */
-  .journal-header {
-    display: grid;
-    grid-template-columns: 210px 1fr;
-    gap: 3rem;
-    align-items: start;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(52,57,64,0.08);
-  }
-
-  .journal-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 3vw, 2.8rem);
-    font-weight: 400;
-    color: var(--snd-black);
-    line-height: 1.05;
-    letter-spacing: -0.04em;
-    display: block;
-    margin-bottom: 1.2rem;
-  }
-
-  .journal-desc {
-    font-size: 0.82rem;
-    color: #6b7280;
-    line-height: 1.7;
-    max-width: 480px;
-  }
-
-  .journal-posts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .journal-post-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    border: 1px solid rgba(52,57,64,0.12);
-    border-radius: 4px;
-    padding: 1.3rem 1.4rem;
     transition: border-color 0.2s;
   }
-
-  .journal-post-link:hover {
-    border-color: var(--snd-black);
+  .site-header.is-scrolled { border-bottom-color: var(--gray-200); }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 100%; gap: 24px;
   }
-
-  .journal-post-date {
-    font-size: 0.62rem;
-    color: #b0b8c4;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
+  .logo-link { display: flex; align-items: center; gap: 8px; }
+  .logo-img  { height: 26px; width: auto; }
+.nav-links { display: flex; }
+  .nav-link {
+    padding: 8px 14px; font-size: 0.8rem; font-weight: 500;
+    color: var(--gray-600); transition: color 0.15s;
   }
+  .nav-link:hover { color: var(--black); }
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+  .nav-toggle { display: none; flex-direction: column; gap: 5px; padding: 8px; }
+  .nav-toggle span { width: 20px; height: 1px; background: var(--black); transition: 0.25s; display: block; }
 
-  .journal-post-title {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--snd-black);
-    line-height: 1.35;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
+  /* ── MOBILE NAV ── */
+  .mobile-nav {
+    display: none; position: fixed;
+    top: var(--header-h); left: 0; right: 0;
+    background: var(--white); border-bottom: 1px solid var(--gray-200);
+    flex-direction: column; padding: 8px 20px;
+    transform: translateY(-110%); transition: transform 0.3s var(--ease);
+    z-index: 90;
   }
-
-  .journal-post-desc {
-    font-size: 0.75rem;
-    color: #8a9bb0;
-    line-height: 1.55;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  .mobile-nav.is-open { transform: translateY(0); }
+  .mobile-nav a {
+    padding: 14px 0; border-bottom: 1px solid var(--gray-100);
+    font-size: 0.9rem; font-weight: 500;
   }
+  .mobile-nav a:last-child { border-bottom: none; }
 
-  .journal-empty {
-    padding: 2rem;
-    text-align: center;
-    color: #aaa;
-    font-size: 0.82rem;
-    border: 1px dashed rgba(52,57,64,0.15);
-    border-radius: 8px;
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px; border-radius: var(--r);
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: all 0.18s var(--ease); white-space: nowrap; cursor: pointer;
   }
+  .btn--small { padding: 8px 16px; font-size: 0.74rem; }
+  .btn--dark        { background: var(--black); color: var(--white);  border: 1px solid var(--black); }
+  .btn--dark:hover  { background: var(--gray-900); }
+  .btn--ghost-dark  { background: transparent; color: var(--black);  border: 1px solid var(--black); }
+  .btn--ghost-dark:hover { background: var(--black); color: var(--white); }
+  .btn--light       { background: var(--white); color: var(--black);  border: 1px solid var(--white); }
+  .btn--light:hover { background: var(--gray-100); }
+  .btn--ghost-light { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.35); }
+  .btn--ghost-light:hover { background: var(--white); color: var(--black); border-color: var(--white); }
+  .arrow { display: inline-block; transition: transform 0.2s; }
+  .btn:hover .arrow { transform: translateX(3px); }
 
-  /* ══ PRODUCTS PANEL ══ */
-  .products-header {
-    display: grid;
-    grid-template-columns: 210px 1fr;
-    gap: 3rem;
-    align-items: start;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(52,57,64,0.08);
+  /* ── LABELS ── */
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gray-400); margin-bottom: 16px;
   }
-
-  .products-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 3vw, 2.8rem);
-    font-weight: 400;
-    color: var(--snd-black);
-    line-height: 1.05;
-    letter-spacing: -0.04em;
-    display: block;
-    margin-bottom: 1.2rem;
+  .eyebrow--light { color: rgba(255,255,255,0.45); }
+  .section-head { text-align: center; max-width: 560px; margin: 0 auto 56px; }
+  .section-title {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 500; line-height: 1.02; letter-spacing: -0.035em;
   }
+  .section-title--light { color: var(--white); }
+  .section-desc { color: var(--gray-600); margin-top: 14px; font-size: 0.96rem; }
 
-  .products-desc {
-    font-size: 0.82rem;
-    color: #6b7280;
-    line-height: 1.7;
-    max-width: 480px;
+  /* ── HERO ── */
+  .hero {
+    padding: calc(var(--header-h) + 80px) 0 80px;
+    position: relative; overflow: hidden;
   }
-
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-  }
-
-  .product-panel-card {
-    border: 1px solid rgba(52,57,64,0.12);
-    border-radius: 4px;
-    padding: 1.4rem;
-    background: #ffffff;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  .product-panel-card:hover {
-    background: #0d0d0d;
-    border-color: #0d0d0d;
-  }
-
-  .product-panel-card:hover h4,
-  .product-panel-card:hover p { color: #fff; }
-
-  .product-panel-card h4 {
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: var(--snd-black);
-    margin-bottom: 0.55rem;
-    letter-spacing: -0.02em;
-    transition: color 0.3s;
-  }
-
-  .product-panel-card p {
-    font-size: 0.78rem;
-    color: #6b7280;
-    line-height: 1.65;
-    margin-bottom: 0.9rem;
-    transition: color 0.3s;
-  }
-
-  /* ══ DESIGN PANEL ══ */
-  .design-panel-layout {
-    display: grid;
-    grid-template-columns: 210px 1fr;
-    gap: 3.5rem;
-    align-items: start;
-  }
-
-  .design-panel-left {}
-
-  .design-panel-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 3vw, 2.8rem);
-    font-weight: 400;
-    color: var(--snd-black);
-    line-height: 1.05;
-    letter-spacing: -0.04em;
-    display: block;
-    margin-bottom: 1.2rem;
-  }
-
-  .panel-cols {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem 2.5rem;
-  }
-
-  .panel-col {
-    border-top: 1px solid rgba(52,57,64,0.1);
-    padding-top: 1rem;
-  }
-
-  .panel-col h4 {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--snd-black);
-    margin-bottom: 0.55rem;
-    letter-spacing: -0.01em;
-  }
-
-  .panel-col p {
-    font-size: 0.78rem;
-    color: #7a828c;
-    line-height: 1.7;
-  }
-
-
-  /* ─── CANVAS WRAP ─── */
-  .canvas-wrap {
-    position: fixed;
-    top: var(--header-h);
-    left: 0; right: 0; bottom: 0;
-    overflow: hidden;
-    background-color: #f9f9f9;
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
     background-image: radial-gradient(circle, rgba(0,0,0,0.5) 0.9px, transparent 0.9px);
     background-size: 8rem 8rem;
+    mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, #000 30%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, #000 30%, transparent 85%);
   }
-
-  .cards-grid {
-    position: relative;
-    width: 100%;
-    height: 100%;
+  .hero-inner {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center;
   }
-
-  /* ─── CARD BASE ─── */
-  .card {
-    position: absolute;
-    left: var(--cx);
-    top: var(--cy);
-    width: var(--w, 160px);
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    cursor: pointer;
-    user-select: none;
+  .hero-content { max-width: 560px; }
+  .hero-title {
+    font-size: clamp(3rem, 6.5vw, 5.4rem);
+    font-weight: 500; line-height: 0.94;
+    letter-spacing: -0.045em; margin-bottom: 24px;
   }
-
-  .card:hover { z-index: 10; }
-
-  .card.dragging {
-    z-index: 100;
-    cursor: grabbing !important;
+  .hero-subtitle {
+    font-size: 0.98rem; color: var(--gray-600);
+    line-height: 1.72; margin-bottom: 32px; max-width: 420px;
   }
-
-  .card.dragging .card-img-wrap {
-    box-shadow: 0 24px 56px rgba(0,0,0,0.2);
+  .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-visual { position: relative; }
+  .hero-img-wrap {
+    border-radius: var(--r); overflow: hidden;
+    aspect-ratio: 4/5; border: 1px solid var(--gray-200);
   }
-
-  .card-inner {
-    display: block;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  .hero-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s var(--ease);
   }
-
-  .card.dragging .card-inner { transition: none; }
-  .card:hover .card-inner { transform: translateY(-6px); }
-
-  .card-img-wrap {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    border-radius: 4px;
-    overflow: hidden;
-    background: var(--snd-light);
-    border: 1px solid rgba(52,57,64,0.13);
-    box-shadow: none;
+  .hero-img-wrap:hover img { transform: scale(1.03); }
+  .hero-badge {
+    position: absolute; bottom: 24px; left: -20px;
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--r); padding: 14px 18px;
+    display: flex; flex-direction: column;
   }
-
-  .card:hover .card-img-wrap {
-    border-color: rgba(52,57,64,0.3);
+  .hero-badge-num { font-size: 1.8rem; font-weight: 800; line-height: 1; letter-spacing: -0.04em; }
+  .hero-badge-label {
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gray-400); margin-top: 4px;
   }
-
-  .card.dragging .card-img-wrap {
-    box-shadow: 0 16px 40px rgba(0,0,0,0.14);
-    border-color: rgba(52,57,64,0.2);
+  .scroll-cue {
+    position: absolute; bottom: 28px; left: 32px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-400);
   }
+  .scroll-line { width: 40px; height: 1px; background: var(--gray-400); }
 
-  .card-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.5s ease;
+  /* ── FEATURE STRIP ── */
+  .feature-strip { background: var(--black); color: var(--white); }
+  .feature-strip-inner {
+    display: grid; grid-template-columns: repeat(4, 1fr);
   }
-
-  .card:hover .card-img-wrap img { transform: scale(1.04); }
-
-
-  .card-body { padding: 0.5rem 0.05rem 0; text-align: center; }
-
-  .card-title {
-    display: -webkit-box;
-    font-family: var(--font-display);
-    font-size: 0.88rem;
-    font-weight: 400;
-    color: var(--snd-black);
-    line-height: 1.25;
-    overflow: hidden;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  .feature-strip-item {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 26px 32px;
+    border-right: 1px solid rgba(255,255,255,0.07);
   }
-
-  /* ─── LEFT COLUMN (logo + typewriter stacked) ─── */
-  .canvas-left-col {
-    position: absolute;
-    left: 6%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 36%;
-    display: flex;
-    flex-direction: column;
-    gap: 1.8rem;
-    z-index: 3;
-    pointer-events: none;
+  .feature-strip-item:last-child { border-right: none; }
+  .fs-label {
+    font-size: 0.58rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.38);
   }
+  .fs-value { font-size: 0.9rem; font-weight: 500; }
 
-  .canvas-logo-center {
-    display: flex;
-    justify-content: center;
-    pointer-events: none;
+  /* ── WORK CARDS ── */
+  .work { padding: 100px 0; }
+  .work-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
   }
-
-  .canvas-center-canvas { display: block; }
-
-  /* ─── TYPEWRITER ─── */
-  .canvas-typewriter {
-    pointer-events: none;
-    width: 100%;
-    pointer-events: none;
-    user-select: none;
-    z-index: 3;
+  .work-card {
+    background: var(--white); cursor: pointer;
+    transition: background 0.18s; display: flex; flex-direction: column;
   }
-
-  .typewriter-label {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 0.78rem;
-    letter-spacing: 0;
-    text-transform: none;
-    color: rgba(52,57,64,0.45);
-    margin-bottom: 1rem;
-    font-weight: 400;
+  .work-card:hover { background: var(--gray-50); }
+  .work-card-img { position: relative; aspect-ratio: 1; overflow: hidden; }
+  .work-card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s var(--ease);
   }
-
-  .typewriter-text {
-    font-family: var(--font-display);
-    font-size: clamp(1.1rem, 1.9vw, 1.65rem);
-    font-weight: 300;
-    color: var(--snd-black);
-    line-height: 1.45;
-    letter-spacing: -0.025em;
-    min-height: 3em;
+  .work-card:hover .work-card-img img { transform: scale(1.05); }
+  .work-card-num {
+    position: absolute; top: 12px; left: 12px;
+    font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em;
+    color: var(--gray-600); background: rgba(255,255,255,0.92);
+    padding: 3px 8px;
   }
-
-  .typewriter-cursor {
-    display: inline-block;
-    width: 1.5px;
-    height: 0.9em;
-    background: var(--snd-black);
-    margin-left: 2px;
-    vertical-align: middle;
-    animation: blink 0.75s step-end infinite;
+  .work-card-body {
+    padding: 20px 22px 24px;
+    border-top: 1px solid var(--gray-200); flex: 1;
   }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
+  .work-card-body h3 { font-size: 0.98rem; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .work-card-body p  { font-size: 0.8rem; color: var(--gray-600); margin-bottom: 14px; line-height: 1.55; }
+  .work-card-cta {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;
+    display: inline-flex; align-items: center; gap: 6px;
   }
+  .work-card:hover .work-card-cta .arrow { transform: translateX(4px); }
 
-  /* ─── TODAY'S HIGHLIGHT ─── */
-  .today-highlight {
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-    pointer-events: auto;
+  /* ── STUDIO ── */
+  .studio { background: var(--black); color: var(--white); padding: 100px 0; }
+  .studio-inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 70px; align-items: center; }
+  .studio-lead { color: rgba(255,255,255,0.62); font-size: 1rem; line-height: 1.75; margin-bottom: 36px; max-width: 480px; }
+  .studio-mv { display: flex; flex-direction: column; gap: 1px; }
+  .mv-card {
+    border: 1px solid rgba(255,255,255,0.08); padding: 22px 24px;
+    transition: background 0.18s;
   }
-
-  .highlight-label {
-    font-family: var(--font-display);
-    font-size: 0.78rem;
-    letter-spacing: 0;
-    text-transform: none;
-    color: rgba(52,57,64,0.45);
-    font-weight: 400;
+  .mv-card + .mv-card { margin-top: 1px; }
+  .mv-card:hover { background: rgba(255,255,255,0.04); }
+  .mv-label {
+    font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: rgba(255,255,255,0.35);
   }
-
-  .highlight-card {
-    display: flex;
-    flex-direction: row;
-    text-decoration: none;
-    border: 1px solid rgba(52,57,64,0.11);
-    border-radius: 8px;
-    background: rgba(255,255,255,0.65);
-    backdrop-filter: blur(6px);
-    overflow: hidden;
-    transition: border-color 0.25s, box-shadow 0.25s;
-    width: 100%;
+  .mv-card h4 { font-size: 1rem; font-weight: 500; letter-spacing: -0.01em; margin: 8px 0 8px; }
+  .mv-card p  { font-size: 0.84rem; color: rgba(255,255,255,0.58); line-height: 1.65; }
+  .studio-visual { position: relative; }
+  .studio-img-main { overflow: hidden; aspect-ratio: 4/5; border-radius: var(--r); }
+  .studio-img-main img { width: 100%; height: 100%; object-fit: cover; }
+  .studio-stats {
+    display: flex; gap: 0; margin-top: 1px;
+    border: 1px solid rgba(255,255,255,0.08);
   }
-
-  .highlight-card:hover {
-    border-color: rgba(52,57,64,0.26);
-    box-shadow: 0 4px 18px rgba(52,57,64,0.07);
+  .stat {
+    display: flex; flex-direction: column; flex: 1; padding: 20px;
+    border-right: 1px solid rgba(255,255,255,0.08);
   }
+  .stat:last-child { border-right: none; }
+  .stat-n    { font-size: 2.2rem; font-weight: 500; line-height: 1; letter-spacing: -0.04em; display: inline; }
+  .stat-plus { font-size: 1.4rem; font-weight: 500; }
+  .stat-l    { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.38); margin-top: 6px; }
 
-  .highlight-img-wrap {
-    width: 110px;
-    flex-shrink: 0;
-    overflow: hidden;
-    background: #f0f0f0;
+  /* ── SERVICES ── */
+  .services { padding: 100px 0; background: var(--gray-50); }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
   }
-
-  .highlight-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-    display: block;
-    transition: transform 0.35s ease;
+  .service-card { background: var(--white); padding: 36px 30px; transition: background 0.18s, color 0.18s; }
+  .service-card:hover { background: var(--black); color: var(--white); }
+  .service-num {
+    font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray-400);
   }
-
-  .highlight-card:hover .highlight-img-wrap img {
-    transform: scale(1.04);
+  .service-card:hover .service-num { color: rgba(255,255,255,0.38); }
+  .service-icon-wrap {
+    width: 100%; aspect-ratio: 16/9; overflow: hidden;
+    margin: 16px 0 20px; border-radius: var(--r);
   }
+  .service-icon-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+  .service-card:hover .service-icon-wrap img { transform: scale(1.04); }
+  .service-card h3 { font-size: 1.1rem; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 12px; }
+  .service-card p  { font-size: 0.84rem; color: var(--gray-600); line-height: 1.7; }
+  .service-card:hover p { color: rgba(255,255,255,0.65); }
 
-  .highlight-body {
-    padding: 0.85rem 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    flex: 1;
-    min-width: 0;
+  /* ── HIGHLIGHT ── */
+  .highlight { padding: 100px 0; }
+  .highlight-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .highlight-img {
+    overflow: hidden; aspect-ratio: 5/4;
+    border-radius: var(--r); border: 1px solid var(--gray-200);
   }
+  .highlight-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+  .highlight-img:hover img { transform: scale(1.03); }
+  .highlight-copy { max-width: 480px; }
+  .highlight-desc { color: var(--gray-600); font-size: 1rem; line-height: 1.72; margin: 18px 0 28px; }
 
-  .highlight-meta {
-    font-size: 0.58rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(52,57,64,0.3);
+  /* ── JOURNAL ── */
+  .journal { padding: 100px 0; background: var(--gray-50); }
+  .journal-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
   }
-
-  .highlight-name {
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: var(--snd-dark);
-    line-height: 1.2;
+  .journal-card {
+    background: var(--white); display: flex; flex-direction: column;
+    transition: background 0.18s; cursor: pointer;
   }
-
-  .highlight-desc {
-    font-size: 0.73rem;
-    color: rgba(52,57,64,0.52);
-    line-height: 1.55;
-    margin-top: 0.1rem;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+  .journal-card:hover { background: var(--gray-50); }
+  .journal-card-img { aspect-ratio: 16/9; overflow: hidden; }
+  .journal-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+  .journal-card:hover .journal-card-img img { transform: scale(1.04); }
+  .journal-card-body { padding: 26px 28px 30px; border-top: 1px solid var(--gray-200); flex: 1; }
+  .journal-date {
+    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--gray-400);
   }
-
-  .highlight-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    margin-top: 0.55rem;
-    font-size: 0.68rem;
-    font-weight: 500;
-    color: var(--snd-dark);
-    letter-spacing: 0.04em;
+  .journal-card-body h3 {
+    font-size: 1.1rem; font-weight: 500; letter-spacing: -0.01em;
+    margin: 10px 0 10px; line-height: 1.22;
   }
+  .journal-card-body p  { font-size: 0.84rem; color: var(--gray-600); line-height: 1.65; margin-bottom: 16px; }
+  .journal-cta { font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.04em; }
+  .journal-card:hover .journal-cta .arrow { transform: translateX(4px); }
 
-  .highlight-cta::after {
-    content: '→';
-    transition: transform 0.2s;
+  /* ── CTA ── */
+  .cta { background: var(--black); color: var(--white); padding: 120px 0; text-align: center; position: relative; overflow: hidden; }
+  .cta::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem; opacity: 0.15;
   }
-
-  .highlight-card:hover .highlight-cta::after {
-    transform: translateX(3px);
+  .cta-inner { position: relative; max-width: 600px; margin: 0 auto; }
+  .cta-title {
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    font-weight: 500; line-height: 0.94;
+    letter-spacing: -0.045em; margin: 8px 0 18px;
   }
-
-  /* ─── SOCIAL ROW ─── */
-  .social-row {
-    display: flex;
-    gap: 1.1rem;
-    align-items: center;
-    pointer-events: auto;
+  .cta-desc { color: rgba(255,255,255,0.5); font-size: 0.98rem; margin-bottom: 36px; }
+  .cta-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+  .cta-socials { display: flex; gap: 8px; justify-content: center; }
+  .cta-socials a {
+    width: 40px; height: 40px; border-radius: var(--r);
+    border: 1px solid rgba(255,255,255,0.14);
+    display: grid; place-items: center; transition: all 0.18s;
   }
+  .cta-socials a:hover { background: var(--white); border-color: var(--white); }
+  .cta-socials img { width: 16px; height: 16px; filter: brightness(0) invert(1); transition: filter 0.18s; }
+  .cta-socials a:hover img { filter: none; }
 
-  .social-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.28;
-    transition: opacity 0.2s;
-    text-decoration: none;
+  /* ── PANEL ── */
+  .panel-backdrop {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
+    opacity: 0; visibility: hidden; transition: all 0.3s;
   }
-
-  .social-link:hover { opacity: 0.75; }
-
-  .social-link img {
-    width: 17px;
-    height: 17px;
-    display: block;
+  .panel-backdrop.is-open { opacity: 1; visibility: visible; }
+  .panel {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 210;
+    background: var(--white); border-bottom: 1px solid var(--gray-200);
+    max-height: 86vh; overflow-y: auto;
+    transform: translateY(-102%);
+    transition: transform 0.4s var(--ease-out);
   }
-
-  /* ─── BOTTOM BAR ─── */
-  .canvas-bottom-bar {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.7rem;
-    padding-bottom: 1.2rem;
-    pointer-events: none;
+  .panel.is-open { transform: translateY(0); }
+  .panel-close {
+    position: absolute; top: 20px; right: 24px;
+    width: 36px; height: 36px; border-radius: var(--r);
+    border: 1px solid var(--gray-200);
+    display: grid; place-items: center;
+    font-size: 0.88rem; z-index: 5; transition: all 0.18s;
   }
-
-  /* Mobile highlight: hidden on desktop, shown above card grid on mobile */
-  .mobile-highlight {
-    display: none;
+  .panel-close:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+  .panel-inner { max-width: var(--maxw); margin: 0 auto; padding: 52px 32px 60px; }
+  :global(.panel-tag) {
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray-400); margin-bottom: 12px; display: block;
   }
-
-  /* On desktop the left-col social row handles it; hide bottom-bar one */
-  @media (min-width: 769px) {
-    .social-row-bottom { display: none; }
+  .panel-inner h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 500; letter-spacing: -0.035em; margin-bottom: 16px; }
+  .panel-inner > p { color: var(--gray-600); font-size: 0.98rem; line-height: 1.7; max-width: 520px; margin-bottom: 36px; }
+  :global(.panel-grid) {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
   }
-
-  @media (max-width: 768px) {
-    .mobile-highlight {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      margin-bottom: 1.5rem;
-    }
+  :global(.panel-card) {
+    background: var(--white); padding: 32px 28px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: background 0.18s, color 0.18s;
   }
-
-  .canvas-credit {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    font-size: 0.58rem;
-    color: rgba(52,57,64,0.28);
-    letter-spacing: 0.08em;
-    white-space: nowrap;
+  :global(.panel-card:hover) { background: var(--black); color: var(--white); }
+  :global(.panel-card--link) { cursor: pointer; }
+  :global(.pc-num) { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; color: var(--gray-400); }
+  :global(.panel-card:hover .pc-num) { color: rgba(255,255,255,0.35); }
+  :global(.panel-card h4) { font-size: 1.05rem; font-weight: 500; letter-spacing: -0.015em; line-height: 1.25; }
+  :global(.panel-card p)  { font-size: 0.85rem; color: var(--gray-600); line-height: 1.7; flex: 1; }
+  :global(.panel-card:hover p) { color: rgba(255,255,255,0.62); }
+  :global(.pc-link) {
+    margin-top: 8px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--gray-400);
   }
+  :global(.panel-card:hover .pc-link) { color: rgba(255,255,255,0.55); }
 
-  .canvas-credit a {
-    color: rgba(52,57,64,0.28);
-    text-decoration: none;
-    pointer-events: auto;
-    transition: color 0.2s;
+  /* ── REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .work-grid { grid-template-columns: repeat(2, 1fr); }
   }
-
-  .canvas-credit a:hover { color: rgba(52,57,64,0.6); }
-
-  /* ─── MOBILE ─── */
-  @media (max-width: 768px) {
-    .canvas-wrap {
-      position: static;
-      overflow: visible;
-      background-image: none;
-      background-color: #f9f9f9;
-      padding: calc(var(--header-h) + 1.5rem) 1.2rem 2rem;
-    }
-
-    .cards-grid {
-      position: static;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      height: auto;
-    }
-
-    .card {
-      position: static !important;
-      left: auto !important;
-      top: auto !important;
-      width: 100% !important;
-      transform: none !important;
-    }
-
-    .canvas-left-col { display: none; }
-    .card:hover .card-inner { transform: none; }
-
-    .canvas-bottom-bar {
-      position: static;
-      padding: 2rem 0 1rem;
-      pointer-events: auto;
-    }
-
-    .canvas-credit { pointer-events: auto; }
-
-    .panel-inner { padding: 1.5rem 1.2rem 2rem; }
-    .panel-close { margin-bottom: -24px; }
-
-    .about-mv-grid { grid-template-columns: 1fr; gap: 1rem; }
-    .about-stats { grid-template-columns: repeat(3, 1fr); }
-    .about-areas-grid { grid-template-columns: 1fr; gap: 1rem; }
-
-    .journal-header { grid-template-columns: 1fr; gap: 1rem; }
-    .journal-posts-grid { grid-template-columns: 1fr; }
-
-    .products-header { grid-template-columns: 1fr; gap: 1rem; }
-    .products-grid { grid-template-columns: 1fr; gap: 1rem; }
-
-    .design-panel-layout { grid-template-columns: 1fr; gap: 1.5rem; }
-    .panel-cols { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+    .hero-visual { max-width: 400px; }
+    .studio-inner { grid-template-columns: 1fr; gap: 48px; }
+    .highlight-inner { grid-template-columns: 1fr; gap: 40px; }
+    :global(.panel-grid) { grid-template-columns: 1fr; }
+    .feature-strip-inner { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .container { padding: 0 20px; }
+    .nav-links { display: none; }
+    .nav-toggle { display: flex; }
+    .nav-actions .btn--small { display: none; }
+    .mobile-nav { display: flex; }
+    .nav-toggle.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+    .work-grid { grid-template-columns: 1fr 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .journal-grid { grid-template-columns: 1fr; }
+    .hero-badge { display: none; }
+    .scroll-cue { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    .reveal { opacity: 1; transform: none; }
   }
 </style>
 
-<!-- ─── HEADER ─── -->
-<header class="site-header">
-  <a href="/" class="logo-link">
-    <img src="/snd.png" alt="SND" class="logo-img" onerror="this.style.display='none';" />
-  </a>
-</header>
+<script is:inline define:vars={{ journalPanelCards }}>
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-<!-- ─── INFO PANEL ─── -->
-<div class="info-panel" id="infoPanel" role="region" aria-label="Section info">
-  <div class="panel-inner">
-    <button class="panel-close" id="panelClose" aria-label="Close">&#x2715;</button>
+  /* Header scroll */
+  const header = $('#siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('is-scrolled', window.scrollY > 20);
+  }, { passive: true });
 
-    <!-- ── ABOUT SND ── -->
-    <div class="panel-content" data-panel="about">
-      <div class="about-hero">
-        <span class="panel-tag">Studio</span>
-        <h1>Think It.<br/>Create It.</h1>
-        <p>We turn ideas into reality through thoughtful design, innovative development, and genuine collaboration.</p>
-      </div>
+  /* Mobile nav */
+  const navToggle = $('#navToggle');
+  const mobileNav = $('#mobileNav');
+  navToggle?.addEventListener('click', () => {
+    navToggle.classList.toggle('is-open');
+    mobileNav.classList.toggle('is-open');
+  });
+  $$('#mobileNav a').forEach((a) => a.addEventListener('click', () => {
+    navToggle.classList.remove('is-open');
+    mobileNav.classList.remove('is-open');
+  }));
 
-      <div class="about-mv-grid">
-        <div class="about-mv-card">
-          <div class="mv-label">Our Vision</div>
-          <h3>To become a leading African brand</h3>
-          <p>Building intelligent, creative, and culturally relevant solutions through the integrated disciplines of technology, art, and design. Demonstrating that world-class digital products can originate from Uganda and serve both local and global audiences.</p>
-        </div>
-        <div class="about-mv-card">
-          <div class="mv-label">Our Mission</div>
-          <h3>Simplify complex problems</h3>
-          <p>Through thoughtful, well-crafted systems that combine functional design, artificial intelligence, and genuine human understanding. Every product, whether a mobile application, a brand identity, or a physical notebook, must serve a clear purpose and provide a seamless user experience.</p>
-        </div>
-      </div>
-
-      <div class="about-stats">
-        <div class="about-stat">
-          <span class="stat-n">10+</span>
-          <span class="stat-l">Projects Completed</span>
-        </div>
-        <div class="about-stat">
-          <span class="stat-n">15+</span>
-          <span class="stat-l">Happy Clients</span>
-        </div>
-        <div class="about-stat">
-          <span class="stat-n">3+</span>
-          <span class="stat-l">Years of Experience</span>
-        </div>
-      </div>
-
-      <div class="about-areas-header">Core Operating Areas</div>
-      <div class="about-areas-grid">
-        <div class="about-area-card">
-          <div class="area-num">01</div>
-          <h4>Technology</h4>
-          <p>Building applications, tools, and platforms designed to solve real-world organizational and productivity problems. From concept to launch, SND develops scalable digital systems with long-term usability in mind.</p>
-        </div>
-        <div class="about-area-card">
-          <div class="area-num">02</div>
-          <h4>Art &amp; Design</h4>
-          <p>Creating visual identity systems, interfaces, motion graphics, and brand experiences that combine clarity with aesthetics. Every design decision is made to strengthen usability, communication, and perception.</p>
-        </div>
-        <div class="about-area-card">
-          <div class="area-num">03</div>
-          <h4>Fashion &amp; Physical Goods</h4>
-          <p>Expanding the SND ecosystem through thoughtfully designed merchandise and physical products that increase visibility, strengthen identity, and create additional revenue channels.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── DESIGN & CREATIVE ── -->
-    <div class="panel-content" data-panel="design">
-      <div class="design-panel-layout">
-        <div class="design-panel-left">
-          <span class="panel-tag">Services</span>
-          <span class="design-panel-title">Design &amp; Creative</span>
-        </div>
-        <div class="panel-cols">
-          <div class="panel-col">
-            <h4>Branding</h4>
-            <p>Visual identity systems, logos, and brand experiences that communicate clearly and build lasting recognition.</p>
-          </div>
-          <div class="panel-col">
-            <h4>UI / UX</h4>
-            <p>Interfaces designed for humans first: intuitive, accessible, and built to serve a clear purpose on every screen.</p>
-          </div>
-          <div class="panel-col">
-            <h4>Motion</h4>
-            <p>Bring ideas to life through animation, motion graphics, and dynamic storytelling that captures attention.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── PRODUCTS ── -->
-    <div class="panel-content" data-panel="products">
-      <div class="products-header">
-        <div>
-          <span class="panel-tag">Physical Goods</span>
-          <span class="products-title">Products</span>
-        </div>
-        <p class="products-desc">The SND ecosystem in physical form. Thoughtfully designed objects that extend the studio's identity into the world. Each product is crafted with the same care and intentionality as our digital work.</p>
-      </div>
-      <div class="products-grid">
-        <div class="product-panel-card">
-          <h4>Notebooks</h4>
-          <p>Crafted for thinkers and makers. Clean layouts and quality materials that make the act of writing feel considered.</p>
-        </div>
-        <div class="product-panel-card">
-          <h4>Apparel</h4>
-          <p>Wear the brand. Minimal pieces that carry the SND aesthetic, designed to be worn, not just seen.</p>
-        </div>
-        <div class="product-panel-card">
-          <h4>Merchandise</h4>
-          <p>Objects that extend the studio's identity into the physical world and create touchpoints beyond the screen.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── THE JOURNAL ── -->
-    <div class="panel-content" data-panel="journal">
-      <div class="journal-header">
-        <div>
-          <span class="panel-tag">Blog</span>
-          <span class="journal-title">The Journal</span>
-          <a href="/blog" class="panel-link">All posts &#x2192;</a>
-        </div>
-        <p class="journal-desc">Stories, ideas, and perspectives from the SND team on design, technology, culture, and the process of building things that matter.</p>
-      </div>
-
-      {sortedPosts.length === 0 ? (
-        <div class="journal-empty">No posts yet. Check back soon.</div>
-      ) : (
-        <div class="journal-posts-grid">
-          {sortedPosts.map((post) => {
-            const slug = post.id.replace(/\.md$/, '');
-            return (
-              <a href={`/blog/${slug}`} class="journal-post-link">
-                <div class="journal-post-date">{post.data.pubDate}</div>
-                <div class="journal-post-title">{post.data.title}</div>
-                <div class="journal-post-desc">{post.data.description}</div>
-              </a>
-            );
-          })}
-        </div>
-      )}
-    </div>
-
-  </div>
-</div>
-
-<!-- Backdrop -->
-<div class="panel-backdrop" id="panelBackdrop"></div>
-
-<!-- ─── CANVAS ─── -->
-<div class="canvas-wrap">
-
-  <!-- Mobile-only highlight (desktop uses left-col version) -->
-  <div class="mobile-highlight">
-    <span class="highlight-label">Today's Highlight</span>
-    <a href="#" class="highlight-card">
-      <div class="highlight-img-wrap">
-        <img src="/physical.jpg" alt="Lineless Notebook" />
-      </div>
-      <div class="highlight-body">
-        <span class="highlight-meta">Physical Goods · Stationery</span>
-        <span class="highlight-name">The Lineless Notebook</span>
-        <span class="highlight-desc">No rules, just space. A clean, minimal notebook designed for creative minds. Sketch, write, and think freely without constraints.</span>
-        <span class="highlight-cta">Shop Now</span>
-      </div>
-    </a>
-  </div>
-
-  <div class="cards-grid" id="cardsGrid">
-
-    <!-- ★ LEFT COLUMN: logo above typewriter -->
-    <div class="canvas-left-col">
-      <div class="canvas-logo-center" aria-label="SND">
-        <video id="logoVideo" src="/snd-logo.mov" autoplay muted playsinline
-          style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;top:0;left:0;"></video>
-        <canvas id="logoCanvas" class="canvas-center-canvas"></canvas>
-      </div>
-
-      <div class="canvas-typewriter" aria-live="polite">
-        <span class="typewriter-label">SND Studio</span>
-        <div class="typewriter-text">
-          <span id="typewriterText"></span><span class="typewriter-cursor"></span>
-        </div>
-      </div>
-
-      <div class="today-highlight">
-        <span class="highlight-label">Today's Highlight</span>
-        <a href="#" class="highlight-card">
-          <div class="highlight-img-wrap">
-            <img src="/physical.jpg" alt="Lineless Notebook" />
-          </div>
-          <div class="highlight-body">
-            <span class="highlight-meta">Physical Goods · Stationery</span>
-            <span class="highlight-name">The Lineless Notebook</span>
-            <span class="highlight-desc">No rules, just space. A clean, minimal notebook designed for creative minds. Sketch, write, and think freely without constraints.</span>
-            <span class="highlight-cta">Shop Now</span>
-          </div>
-        </a>
-      </div>
-
-      <div class="social-row">
-        <a href="https://instagram.com/sndstudio.ug" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
-          <img src="/instagram.svg" alt="Instagram" />
-        </a>
-        <a href="https://tiktok.com/@sndstudio.ug" class="social-link" aria-label="TikTok" target="_blank" rel="noopener">
-          <img src="/tiktok.svg" alt="TikTok" />
-        </a>
-        <a href="https://x.com/sndstudio_ug" class="social-link" aria-label="X" target="_blank" rel="noopener">
-          <img src="/x.svg" alt="X" />
-        </a>
-        <a href="https://threads.net/@sndstudio.ug" class="social-link" aria-label="Threads" target="_blank" rel="noopener">
-          <img src="/threads.svg" alt="Threads" />
-        </a>
-        <a href="https://pinterest.com/sndstudio_ug" class="social-link" aria-label="Pinterest" target="_blank" rel="noopener">
-          <img src="/pinterest.svg" alt="Pinterest" />
-        </a>
-      </div>
-    </div>
-
-    <!-- About SND (upper-right cluster) -->
-    <div class="card" data-panel="about"
-         style="--cx: 83%; --cy: 32%; --w: 215px;">
-      <div class="card-inner">
-        <div class="card-img-wrap">
-          <img src="/art_tech.jpg" alt="About SND" />
-        </div>
-        <div class="card-body"><span class="card-title">About SND</span></div>
-      </div>
-    </div>
-
-    <!-- Design & Creative (upper-left of right cluster) -->
-    <div class="card" data-panel="design"
-         style="--cx: 62%; --cy: 32%; --w: 215px;">
-      <div class="card-inner">
-        <div class="card-img-wrap">
-          <img src="/design.jpg" alt="Design & Creative" />
-        </div>
-        <div class="card-body"><span class="card-title">Design &amp; Creative</span></div>
-      </div>
-    </div>
-
-    <!-- Products (lower-left of right cluster) -->
-    <div class="card" data-panel="products"
-         style="--cx: 62%; --cy: 68%; --w: 215px;">
-      <div class="card-inner">
-        <div class="card-img-wrap">
-          <img src="/fashion.jpg" alt="Products" />
-        </div>
-        <div class="card-body"><span class="card-title">Products</span></div>
-      </div>
-    </div>
-
-    <!-- The Journal (lower-right of right cluster) -->
-    <div class="card" data-panel="journal"
-         style="--cx: 83%; --cy: 68%; --w: 215px;">
-      <div class="card-inner">
-        <div class="card-img-wrap">
-          <img src="/digital.jpg" alt="The Journal" />
-        </div>
-        <div class="card-body"><span class="card-title">The Journal</span></div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="canvas-bottom-bar">
-    <div class="social-row social-row-bottom">
-      <a href="https://instagram.com/sndstudio.ug" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
-        <img src="/instagram.svg" alt="Instagram" />
-      </a>
-      <a href="https://tiktok.com/@sndstudio.ug" class="social-link" aria-label="TikTok" target="_blank" rel="noopener">
-        <img src="/tiktok.svg" alt="TikTok" />
-      </a>
-      <a href="https://x.com/sndstudio_ug" class="social-link" aria-label="X" target="_blank" rel="noopener">
-        <img src="/x.svg" alt="X" />
-      </a>
-      <a href="https://threads.net/@sndstudio.ug" class="social-link" aria-label="Threads" target="_blank" rel="noopener">
-        <img src="/threads.svg" alt="Threads" />
-      </a>
-      <a href="https://pinterest.com/sndstudio_ug" class="social-link" aria-label="Pinterest" target="_blank" rel="noopener">
-        <img src="/pinterest.svg" alt="Pinterest" />
-      </a>
-    </div>
-    <div class="canvas-credit">
-      <span>© 2026 SND</span>
-      <a href="/terms">Terms</a>
-      <a href="/privacy">Privacy</a>
-    </div>
-  </div>
-</div>
-
-<script>
-(function () {
-  const cards = Array.from(document.querySelectorAll<HTMLElement>('#cardsGrid .card'));
-  const canvasWrap = document.querySelector<HTMLElement>('.canvas-wrap');
-
-  if (!cards.length || window.innerWidth <= 768 || !canvasWrap) return;
-
-  let dragCard: HTMLElement | null = null;
-  let dragOffsetX = 0;
-  let dragOffsetY = 0;
-  let dragStartX = 0;
-  let dragStartY = 0;
-  let hasDragged = false;
-
-  cards.forEach((card) => {
-    card.addEventListener('mousedown', (e: MouseEvent) => {
-      if (e.button !== 0) return;
-
-      const rect = card.getBoundingClientRect();
-      const canvasRect = canvasWrap.getBoundingClientRect();
-
-      dragCard   = card;
-      dragStartX = e.clientX;
-      dragStartY = e.clientY;
-      hasDragged = false;
-
-      dragOffsetX = e.clientX - (rect.left + rect.width  / 2);
-      dragOffsetY = e.clientY - (rect.top  + rect.height / 2);
-
-      card.style.left = (rect.left + rect.width  / 2 - canvasRect.left) + 'px';
-      card.style.top  = (rect.top  + rect.height / 2 - canvasRect.top)  + 'px';
-
-      e.preventDefault();
+  /* Scroll reveal */
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('is-visible'), (i % 5) * 80);
+        revealObs.unobserve(entry.target);
+      }
     });
-  });
+  }, { threshold: 0.1 });
+  $$('.reveal').forEach((el) => revealObs.observe(el));
 
-  document.addEventListener('mousemove', (e: MouseEvent) => {
-    if (!dragCard) return;
-
-    const dx = e.clientX - dragStartX;
-    const dy = e.clientY - dragStartY;
-
-    if (!hasDragged && Math.sqrt(dx * dx + dy * dy) < 5) return;
-    hasDragged = true;
-
-    dragCard.classList.add('dragging');
-
-    const canvasRect = canvasWrap.getBoundingClientRect();
-    dragCard.style.left = (e.clientX - dragOffsetX - canvasRect.left) + 'px';
-    dragCard.style.top  = (e.clientY - dragOffsetY - canvasRect.top)  + 'px';
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (!dragCard) return;
-
-    if (hasDragged) {
-      const captured = dragCard;
-      const blockClick = (ev: Event) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        captured.removeEventListener('click', blockClick, true);
-      };
-      dragCard.addEventListener('click', blockClick, true);
+  /* Stat counters */
+  function animateCount(el) {
+    const target = +el.dataset.target;
+    const dur = 1500;
+    const start = performance.now();
+    function tick(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.floor(eased * target);
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target;
     }
+    requestAnimationFrame(tick);
+  }
+  const countObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { animateCount(e.target); countObs.unobserve(e.target); } });
+  }, { threshold: 0.5 });
+  $$('.stat-n').forEach((el) => countObs.observe(el));
 
-    dragCard.classList.remove('dragging');
-    dragCard = null;
-    hasDragged = false;
-  });
-})();
-</script>
+  /* Panel */
+  const PANEL_DATA = {
+    studio: {
+      tag: 'The studio', title: 'About SND',
+      body: 'We turn ideas into reality through thoughtful design, innovative development, and genuine collaboration. SND builds intelligent, creative, and culturally relevant solutions.',
+      cards: [
+        { num: '01', h: 'Technology', p: 'Building applications, tools, and platforms designed to solve real-world problems. Scalable digital systems with long-term usability.' },
+        { num: '02', h: 'Art & Design', p: 'Visual identity systems, interfaces, motion graphics, and brand experiences that combine clarity with aesthetics.' },
+        { num: '03', h: 'Fashion & Physical Goods', p: 'Thoughtfully designed merchandise and physical products that increase visibility and strengthen identity.' },
+      ],
+    },
+    services: {
+      tag: 'Services', title: 'Design & Creative',
+      body: 'Interfaces designed for humans first: intuitive, accessible, and built to serve a clear purpose on every screen.',
+      cards: [
+        { num: '01', h: 'Branding', p: 'Visual identity systems, logos, and brand experiences that communicate clearly and build lasting recognition.' },
+        { num: '02', h: 'UI / UX', p: 'Interfaces designed for humans first: intuitive, accessible, and built to serve a clear purpose on every screen.' },
+        { num: '03', h: 'Motion', p: 'Bring ideas to life through animation, motion graphics, and dynamic storytelling that captures attention.' },
+      ],
+    },
+    products: {
+      tag: 'Physical Goods', title: 'Products',
+      body: 'The SND ecosystem in physical form. Thoughtfully designed objects that extend the studio identity into the world.',
+      cards: [
+        { num: '01', h: 'Notebooks', p: 'Crafted for thinkers and makers. Clean layouts and quality materials that make the act of writing feel considered.' },
+        { num: '02', h: 'Apparel', p: 'Wear the brand. Minimal pieces that carry the SND aesthetic, designed to be worn, not just seen.' },
+        { num: '03', h: 'Merchandise', p: 'Objects that extend the studio identity into the physical world and create touchpoints beyond the screen.' },
+      ],
+    },
+    journal: {
+      tag: 'Blog', title: 'The Journal',
+      body: 'Stories, ideas, and perspectives from the SND team on design, technology, culture, and the process of building things that matter.',
+      cards: journalPanelCards,
+    },
+  };
 
-<script>
-(function () {
-  const panel    = document.getElementById('infoPanel')     as HTMLElement;
-  const backdrop = document.getElementById('panelBackdrop') as HTMLElement;
-  const closeBtn = document.getElementById('panelClose')    as HTMLButtonElement;
+  const panel = $('#panel');
+  const panelBackdrop = $('#panelBackdrop');
+  const panelInner = $('#panelInner');
+  const panelClose = $('#panelClose');
 
-  if (!panel || !backdrop) return;
-
-  function openPanel(id: string) {
-    panel.querySelectorAll<HTMLElement>('.panel-content').forEach(el => el.classList.remove('active'));
-    const target = panel.querySelector<HTMLElement>(`.panel-content[data-panel="${id}"]`);
-    if (!target) return;
-    target.classList.add('active');
-    panel.classList.add('open');
-    backdrop.classList.add('active');
+  function openPanel(key) {
+    const data = PANEL_DATA[key];
+    if (!data) return;
+    panelInner.innerHTML = `
+      <span class="panel-tag">${data.tag}</span>
+      <h2>${data.title}</h2>
+      <p>${data.body}</p>
+      <div class="panel-grid">
+        ${data.cards.map((c) => `
+          <div class="panel-card ${c.href ? 'panel-card--link' : ''}" ${c.href ? `data-href="${c.href}"` : ''}>
+            <div class="pc-num">${c.num}</div>
+            <h4>${c.h}</h4>
+            <p>${c.p}</p>
+            ${c.href ? '<span class="pc-link">Read article &rarr;</span>' : ''}
+          </div>`).join('')}
+      </div>`;
+    $$('.panel-card--link', panelInner).forEach((card) => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => { window.location.href = card.dataset.href; });
+    });
+    panel.classList.add('is-open');
+    panelBackdrop.classList.add('is-open');
     panel.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
   }
 
   function closePanel() {
-    panel.classList.remove('open');
-    backdrop.classList.remove('active');
+    panel.classList.remove('is-open');
+    panelBackdrop.classList.remove('is-open');
+    document.body.style.overflow = '';
   }
 
-  document.querySelectorAll<HTMLElement>('#cardsGrid .card[data-panel]').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = card.dataset.panel;
-      if (id) openPanel(id);
+  $$('.work-card').forEach((card) => card.addEventListener('click', () => openPanel(card.dataset.panel)));
+  panelClose?.addEventListener('click', closePanel);
+  panelBackdrop?.addEventListener('click', closePanel);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+
+  /* Smooth anchor scroll */
+  $$('a[href^="#"]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      if (id.length < 2) return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top, behavior: 'smooth' });
     });
   });
-
-  closeBtn?.addEventListener('click', closePanel);
-  backdrop.addEventListener('click', closePanel);
-  document.addEventListener('keydown', (e: KeyboardEvent) => {
-    if (e.key === 'Escape') closePanel();
-  });
-})();
-</script>
-
-<script>
-(function () {
-  const video  = document.getElementById('logoVideo')  as HTMLVideoElement;
-  const canvas = document.getElementById('logoCanvas') as HTMLCanvasElement;
-  if (!video || !canvas) return;
-
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-  if (!ctx) return;
-
-  const DISPLAY_H = 155;
-  let ready = false;
-
-  function setup() {
-    if (ready || !video.videoWidth) return;
-    ready = true;
-    const aspect = video.videoWidth / video.videoHeight;
-    canvas.width  = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.style.height = DISPLAY_H + 'px';
-    canvas.style.width  = Math.round(DISPLAY_H * aspect) + 'px';
-  }
-
-  function drawFrame(): void {
-    if (video.readyState >= 2) {
-      if (!ready) setup();
-      if (ready) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const d = img.data;
-        for (let i = 0; i < d.length; i += 4) {
-          if (d[i] > 230 && d[i + 1] > 230 && d[i + 2] > 230) d[i + 3] = 0;
-        }
-        ctx.putImageData(img, 0, 0);
-      }
-    }
-    requestAnimationFrame(drawFrame);
-  }
-
-  video.addEventListener('ended', () => {
-    setTimeout(() => { video.play().catch(() => {}); }, 10000);
-  });
-
-  video.play().catch(() => {});
-  requestAnimationFrame(drawFrame);
-})();
-</script>
-
-<script>
-(function () {
-  const el = document.getElementById('typewriterText') as HTMLElement | null;
-  if (!el) return;
-  const span = el;
-
-  const lines = [
-    "Think It. Create It.",
-    "A creative studio from Uganda.",
-    "Building intelligent, creative, and culturally relevant solutions.",
-    "Technology · Art & Design · Physical Goods.",
-    "10+ projects completed.",
-    "15+ happy clients.",
-    "Simplifying complex problems through thoughtful design.",
-    "World-class digital products originating from Uganda.",
-    "Every product must serve a clear purpose.",
-    "Design · Development · Physical Goods.",
-    "3+ years of building things that matter.",
-  ];
-
-  let lineIndex = 0;
-  let charIndex = 0;
-  let deleting = false;
-
-  function tick() {
-    const current = lines[lineIndex];
-
-    if (deleting) {
-      charIndex--;
-      span.textContent = current.slice(0, charIndex);
-      if (charIndex === 0) {
-        deleting = false;
-        lineIndex = (lineIndex + 1) % lines.length;
-        setTimeout(tick, 480);
-      } else {
-        setTimeout(tick, 22);
-      }
-    } else {
-      charIndex++;
-      span.textContent = current.slice(0, charIndex);
-      if (charIndex === current.length) {
-        setTimeout(() => { deleting = true; tick(); }, 2800);
-      } else {
-        setTimeout(tick, 52);
-      }
-    }
-  }
-
-  setTimeout(tick, 900);
-})();
 </script>
 
 </BaseLayout>

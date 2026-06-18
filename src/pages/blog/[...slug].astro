@@ -1,31 +1,19 @@
 ---
-import Navbar from '../../components/Navbar.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import Footer from '../../components/Footer.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  console.log('=== GET STATIC PATHS ===');
-  console.log('Number of posts for paths:', posts.length);
-  
-  const paths = posts.map((post) => {
-    // In Astro v6, use 'id' (without .md extension) as the slug
-    const slug = post.id.replace(/\.md$/, '');
-    console.log('Creating path for slug:', slug);
-    return {
-      params: { slug: slug },
-      props: { post },
-    };
-  });
-  
-  return paths;
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/\.md$/, '') },
+    props: { post },
+  }));
 }
 
 const { post } = Astro.props;
-
-// Store the result in a variable instead of returning JSX
+const postExists = !!post;
 let ContentComponent = null;
-let postExists = !!post;
 
 if (postExists) {
   const rendered = await render(post);
@@ -33,201 +21,306 @@ if (postExists) {
 }
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{postExists ? post.data.title : 'Post Not Found'} — SND Blog</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<BaseLayout title={postExists ? `${post.data.title} — SND Journal` : 'Not Found — SND'}>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+<!-- ── HEADER ── -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="/" class="logo-link">
+      <img src="/snd.png" alt="SND" class="logo-img" />
+    </a>
+    <nav class="nav-links">
+      <a href="/"         class="nav-link">Home</a>
+      <a href="/#work"    class="nav-link">Work</a>
+      <a href="/blog"     class="nav-link is-active">Journal</a>
+      <a href="/#contact" class="nav-link">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="/#contact" class="btn btn--dark btn--small">Start a project</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<nav class="mobile-nav" id="mobileNav">
+  <a href="/">Home</a>
+  <a href="/#work">Work</a>
+  <a href="/blog">Journal</a>
+  <a href="/#contact">Contact</a>
+</nav>
 
-    :root {
-      --snd-dark:   #343940;
-      --snd-light:  #CFCFD3;
-      --snd-black:  #0d0d0d;
-      --snd-white:  #ffffff;
-      --remi-blue:  #535FFD;
-      --remi-amber: #FDAC1B;
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-body: 'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
-    }
-
-    body {
-      background: var(--snd-white);
-      color: var(--snd-black);
-      font-family: var(--font-body);
-      line-height: 1.6;
-    }
-
-    .post-hero {
-      background: linear-gradient(135deg, var(--snd-dark) 0%, #2a2f35 100%);
-      padding: 10rem 4rem 4rem;
-    }
-
-    .post-hero-inner {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .post-meta {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.6);
-    }
-
-    .post-tags {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-    }
-
-    .post-tag {
-      background: rgba(255,255,255,0.15);
-      padding: 0.2rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.8);
-    }
-
-    .post-hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 700;
-      color: white;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-
-    .post-content {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 4rem;
-    }
-
-    .post-content h2 {
-      font-family: var(--font-display);
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin: 2rem 0 1rem;
-      color: var(--snd-black);
-    }
-
-    .post-content h3 {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 600;
-      margin: 1.5rem 0 1rem;
-      color: var(--snd-black);
-    }
-
-    .post-content p {
-      color: #4b5563;
-      margin-bottom: 1rem;
-      line-height: 1.8;
-    }
-
-    .post-content ul, .post-content ol {
-      margin: 1rem 0;
-      padding-left: 1.5rem;
-      color: #4b5563;
-    }
-
-    .post-content li {
-      margin-bottom: 0.5rem;
-    }
-
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      margin-bottom: 2rem;
-      font-weight: 500;
-      transition: gap 0.2s;
-    }
-
-    .back-link:hover {
-      gap: 0.8rem;
-      color: white;
-    }
-
-    .not-found {
-      text-align: center;
-      padding: 6rem 2rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .not-found h1 {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: var(--snd-black);
-    }
-
-    .not-found p {
-      color: #5f6c7a;
-      margin-bottom: 2rem;
-    }
-
-    .not-found a {
-      color: var(--remi-blue);
-      text-decoration: none;
-    }
-
-    @media (max-width: 900px) {
-      .post-hero { padding: 8rem 1.5rem 3rem; }
-      .post-content { padding: 2rem 1.5rem; }
-    }
-  </style>
-</head>
-<body>
-
-  <Navbar />
-
-  {
-    !postExists ? (
-      <div class="not-found">
-        <h1>Post Not Found</h1>
-        <p>The blog post you're looking for doesn't exist or has been moved.</p>
-        <a href="/blog">← Back to Blog</a>
-      </div>
-    ) : (
-      <>
-        <div class="post-hero">
-          <div class="post-hero-inner">
-            <a href="/blog" class="back-link">← Back to Blog</a>
-            <div class="post-meta">
-              <span>{post.data.pubDate}</span>
-              <span>•</span>
-              <span>by {post.data.author}</span>
-            </div>
-            <div class="post-tags">
-              {post.data.tags?.map((tag) => (
-                <span class="post-tag">#{tag}</span>
-              ))}
-            </div>
-            <h1>{post.data.title}</h1>
+{!postExists ? (
+  <div class="not-found">
+    <span class="eyebrow">404</span>
+    <h1>Post not found</h1>
+    <p>The article you're looking for doesn't exist or has been moved.</p>
+    <a href="/blog" class="btn btn--dark">Back to Journal</a>
+  </div>
+) : (
+  <>
+    <!-- ── POST HERO ── -->
+    <section class="post-hero">
+      <div class="hero-bg"></div>
+      <div class="container post-hero-inner">
+        <a href="/blog" class="back-link">&larr; Journal</a>
+        {post.data.tags && (
+          <div class="tag-row">
+            {post.data.tags.slice(0, 3).map((tag: string) => (
+              <span class="tag">{tag}</span>
+            ))}
           </div>
-        </div>
+        )}
+        <h1 class="post-title">{post.data.title}</h1>
+        <p class="post-desc">{post.data.description}</p>
+        <span class="eyebrow">{post.data.pubDate} &middot; {post.data.author}</span>
+      </div>
+    </section>
 
-        <article class="post-content">
+    <!-- ── HERO IMAGE ── -->
+    {post.data.image && (
+      <div class="post-cover">
+        <div class="container">
+          <img src={post.data.image} alt={post.data.title} />
+        </div>
+      </div>
+    )}
+
+    <!-- ── ARTICLE ── -->
+    <article class="post-body">
+      <div class="container">
+        <div class="prose">
           <ContentComponent />
-        </article>
-      </>
-    )
+        </div>
+      </div>
+    </article>
+
+    <!-- ── BOTTOM NAV ── -->
+    <div class="post-nav">
+      <div class="container">
+        <a href="/blog" class="btn btn--ghost">&larr; All articles</a>
+        <a href="/#contact" class="btn btn--dark">Start a project &rarr;</a>
+      </div>
+    </div>
+  </>
+)}
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  /* ── TOKENS ── */
+  :root {
+    --black:    #0a0a0a;
+    --white:    #ffffff;
+    --gray-50:  #fafafa;
+    --gray-100: #f5f5f5;
+    --gray-200: #e5e5e5;
+    --gray-400: #a3a3a3;
+    --gray-600: #525252;
+    --gray-900: #171717;
+    --font:     'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    --r:        2px;
+    --header-h: 60px;
+    --maxw:     1280px;
+    --prose-w:  720px;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  <Footer />
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--white); color: var(--black); -webkit-font-smoothing: antialiased; }
 
-</body>
-</html>
+  /* ── HEADER ── */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--header-h); background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px); border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .site-header.is-scrolled { border-bottom-color: var(--gray-200); }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 100%;
+  }
+  .container { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+  .logo-link { display: flex; align-items: center; }
+  .logo-img   { height: 28px; width: auto; object-fit: contain; }
+  .nav-links  { display: flex; gap: 28px; list-style: none; }
+  .nav-link   { font-size: 0.82rem; color: var(--gray-600); text-decoration: none; letter-spacing: 0.02em; transition: color 0.15s; }
+  .nav-link:hover, .nav-link.is-active { color: var(--black); }
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+  .nav-toggle {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 4px;
+  }
+  .nav-toggle span { display: block; width: 20px; height: 1.5px; background: var(--black); transition: all 0.25s; }
+  .mobile-nav {
+    display: none; flex-direction: column;
+    position: fixed; top: var(--header-h); left: 0; right: 0; z-index: 90;
+    background: var(--white); border-bottom: 1px solid var(--gray-200);
+    padding: 16px 32px; gap: 2px;
+    transform: translateY(-8px); opacity: 0;
+    transition: transform 0.25s var(--ease-out), opacity 0.25s;
+    pointer-events: none;
+  }
+  .mobile-nav.is-open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  .mobile-nav a { font-size: 0.95rem; color: var(--gray-600); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+  .mobile-nav a:last-child { border-bottom: none; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 20px; font-size: 0.82rem; font-family: var(--font);
+    font-weight: 500; letter-spacing: 0.04em; border-radius: var(--r);
+    border: 1px solid transparent; cursor: pointer; text-decoration: none;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+  }
+  .btn--dark  { background: var(--black); color: var(--white); border-color: var(--black); }
+  .btn--dark:hover { background: var(--gray-900); }
+  .btn--ghost { background: transparent; color: var(--black); border-color: var(--gray-200); }
+  .btn--ghost:hover { border-color: var(--black); }
+  .btn--small { padding: 7px 14px; font-size: 0.75rem; }
+
+  /* ── EYEBROW ── */
+  .eyebrow {
+    display: block; font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-400);
+    margin-bottom: 12px;
+  }
+
+  /* ── POST HERO ── */
+  .post-hero { position: relative; padding: calc(var(--header-h) + 72px) 0 64px; overflow: hidden; }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem;
+    opacity: 0.06;
+  }
+  .post-hero-inner { position: relative; z-index: 1; max-width: var(--prose-w); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gray-400); text-decoration: none; margin-bottom: 24px;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--black); }
+  .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tag {
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--gray-600);
+    border: 1px solid var(--gray-200); padding: 3px 8px;
+    border-radius: var(--r);
+  }
+  .post-title {
+    font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 500;
+    letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 20px;
+  }
+  .post-desc { font-size: 1.05rem; color: var(--gray-600); line-height: 1.7; margin-bottom: 28px; }
+
+  /* ── COVER IMAGE ── */
+  .post-cover { padding: 0 0 60px; }
+  .post-cover img {
+    width: 100%; max-height: 480px; object-fit: cover;
+    border-radius: var(--r); display: block;
+    border: 1px solid var(--gray-200);
+  }
+
+  /* ── PROSE ── */
+  .post-body { padding-bottom: 80px; }
+  .prose { max-width: var(--prose-w); }
+
+  .prose :global(h2) {
+    font-size: 1.6rem; font-weight: 500; letter-spacing: -0.03em;
+    margin: 2.5rem 0 1rem; line-height: 1.2;
+  }
+  .prose :global(h3) {
+    font-size: 1.2rem; font-weight: 500; letter-spacing: -0.02em;
+    margin: 2rem 0 0.75rem; line-height: 1.3;
+  }
+  .prose :global(h4) {
+    font-size: 0.9rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--gray-600);
+    margin: 1.75rem 0 0.5rem;
+  }
+  .prose :global(p) {
+    font-size: 1rem; color: var(--gray-600); line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .prose :global(ul), .prose :global(ol) {
+    padding-left: 1.5rem; color: var(--gray-600);
+    font-size: 1rem; line-height: 1.8; margin-bottom: 1.25rem;
+  }
+  .prose :global(li) { margin-bottom: 0.4rem; }
+  .prose :global(strong) { color: var(--black); font-weight: 600; }
+  .prose :global(em) { font-style: italic; }
+  .prose :global(a) { color: var(--black); text-decoration: underline; text-underline-offset: 3px; }
+  .prose :global(a:hover) { opacity: 0.7; }
+  .prose :global(blockquote) {
+    border-left: 2px solid var(--black); padding-left: 20px;
+    margin: 2rem 0; color: var(--gray-600); font-style: italic;
+  }
+  .prose :global(code) {
+    font-size: 0.85em; background: var(--gray-100);
+    padding: 2px 6px; border-radius: var(--r);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+  .prose :global(pre) {
+    background: var(--gray-900); color: var(--gray-100);
+    padding: 24px; border-radius: var(--r); overflow-x: auto;
+    margin: 1.5rem 0; font-size: 0.85rem; line-height: 1.7;
+  }
+  .prose :global(pre code) { background: none; padding: 0; }
+  .prose :global(hr) {
+    border: none; border-top: 1px solid var(--gray-200); margin: 2.5rem 0;
+  }
+  .prose :global(img) {
+    width: 100%; border-radius: var(--r); margin: 1.5rem 0;
+    border: 1px solid var(--gray-200);
+  }
+
+  /* ── BOTTOM NAV ── */
+  .post-nav {
+    border-top: 1px solid var(--gray-200); padding: 32px 0;
+  }
+  .post-nav .container { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  /* ── 404 ── */
+  .not-found {
+    padding: calc(var(--header-h) + 120px) 32px 120px;
+    max-width: var(--prose-w); margin: 0 auto;
+  }
+  .not-found h1 { font-size: 2.4rem; font-weight: 500; letter-spacing: -0.04em; margin-bottom: 12px; }
+  .not-found p  { color: var(--gray-600); margin-bottom: 32px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .container { padding: 0 20px; }
+    .nav-links { display: none; }
+    .nav-actions .btn--small { display: none; }
+    .nav-toggle { display: flex; }
+    .mobile-nav { display: flex; }
+    .post-hero { padding-bottom: 40px; }
+    .post-nav .container { flex-direction: column; align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; }
+  }
+</style>
+
+<script is:inline>
+  const header = document.getElementById('siteHeader');
+  const toggle = document.getElementById('navToggle');
+  const mobileNav = document.getElementById('mobileNav');
+
+  window.addEventListener('scroll', () => {
+    header?.classList.toggle('is-scrolled', window.scrollY > 20);
+  });
+
+  toggle?.addEventListener('click', () => {
+    const open = mobileNav?.classList.toggle('is-open');
+    toggle.classList.toggle('is-open', open);
+  });
+</script>
