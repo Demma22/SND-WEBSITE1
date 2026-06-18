@@ -1,0 +1,77 @@
+---
+// Shared site header — used on every page for a single, consistent nav.
+// Props:
+//   homepage : when true, section links are in-page anchors (#work);
+//              otherwise they point back to the home page (/#work).
+//   active   : label of the current section to highlight (e.g. "Journal").
+interface Props {
+  homepage?: boolean;
+  active?: string;
+}
+const { homepage = false, active = '' } = Astro.props;
+
+const items = [
+  { label: 'Work',     anchor: '#work' },
+  { label: 'Services', anchor: '#services' },
+  { label: 'Studio',   anchor: '#studio' },
+  { label: 'Journal',  href: '/blog' },
+  { label: 'Contact',  anchor: '#contact' },
+];
+
+const resolve = (item: { anchor?: string; href?: string }) =>
+  item.href ?? (homepage ? item.anchor! : `/${item.anchor}`);
+---
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="/" class="logo-link" aria-label="SND — home">
+      <img src="/snd.png" alt="SND" class="logo-img" />
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      {items.map((item) => (
+        <a
+          href={resolve(item)}
+          class:list={['nav-link', { 'is-active': item.label === active }]}
+          aria-current={item.label === active ? 'page' : undefined}
+        >{item.label}</a>
+      ))}
+    </nav>
+    <div class="nav-actions">
+      <a href={homepage ? '#contact' : '/#contact'} class="btn btn--dark btn--small">Start a project</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+  {items.map((item) => (
+    <a href={resolve(item)} aria-current={item.label === active ? 'page' : undefined}>{item.label}</a>
+  ))}
+</nav>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  const toggle = document.getElementById('navToggle');
+  const mobileNav = document.getElementById('mobileNav');
+
+  window.addEventListener('scroll', () => {
+    header?.classList.toggle('is-scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  function setMenu(open: boolean) {
+    toggle?.classList.toggle('is-open', open);
+    mobileNav?.classList.toggle('is-open', open);
+    toggle?.setAttribute('aria-expanded', String(open));
+  }
+  toggle?.addEventListener('click', () => {
+    setMenu(!mobileNav?.classList.contains('is-open'));
+  });
+  mobileNav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setMenu(false);
+  });
+</script>

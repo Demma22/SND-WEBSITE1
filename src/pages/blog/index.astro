@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getCollection } from 'astro:content';
 
@@ -11,33 +12,9 @@ const sortedPosts = allPosts.sort((a, b) =>
 
 <BaseLayout title="Journal — SND">
 
-<!-- ── HEADER ── -->
-<header class="site-header" id="siteHeader">
-  <div class="container header-inner">
-    <a href="/" class="logo-link">
-      <img src="/snd.png" alt="SND" class="logo-img" />
-    </a>
-    <nav class="nav-links">
-      <a href="/"         class="nav-link">Home</a>
-      <a href="/#work"    class="nav-link">Work</a>
-      <a href="/blog"     class="nav-link is-active">Journal</a>
-      <a href="/#contact" class="nav-link">Contact</a>
-    </nav>
-    <div class="nav-actions">
-      <a href="/#contact" class="btn btn--dark btn--small">Start a project</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-</header>
+<Header active="Journal" />
 
-<nav class="mobile-nav" id="mobileNav">
-  <a href="/">Home</a>
-  <a href="/#work">Work</a>
-  <a href="/blog">Journal</a>
-  <a href="/#contact">Contact</a>
-</nav>
+<main id="main" tabindex="-1">
 
 <!-- ── HERO ── -->
 <section class="page-hero">
@@ -55,14 +32,14 @@ const sortedPosts = allPosts.sort((a, b) =>
     {sortedPosts.length === 0 ? (
       <div class="empty-state">
         <span class="eyebrow">No posts yet</span>
-        <p>Check back soon — new perspectives drop regularly.</p>
+        <p>Check back soon, new perspectives drop regularly.</p>
       </div>
     ) : (
       <div class="blog-grid">
         {sortedPosts.map((post) => (
           <a href={`/blog/${post.id}`} class="blog-card">
             <div class="blog-card-img">
-              <img src={post.data.image ?? '/digital.jpg'} alt={post.data.title} />
+              <img src={post.data.image ?? '/digital.jpg'} alt="" />
             </div>
             <div class="blog-card-body">
               <span class="eyebrow">{post.data.pubDate} &middot; {post.data.author}</span>
@@ -75,7 +52,7 @@ const sortedPosts = allPosts.sort((a, b) =>
               )}
               <h2>{post.data.title}</h2>
               <p>{post.data.description}</p>
-              <span class="read-link">Read &rarr;</span>
+              <span class="read-link">Read <span class="arrow">&rarr;</span></span>
             </div>
           </a>
         ))}
@@ -84,102 +61,14 @@ const sortedPosts = allPosts.sort((a, b) =>
   </div>
 </section>
 
+</main>
+
 <Footer />
 
 </BaseLayout>
 
 <style>
-  /* ── TOKENS ── */
-  :root {
-    --black:    #0a0a0a;
-    --white:    #ffffff;
-    --gray-50:  #fafafa;
-    --gray-100: #f5f5f5;
-    --gray-200: #CFCFD3;
-    --gray-400: #8e9196;
-    --gray-600: #343940;
-    --gray-900: #343940;
-    --font:     'Skia', 'Inter', 'Helvetica Neue', system-ui, sans-serif;
-    --r:        2px;
-    --header-h: 60px;
-    --maxw:     1280px;
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: var(--font); background: var(--white); color: var(--black); -webkit-font-smoothing: antialiased; }
-
-  /* ── HEADER ── */
-  .site-header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    height: var(--header-h); background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(12px); border-bottom: 1px solid transparent;
-    transition: border-color 0.2s;
-  }
-  .site-header.is-scrolled { border-bottom-color: var(--gray-200); }
-  .header-inner {
-    display: flex; align-items: center; justify-content: space-between;
-    height: 100%;
-  }
-  .container { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
-  .logo-link { display: flex; align-items: center; }
-  .logo-img   { height: 28px; width: auto; object-fit: contain; }
-  .nav-links  { display: flex; gap: 28px; list-style: none; }
-  .nav-link   { font-size: 0.82rem; color: var(--gray-600); text-decoration: none; letter-spacing: 0.02em; transition: color 0.15s; }
-  .nav-link:hover, .nav-link.is-active { color: var(--black); }
-  .nav-actions { display: flex; align-items: center; gap: 12px; }
-  .nav-toggle {
-    display: none; flex-direction: column; gap: 5px;
-    background: none; border: none; cursor: pointer; padding: 4px;
-  }
-  .nav-toggle span { display: block; width: 20px; height: 1.5px; background: var(--black); transition: all 0.25s; }
-  .mobile-nav {
-    display: none; flex-direction: column;
-    position: fixed; top: var(--header-h); left: 0; right: 0; z-index: 90;
-    background: var(--white); border-bottom: 1px solid var(--gray-200);
-    padding: 16px 32px; gap: 2px;
-    transform: translateY(-8px); opacity: 0;
-    transition: transform 0.25s var(--ease-out), opacity 0.25s;
-    pointer-events: none;
-  }
-  .mobile-nav.is-open { transform: translateY(0); opacity: 1; pointer-events: auto; }
-  .mobile-nav a { font-size: 0.95rem; color: var(--gray-600); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
-  .mobile-nav a:last-child { border-bottom: none; }
-
-  /* ── BUTTONS ── */
-  .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 10px 20px; font-size: 0.82rem; font-family: var(--font);
-    font-weight: 500; letter-spacing: 0.04em; border-radius: var(--r);
-    border: 1px solid transparent; cursor: pointer; text-decoration: none;
-    transition: background 0.18s, color 0.18s, border-color 0.18s;
-  }
-  .btn--dark  { background: var(--black); color: var(--white); border-color: var(--black); }
-  .btn--dark:hover { background: var(--gray-900); }
-  .btn--small { padding: 7px 14px; font-size: 0.75rem; }
-
-  /* ── EYEBROW ── */
-  .eyebrow {
-    display: block; font-size: 0.6rem; font-weight: 700;
-    letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-400);
-    margin-bottom: 12px;
-  }
-
-  /* ── HERO ── */
-  .page-hero { position: relative; padding: calc(var(--header-h) + 80px) 0 80px; overflow: hidden; }
-  .hero-bg {
-    position: absolute; inset: 0; z-index: 0;
-    background-image: radial-gradient(circle, rgba(0,0,0,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem;
-    opacity: 0.06;
-  }
-  .page-hero-inner { position: relative; z-index: 1; }
-  .hero-title {
-    font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 500;
-    letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 20px;
-  }
-  .hero-sub { font-size: 1rem; color: var(--gray-600); max-width: 520px; line-height: 1.7; }
+  /* Tokens, header, buttons, eyebrow, page-hero & reveal are global (app.css). */
 
   /* ── BLOG LIST ── */
   .blog-list { padding: 80px 0 120px; }
@@ -198,8 +87,8 @@ const sortedPosts = allPosts.sort((a, b) =>
   }
   .blog-card:hover { background: var(--gray-50); }
   .blog-card-img { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: var(--gray-100); }
-  .blog-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--ease-out); }
-  .blog-card:hover .blog-card-img img { transform: scale(1.03); }
+  .blog-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease-out); }
+  .blog-card:hover .blog-card-img img { transform: scale(1.04); }
   .blog-card-body { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
   .blog-card-body .eyebrow { margin-bottom: 0; }
   .tag-row { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -214,40 +103,14 @@ const sortedPosts = allPosts.sort((a, b) =>
     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
   }
   .read-link { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; color: var(--black); margin-top: auto; }
+  .read-link .arrow { display: inline-block; transition: transform 0.2s var(--ease); }
+  .blog-card:hover .read-link .arrow { transform: translateX(4px); }
 
   /* ── EMPTY ── */
   .empty-state { padding: 80px 0; }
   .empty-state p { color: var(--gray-600); font-size: 0.95rem; margin-top: 12px; }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 1024px) {
-    .blog-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 700px) {
-    .container { padding: 0 20px; }
-    .nav-links { display: none; }
-    .nav-actions .btn--small { display: none; }
-    .nav-toggle { display: flex; }
-    .mobile-nav { display: flex; }
-    .blog-grid { grid-template-columns: 1fr; }
-    .page-hero { padding-bottom: 48px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { transition-duration: 0.01ms !important; }
-  }
+  @media (max-width: 1024px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px)  { .blog-grid { grid-template-columns: 1fr; } .page-hero { padding-bottom: 48px; } }
 </style>
-
-<script is:inline>
-  const header = document.getElementById('siteHeader');
-  const toggle = document.getElementById('navToggle');
-  const mobileNav = document.getElementById('mobileNav');
-
-  window.addEventListener('scroll', () => {
-    header?.classList.toggle('is-scrolled', window.scrollY > 20);
-  });
-
-  toggle?.addEventListener('click', () => {
-    const open = mobileNav?.classList.toggle('is-open');
-    toggle.classList.toggle('is-open', open);
-  });
-</script>
