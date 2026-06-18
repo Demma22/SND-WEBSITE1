@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Inside Stories — SND">
+
+<Header active="Inside Stories" />
+
+<main id="main" tabindex="-1">
+
+<section class="soon">
+  <div class="soon-bg"></div>
+  <div class="container soon-inner">
+    <span class="eyebrow eyebrow--light">Inside Stories</span>
+    <h1 class="soon-title">Coming soon.</h1>
+    <p class="soon-sub">
+      A look behind the studio, our process, the ideas we're chasing, and the
+      culture that shapes the work. The first stories are on the way.
+    </p>
+    <a href="/" class="btn btn--light">Back home <span class="arrow">&#8594;</span></a>
+  </div>
+</section>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  .soon {
+    position: relative; overflow: hidden;
+    background: var(--black); color: var(--white);
+    min-height: calc(100vh - var(--header-h));
+    display: grid; place-items: center;
+  }
+  .soon-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px); opacity: 0.32;
+  }
+  .soon-inner {
+    position: relative; z-index: 1; text-align: center;
+    padding: 100px 32px; max-width: 620px;
+  }
+  .soon-title {
+    font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 500;
+    line-height: 0.94; letter-spacing: -0.045em; margin-bottom: 20px;
+  }
+  .soon-sub { color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1.75; margin-bottom: 36px; }
+</style>

@@ -2,22 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { getCollection } from 'astro:content';
-
-const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort((a, b) =>
-  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
-);
-
-const journalPanelCards = [
-  ...sortedPosts.slice(0, 2).map((p, i) => ({
-    num: String(i + 1).padStart(2, '0'),
-    h: p.data.title,
-    p: p.data.description ?? '',
-    href: `/blog/${p.id}`,
-  })),
-  { num: '03', h: 'More coming soon', p: 'New perspectives on design, technology, and culture drop regularly.', href: null },
-];
 ---
 
 <BaseLayout title="SND: Think It. Create It.">
@@ -38,7 +22,7 @@ const journalPanelCards = [
   <div class="hero-bg"></div>
   <div class="container hero-inner">
     <div class="hero-content reveal">
-      <span class="eyebrow">A creative studio from Uganda</span>
+      <span class="eyebrow">A creative studio</span>
       <h1 class="hero-title">Think It.<br />Create It.</h1>
       <p class="hero-subtitle">
         We turn ideas into reality through thoughtful design, innovative development,
@@ -128,17 +112,17 @@ const journalPanelCards = [
           <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
         </div>
       </article>
-      <article class="work-card reveal" data-panel="journal">
+      <a class="work-card reveal" href="/inside-stories">
         <div class="work-card-img">
-          <img src="/digital.jpg" alt="The Journal" />
+          <img src="/digital.jpg" alt="Inside Stories" />
           <span class="work-card-num">04</span>
         </div>
         <div class="work-card-body">
-          <h3>The Journal</h3>
-          <p>Ideas and perspectives on design, technology, and culture.</p>
-          <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
+          <h3>Inside Stories</h3>
+          <p>Behind the studio, our process, ideas, and culture.</p>
+          <span class="work-card-cta">Read <span class="arrow">&#8594;</span></span>
         </div>
-      </article>
+      </a>
     </div>
   </div>
 </section>
@@ -239,31 +223,17 @@ const journalPanelCards = [
   </div>
 </section>
 
-<!-- ── JOURNAL ── -->
-<section class="journal" id="journal">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">The Journal</span>
-      <h2 class="section-title">Ideas worth sharing.</h2>
-      <p class="section-desc">Stories and perspectives on design, technology, and culture.</p>
+<!-- ── INSIDE STORIES STRIP ── -->
+<a class="stories-strip" id="stories" href="/inside-stories">
+  <div class="container stories-inner">
+    <div class="stories-text">
+      <span class="eyebrow eyebrow--light">From the studio</span>
+      <h2 class="stories-title">Inside Stories</h2>
+      <p class="stories-sub">Behind the work, our process, ideas, and culture.</p>
     </div>
-    <div class="journal-grid">
-      {sortedPosts.map((post) => (
-        <a href={`/blog/${post.id}`} class="journal-card reveal">
-          <div class="journal-card-img">
-            <img src={post.data.image ?? '/digital.jpg'} alt={post.data.title} />
-          </div>
-          <div class="journal-card-body">
-            <span class="journal-date">{post.data.pubDate} &middot; SND Team</span>
-            <h3>{post.data.title}</h3>
-            <p>{post.data.description}</p>
-            <span class="journal-cta">Read more <span class="arrow">&#8594;</span></span>
-          </div>
-        </a>
-      ))}
-    </div>
+    <span class="stories-arrow" aria-hidden="true">&#8594;</span>
   </div>
-</section>
+</a>
 
 <!-- ── CTA ── -->
 <section class="cta" id="contact">
@@ -311,7 +281,7 @@ const journalPanelCards = [
   .hero-bg {
     position: absolute; inset: 0; z-index: 0;
     background-image: radial-gradient(circle, rgba(0,0,0,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem; background-attachment: fixed;
+    background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px);
     mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, #000 30%, transparent 85%);
     -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, #000 30%, transparent 85%);
   }
@@ -364,7 +334,7 @@ const journalPanelCards = [
   .feature-strip::before {
     content: ''; position: absolute; inset: 0; pointer-events: none;
     background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem; background-attachment: fixed; opacity: 0.32;
+    background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px); opacity: 0.32;
   }
   .feature-strip-inner {
     position: relative; z-index: 1;
@@ -422,7 +392,7 @@ const journalPanelCards = [
   .studio::before {
     content: ''; position: absolute; inset: 0; pointer-events: none;
     background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem; background-attachment: fixed; opacity: 0.32;
+    background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px); opacity: 0.32;
   }
   .studio-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 70px; align-items: center; }
   .studio-lead { color: rgba(255,255,255,0.62); font-size: 1rem; line-height: 1.75; margin-bottom: 36px; max-width: 480px; }
@@ -490,39 +460,40 @@ const journalPanelCards = [
   .highlight-copy { max-width: 480px; }
   .highlight-desc { color: var(--gray-600); font-size: 1rem; line-height: 1.72; margin: 18px 0 28px; }
 
-  /* ── JOURNAL ── */
-  .journal { padding: 100px 0; background: var(--gray-50); }
-  .journal-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
+  /* ── INSIDE STORIES STRIP ── */
+  .stories-strip {
+    display: block; position: relative; overflow: hidden;
+    background: var(--black); color: var(--white);
+    transition: background 0.25s var(--ease);
   }
-  .journal-card {
-    background: var(--white); display: flex; flex-direction: column;
-    transition: background 0.18s; cursor: pointer;
+  .stories-strip::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px); opacity: 0.32;
   }
-  .journal-card:hover { background: var(--gray-50); }
-  .journal-card-img { aspect-ratio: 16/9; overflow: hidden; }
-  .journal-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-  .journal-card:hover .journal-card-img img { transform: scale(1.04); }
-  .journal-card-body { padding: 26px 28px 30px; border-top: 1px solid var(--gray-200); flex: 1; }
-  .journal-date {
-    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--gray-400);
+  .stories-strip:hover { background: var(--gray-900); }
+  .stories-inner {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    padding: 72px 32px;
   }
-  .journal-card-body h3 {
-    font-size: 1.1rem; font-weight: 500; letter-spacing: -0.01em;
-    margin: 10px 0 10px; line-height: 1.22;
+  .stories-title {
+    font-size: clamp(2.4rem, 6vw, 4.4rem); font-weight: 500;
+    line-height: 0.96; letter-spacing: -0.045em; margin: 4px 0 12px;
   }
-  .journal-card-body p  { font-size: 0.84rem; color: var(--gray-600); line-height: 1.65; margin-bottom: 16px; }
-  .journal-cta { font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.04em; }
-  .journal-card:hover .journal-cta .arrow { transform: translateX(4px); }
+  .stories-sub { color: rgba(255,255,255,0.55); font-size: 0.96rem; max-width: 420px; }
+  .stories-arrow {
+    font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1; flex-shrink: 0;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .stories-strip:hover .stories-arrow { transform: translateX(12px); }
 
   /* ── CTA ── */
   .cta { background: var(--black); color: var(--white); padding: 120px 0; text-align: center; position: relative; overflow: hidden; }
   .cta::before {
     content: ''; position: absolute; inset: 0;
     background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem; background-attachment: fixed; opacity: 0.32;
+    background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px); opacity: 0.32;
   }
   .cta-inner { position: relative; max-width: 600px; margin: 0 auto; }
   .cta-title {
@@ -609,13 +580,13 @@ const journalPanelCards = [
   @media (max-width: 700px) {
     .work-grid { grid-template-columns: 1fr 1fr; }
     .services-grid { grid-template-columns: 1fr; }
-    .journal-grid { grid-template-columns: 1fr; }
+    .stories-inner { flex-direction: column; align-items: flex-start; gap: 24px; padding: 56px 20px; }
     .hero-badge { display: none; }
     .scroll-cue { display: none; }
   }
 </style>
 
-<script is:inline define:vars={{ journalPanelCards }}>
+<script is:inline>
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
@@ -669,11 +640,6 @@ const journalPanelCards = [
         { num: '03', h: 'Merchandise', p: 'Objects that extend the studio identity into the physical world and create touchpoints beyond the screen.' },
       ],
     },
-    journal: {
-      tag: 'Blog', title: 'The Journal',
-      body: 'Stories, ideas, and perspectives from the SND team on design, technology, culture, and the process of building things that matter.',
-      cards: journalPanelCards,
-    },
   };
 
   const panel = $('#panel');
@@ -718,8 +684,9 @@ const journalPanelCards = [
     if (lastFocused) { lastFocused.focus(); lastFocused = null; }
   }
 
-  /* Work cards: clickable + keyboard-operable (Enter / Space) */
-  $$('.work-card').forEach((card) => {
+  /* Panel work cards: clickable + keyboard-operable (Enter / Space).
+     Cards without [data-panel] (e.g. Inside Stories) are plain links. */
+  $$('.work-card[data-panel]').forEach((card) => {
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     const open = () => openPanel(card.dataset.panel, card);

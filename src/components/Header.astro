@@ -15,7 +15,7 @@ const items = [
   { label: 'Services', anchor: '#services' },
   { label: 'Products', href: '/products' },
   { label: 'Studio',   anchor: '#studio' },
-  { label: 'Journal',  href: '/blog' },
+  { label: 'Inside Stories', href: '/inside-stories' },
   { label: 'Contact',  anchor: '#contact' },
 ];
 
@@ -75,6 +75,26 @@ const resolve = (item: { anchor?: string; href?: string }) =>
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') setMenu(false);
   });
+
+  /* Dot-grid parallax — lock the pattern to the viewport on every device.
+     background-attachment: fixed is ignored on mobile, so drive it with a
+     --dotY variable that counters the scroll position instead. */
+  const dotHosts = document.querySelectorAll(
+    '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .soon, .page-hero'
+  );
+  if (dotHosts.length) {
+    let dotTick = false;
+    const updateDots = () => {
+      dotHosts.forEach((el) => {
+        (el as HTMLElement).style.setProperty('--dotY', `${-el.getBoundingClientRect().top}px`);
+      });
+      dotTick = false;
+    };
+    const onScroll = () => { if (!dotTick) { dotTick = true; requestAnimationFrame(updateDots); } };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', updateDots);
+    updateDots();
+  }
 
   /* Scroll reveal — global so every page's `.reveal` elements animate in.
      (Without this, `.reveal` stays at opacity:0 on pages that lack an observer.) */
