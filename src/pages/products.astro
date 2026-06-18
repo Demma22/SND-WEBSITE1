@@ -45,6 +45,15 @@ const WHATSAPP = '256742072661';
         <li>No lines, no rules, just space to think</li>
       </ul>
 
+      <!-- Price + currency toggle -->
+      <div class="price-row">
+        <span class="price" id="priceVal" aria-live="polite">UGX 25,000</span>
+        <div class="cur-toggle" role="group" aria-label="Currency">
+          <button type="button" data-cur="UGX" class="is-active">UGX</button>
+          <button type="button" data-cur="USD">USD</button>
+        </div>
+      </div>
+
       <!-- Buy controls -->
       <div class="buy-row">
         <div class="qty" role="group" aria-label="Quantity">
@@ -117,6 +126,17 @@ const WHATSAPP = '256742072661';
   }
   .product-points li::before { content: ''; width: 5px; height: 5px; background: var(--black); margin-top: 8px; flex-shrink: 0; }
 
+  /* Price */
+  .price-row { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+  .price { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.02em; }
+  .cur-toggle { display: inline-flex; border: 1px solid var(--gray-200); border-radius: var(--r); overflow: hidden; }
+  .cur-toggle button {
+    padding: 6px 14px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--gray-400); transition: background 0.15s, color 0.15s;
+  }
+  .cur-toggle button + button { border-left: 1px solid var(--gray-200); }
+  .cur-toggle button.is-active { background: var(--black); color: var(--white); }
+
   /* Buy controls */
   .buy-row { display: flex; align-items: stretch; gap: 12px; flex-wrap: wrap; }
   .qty {
@@ -170,27 +190,41 @@ const WHATSAPP = '256742072661';
 
 <script is:inline define:vars={{ WHATSAPP }}>
   (function () {
+    const PRICE_UGX = 25000;   // unit price in UGX
+    const USD_RATE  = 3800;    // UGX per 1 USD (approximate — edit to adjust)
+
     let qty = 1;
-    const qtyVal  = document.getElementById('qtyVal');
-    const minus   = document.getElementById('qtyMinus');
-    const plus    = document.getElementById('qtyPlus');
-    const addCart = document.getElementById('addCart');
-    const cartBox = document.getElementById('cartBox');
+    let cur = 'UGX';
+
+    const qtyVal   = document.getElementById('qtyVal');
+    const minus    = document.getElementById('qtyMinus');
+    const plus     = document.getElementById('qtyPlus');
+    const addCart  = document.getElementById('addCart');
+    const cartBox  = document.getElementById('cartBox');
     const cartText = document.getElementById('cartText');
     const orderBtn = document.getElementById('orderBtn');
+    const priceVal = document.getElementById('priceVal');
+    const curBtns  = document.querySelectorAll('.cur-toggle button');
+
+    const fmtUGX = (n) => 'UGX ' + n.toLocaleString('en-US');
+    const fmtUSD = (n) => '≈ $' + (n / USD_RATE).toFixed(2);
+    const unit   = () => (cur === 'UGX' ? fmtUGX(PRICE_UGX) : fmtUSD(PRICE_UGX));
+    const total  = (q) => (cur === 'UGX' ? fmtUGX(PRICE_UGX * q) : fmtUSD(PRICE_UGX * q));
 
     function orderLink(q) {
       const plural = q > 1 ? 's' : '';
       const msg =
-        `Hi SND! I would like to purchase ${q} Lineless Notebook${plural}. ` +
-        `Could you please share the price, availability, and delivery details? Thank you.`;
+        `Hi SND! I would like to purchase ${q} Lineless Notebook${plural} ` +
+        `(${unit()} each, total ${total(q)}). ` +
+        `Could you please confirm availability and delivery details? Thank you.`;
       return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
     }
 
     function render() {
       const plural = qty > 1 ? 's' : '';
       qtyVal.textContent = String(qty);
-      cartText.innerHTML = `${qty} &times; Lineless Notebook${plural}`;
+      priceVal.textContent = unit();
+      cartText.innerHTML = `${qty} &times; Lineless Notebook${plural} &middot; ${total(qty)}`;
       orderBtn.href = orderLink(qty);
     }
 
@@ -202,7 +236,12 @@ const WHATSAPP = '256742072661';
       addCart.disabled = true;
       render();
     });
+    curBtns.forEach((b) => b.addEventListener('click', () => {
+      cur = b.getAttribute('data-cur');
+      curBtns.forEach((x) => x.classList.toggle('is-active', x === b));
+      render();
+    }));
 
-    render(); // initialise link + labels
+    render(); // initialise price, link + labels
   })();
 </script>
