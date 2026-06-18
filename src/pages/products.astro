@@ -1,0 +1,209 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// WhatsApp business number in international format, no "+" (wa.me requirement).
+const WHATSAPP = '256742072661';
+---
+
+<BaseLayout title="Products — SND">
+
+<Header active="Products" />
+
+<main id="main" tabindex="-1">
+
+<!-- ── HERO ── -->
+<section class="page-hero">
+  <div class="hero-bg"></div>
+  <div class="container page-hero-inner">
+    <span class="eyebrow">Physical Goods</span>
+    <h1 class="hero-title">Products.</h1>
+    <p class="hero-sub">Thoughtfully designed objects that extend the studio into the physical world. Available now, with more on the way.</p>
+  </div>
+</section>
+
+<!-- ── PRODUCT ── -->
+<section class="product">
+  <div class="container product-grid">
+    <div class="product-media reveal">
+      <img src="/physical.jpg" alt="The Lineless Notebook" />
+      <span class="product-tag">01 / Notebook</span>
+    </div>
+
+    <div class="product-info reveal">
+      <span class="eyebrow">Lineless Notebook &middot; In stock</span>
+      <h2 class="product-title">The Lineless Notebook.</h2>
+      <p class="product-desc">
+        Somewhere to journal, write your thoughts, plans, and track progress.
+        Put your drawing and sketching skills to work. No line, no rules.
+      </p>
+
+      <ul class="product-points">
+        <li>Journal, write, and plan with total freedom</li>
+        <li>Blank pages built for sketching and drawing</li>
+        <li>No lines, no rules, just space to think</li>
+      </ul>
+
+      <!-- Buy controls -->
+      <div class="buy-row">
+        <div class="qty" role="group" aria-label="Quantity">
+          <button type="button" id="qtyMinus" aria-label="Decrease quantity">&minus;</button>
+          <span id="qtyVal" aria-live="polite">1</span>
+          <button type="button" id="qtyPlus" aria-label="Increase quantity">&plus;</button>
+        </div>
+        <button type="button" id="addCart" class="btn btn--ghost-dark">Add to cart</button>
+      </div>
+
+      <!-- Cart / order (revealed after add) -->
+      <div class="cart-box" id="cartBox" hidden>
+        <div class="cart-summary">
+          <span class="cart-label">In cart</span>
+          <span id="cartText">1 &times; Lineless Notebook</span>
+        </div>
+        <a id="orderBtn" class="btn btn--dark" target="_blank" rel="noopener" href="#">
+          Order on WhatsApp <span class="arrow">&#8594;</span>
+        </a>
+      </div>
+      <p class="buy-note">Orders are confirmed over WhatsApp, we'll share price, availability, and delivery.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMING SOON ── -->
+<section class="more">
+  <div class="container">
+    <div class="more-card">
+      <span class="eyebrow">Apparel &amp; Merch</span>
+      <h3>More products coming soon.</h3>
+      <p>Minimal pieces and objects that carry the SND aesthetic into everyday life.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  /* Tokens, header, buttons, eyebrow & page-hero are global (app.css). */
+
+  .product { padding: 80px 0 100px; }
+  .product-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center;
+  }
+  .product-media {
+    position: relative; overflow: hidden;
+    aspect-ratio: 4/5; border-radius: var(--r); border: 1px solid var(--gray-200);
+  }
+  .product-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+  .product-media:hover img { transform: scale(1.03); }
+  .product-tag {
+    position: absolute; top: 14px; left: 14px;
+    font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--black); background: rgba(255,255,255,0.92); padding: 4px 10px; border-radius: var(--r);
+  }
+
+  .product-info { max-width: 480px; }
+  .product-title { font-size: clamp(1.9rem, 3.5vw, 2.8rem); font-weight: 500; letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 18px; }
+  .product-desc { color: var(--gray-600); font-size: 1rem; line-height: 1.75; margin-bottom: 24px; }
+
+  .product-points { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+  .product-points li {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 0.88rem; color: var(--gray-600); line-height: 1.6;
+  }
+  .product-points li::before { content: ''; width: 5px; height: 5px; background: var(--black); margin-top: 8px; flex-shrink: 0; }
+
+  /* Buy controls */
+  .buy-row { display: flex; align-items: stretch; gap: 12px; flex-wrap: wrap; }
+  .qty {
+    display: inline-flex; align-items: center;
+    border: 1px solid var(--black); border-radius: var(--r);
+  }
+  .qty button {
+    width: 40px; height: 100%; min-height: 42px;
+    font-size: 1.1rem; line-height: 1; color: var(--black);
+    transition: background 0.15s, color 0.15s;
+  }
+  .qty button:hover { background: var(--black); color: var(--white); }
+  .qty #qtyVal {
+    min-width: 44px; text-align: center; font-size: 0.95rem; font-weight: 600;
+    border-left: 1px solid var(--gray-200); border-right: 1px solid var(--gray-200);
+    padding: 0 6px; align-self: stretch; display: grid; place-items: center;
+  }
+
+  /* Cart / order */
+  .cart-box {
+    margin-top: 20px; padding: 18px 20px;
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap; background: var(--gray-50);
+    animation: cartIn 0.3s var(--ease-out);
+  }
+  @keyframes cartIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .cart-summary { display: flex; flex-direction: column; gap: 3px; }
+  .cart-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-400); }
+  #cartText { font-size: 0.92rem; font-weight: 500; }
+  .buy-note { margin-top: 14px; font-size: 0.76rem; color: var(--gray-400); line-height: 1.5; }
+
+  /* Coming soon */
+  .more { padding: 0 0 100px; }
+  .more-card {
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    padding: 48px 40px; text-align: center;
+  }
+  .more-card h3 { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.025em; margin-bottom: 10px; }
+  .more-card p  { color: var(--gray-600); font-size: 0.92rem; max-width: 440px; margin: 0 auto; line-height: 1.7; }
+
+  @media (max-width: 900px) {
+    .product-grid { grid-template-columns: 1fr; gap: 40px; }
+    .product-media { max-width: 460px; }
+  }
+  @media (max-width: 700px) {
+    .product { padding: 56px 0 72px; }
+    .page-hero { padding-bottom: 48px; }
+  }
+</style>
+
+<script is:inline define:vars={{ WHATSAPP }}>
+  (function () {
+    let qty = 1;
+    const qtyVal  = document.getElementById('qtyVal');
+    const minus   = document.getElementById('qtyMinus');
+    const plus    = document.getElementById('qtyPlus');
+    const addCart = document.getElementById('addCart');
+    const cartBox = document.getElementById('cartBox');
+    const cartText = document.getElementById('cartText');
+    const orderBtn = document.getElementById('orderBtn');
+
+    function orderLink(q) {
+      const plural = q > 1 ? 's' : '';
+      const msg =
+        `Hi SND! I would like to purchase ${q} Lineless Notebook${plural}. ` +
+        `Could you please share the price, availability, and delivery details? Thank you.`;
+      return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function render() {
+      const plural = qty > 1 ? 's' : '';
+      qtyVal.textContent = String(qty);
+      cartText.innerHTML = `${qty} &times; Lineless Notebook${plural}`;
+      orderBtn.href = orderLink(qty);
+    }
+
+    minus.addEventListener('click', () => { qty = Math.max(1, qty - 1); render(); });
+    plus.addEventListener('click',  () => { qty = Math.min(99, qty + 1); render(); });
+    addCart.addEventListener('click', () => {
+      cartBox.hidden = false;
+      addCart.textContent = 'Added ✓';
+      addCart.disabled = true;
+      render();
+    });
+
+    render(); // initialise link + labels
+  })();
+</script>

@@ -177,7 +177,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .legal-hero::before {
   content: ''; position: absolute; inset: 0;
   background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-  background-size: 8rem 8rem; opacity: 0.32;
+  background-size: 8rem 8rem; background-attachment: fixed; opacity: 0.32;
 }
 .legal-hero-inner {
   position: relative; z-index: 1;

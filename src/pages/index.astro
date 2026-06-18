@@ -234,7 +234,7 @@ const journalPanelCards = [
         No rules, just space. A clean, minimal notebook designed for creative minds.
         Sketch, write, and think freely without constraints.
       </p>
-      <a href="#contact" class="btn btn--dark">Shop now <span class="arrow">&#8594;</span></a>
+      <a href="/products" class="btn btn--dark">Shop now <span class="arrow">&#8594;</span></a>
     </div>
   </div>
 </section>
@@ -311,7 +311,7 @@ const journalPanelCards = [
   .hero-bg {
     position: absolute; inset: 0; z-index: 0;
     background-image: radial-gradient(circle, rgba(0,0,0,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem;
+    background-size: 8rem 8rem; background-attachment: fixed;
     mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, #000 30%, transparent 85%);
     -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, #000 30%, transparent 85%);
   }
@@ -364,7 +364,7 @@ const journalPanelCards = [
   .feature-strip::before {
     content: ''; position: absolute; inset: 0; pointer-events: none;
     background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem; opacity: 0.32;
+    background-size: 8rem 8rem; background-attachment: fixed; opacity: 0.32;
   }
   .feature-strip-inner {
     position: relative; z-index: 1;
@@ -422,7 +422,7 @@ const journalPanelCards = [
   .studio::before {
     content: ''; position: absolute; inset: 0; pointer-events: none;
     background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem; opacity: 0.32;
+    background-size: 8rem 8rem; background-attachment: fixed; opacity: 0.32;
   }
   .studio-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 70px; align-items: center; }
   .studio-lead { color: rgba(255,255,255,0.62); font-size: 1rem; line-height: 1.75; margin-bottom: 36px; max-width: 480px; }
@@ -522,7 +522,7 @@ const journalPanelCards = [
   .cta::before {
     content: ''; position: absolute; inset: 0;
     background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem; opacity: 0.32;
+    background-size: 8rem 8rem; background-attachment: fixed; opacity: 0.32;
   }
   .cta-inner { position: relative; max-width: 600px; margin: 0 auto; }
   .cta-title {
