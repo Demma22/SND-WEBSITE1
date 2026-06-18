@@ -55,7 +55,8 @@
     .footer-inner { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 700px) {
-    .footer-inner { grid-template-columns: 1fr; gap: 28px; padding-inline: 20px; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px 20px; padding-inline: 20px; }
+    .footer-brand { grid-column: 1 / -1; }
     .footer-bottom { flex-direction: column; gap: 6px; text-align: center; padding-inline: 20px; }
   }
 </style>

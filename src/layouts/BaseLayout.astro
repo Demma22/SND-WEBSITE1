@@ -39,9 +39,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image"       content={new URL(image, Astro.site)} />
 
-  <!-- Status bar -->
+  <!-- Status bar: translucent so it blends with the frosted nav (in standalone /
+       installed mode the page draws under a transparent status bar) -->
   <meta name="theme-color" content="#ffffff" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
   <!-- Skia is the brand face on macOS; Inter is loaded only as a fallback so
        non-macOS devices (which lack Skia) render Inter instead of Helvetica. -->
