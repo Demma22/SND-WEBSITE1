@@ -75,4 +75,20 @@ const resolve = (item: { anchor?: string; href?: string }) =>
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') setMenu(false);
   });
+
+  /* Scroll reveal — global so every page's `.reveal` elements animate in.
+     (Without this, `.reveal` stays at opacity:0 on pages that lack an observer.) */
+  const revealEls = document.querySelectorAll('.reveal');
+  if (revealEls.length) {
+    const ro = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          setTimeout(() => el.classList.add('is-visible'), (i % 5) * 70);
+          obs.unobserve(el);
+        }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach((el) => ro.observe(el));
+  }
 </script>

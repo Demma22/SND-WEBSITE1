@@ -619,16 +619,7 @@ const journalPanelCards = [
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-  /* Scroll reveal */
-  const revealObs = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('is-visible'), (i % 5) * 80);
-        revealObs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  $$('.reveal').forEach((el) => revealObs.observe(el));
+  /* Scroll reveal is handled globally in Header.astro */
 
   /* Stat counters */
   function animateCount(el) {
