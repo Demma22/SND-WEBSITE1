@@ -52,20 +52,40 @@ import Footer from '../components/Footer.astro';
 <section class="feature-strip">
   <div class="container feature-strip-inner">
     <div class="feature-strip-item">
-      <span class="fs-label">Design</span>
-      <span class="fs-value">Human-first</span>
+      <div class="fs-flip">
+        <div class="fs-face fs-front"><img src="/icons/design.svg" class="fs-icon" alt="" /></div>
+        <div class="fs-face fs-back">
+          <span class="fs-label">Design</span>
+          <span class="fs-value">Human-first</span>
+        </div>
+      </div>
     </div>
     <div class="feature-strip-item">
-      <span class="fs-label">Built in</span>
-      <span class="fs-value">Uganda</span>
+      <div class="fs-flip">
+        <div class="fs-face fs-front"><img src="/icons/location.svg" class="fs-icon" alt="" /></div>
+        <div class="fs-face fs-back">
+          <span class="fs-label">Built in</span>
+          <span class="fs-value">Uganda</span>
+        </div>
+      </div>
     </div>
     <div class="feature-strip-item">
-      <span class="fs-label">Disciplines</span>
-      <span class="fs-value">Tech &middot; Art &middot; Goods</span>
+      <div class="fs-flip">
+        <div class="fs-face fs-front"><img src="/icons/flow-chart.svg" class="fs-icon" alt="" /></div>
+        <div class="fs-face fs-back">
+          <span class="fs-label">Disciplines</span>
+          <span class="fs-value">Tech &middot; Art &middot; Goods</span>
+        </div>
+      </div>
     </div>
     <div class="feature-strip-item">
-      <span class="fs-label">Since</span>
-      <span class="fs-value">2023</span>
+      <div class="fs-flip">
+        <div class="fs-face fs-front"><img src="/icons/clock.svg" class="fs-icon" alt="" /></div>
+        <div class="fs-face fs-back">
+          <span class="fs-label">Since</span>
+          <span class="fs-value">2023</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -341,11 +361,31 @@ import Footer from '../components/Footer.astro';
     display: grid; grid-template-columns: repeat(4, 1fr);
   }
   .feature-strip-item {
-    display: flex; flex-direction: column; gap: 4px;
     padding: 26px 32px;
     border-right: 1px solid rgba(255,255,255,0.07);
+    perspective: 800px;
   }
   .feature-strip-item:last-child { border-right: none; }
+
+  /* Flip tile: icon (front) rolls over to reveal label + value (back) */
+  .fs-flip {
+    position: relative; min-height: 48px;
+    transform-style: preserve-3d;
+    transform: rotateX(0deg);
+    transition: transform 0.85s cubic-bezier(0.62, 0.04, 0.3, 1);
+  }
+  .fs-flip.is-flipped { transform: rotateX(180deg); }
+  .fs-face {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    gap: 4px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  }
+  .fs-back { transform: rotateX(180deg); }
+  .fs-icon {
+    width: 30px; height: 30px; object-fit: contain;
+    filter: brightness(0) invert(1); opacity: 0.92;
+  }
   .fs-label {
     font-size: 0.58rem; font-weight: 700;
     letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.38);
@@ -615,6 +655,21 @@ import Footer from '../components/Footer.astro';
     entries.forEach((e) => { if (e.isIntersecting) { animateCount(e.target); countObs.unobserve(e.target); } });
   }, { threshold: 0.5 });
   $$('.stat-n').forEach((el) => countObs.observe(el));
+
+  /* Feature strip: show icons, then roll each tile to its label/value (staggered) */
+  const fsStrip = $('.feature-strip');
+  if (fsStrip) {
+    const flips = $$('.fs-flip', fsStrip);
+    const fsObs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          flips.forEach((el, i) => setTimeout(() => el.classList.add('is-flipped'), 500 + i * 200));
+          fsObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    fsObs.observe(fsStrip);
+  }
 
   /* Panel */
   const PANEL_DATA = {
