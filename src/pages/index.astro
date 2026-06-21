@@ -516,16 +516,21 @@ import Footer from '../components/Footer.astro';
   /* ── PANEL ── */
   .panel-backdrop {
     position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
-    opacity: 0; visibility: hidden; transition: all 0.3s;
+    background: rgba(10,10,10,0.28);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease);
   }
   .panel-backdrop.is-open { opacity: 1; visibility: visible; }
   .panel {
     position: fixed; top: 0; left: 0; right: 0; z-index: 210;
-    background: var(--white); border-bottom: 1px solid var(--gray-200);
-    max-height: 86vh; overflow-y: auto;
-    transform: translateY(-102%);
-    transition: transform 0.4s var(--ease-out);
+    background: rgba(255,255,255,0.62);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border-bottom: 1px solid rgba(207,207,211,0.6);
+    max-height: 86vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    transform: translateY(-101%);
+    will-change: transform;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .panel.is-open { transform: translateY(0); }
   .panel-close {
