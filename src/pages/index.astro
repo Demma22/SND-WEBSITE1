@@ -377,8 +377,8 @@ import Footer from '../components/Footer.astro';
   .fs-flip.is-flipped { transform: rotateX(180deg); }
   .fs-face {
     position: absolute; inset: 0;
-    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-    gap: 4px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    gap: 4px; text-align: center;
     backface-visibility: hidden; -webkit-backface-visibility: hidden;
   }
   .fs-back { transform: rotateX(180deg); }
@@ -656,15 +656,24 @@ import Footer from '../components/Footer.astro';
   }, { threshold: 0.5 });
   $$('.stat-n').forEach((el) => countObs.observe(el));
 
-  /* Feature strip: show icons, then roll each tile to its label/value (staggered) */
+  /* Feature strip: show icons, then roll each tile to its label/value (staggered).
+     Loops every 30s — icons reappear, then roll back to the text. */
   const fsStrip = $('.feature-strip');
   if (fsStrip) {
     const flips = $$('.fs-flip', fsStrip);
+    const setFlip = (show) => flips.forEach((el, i) =>
+      setTimeout(() => el.classList.toggle('is-flipped', show), i * 200));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const fsObs = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
-        if (e.isIntersecting) {
-          flips.forEach((el, i) => setTimeout(() => el.classList.add('is-flipped'), 500 + i * 200));
-          fsObs.unobserve(e.target);
+        if (!e.isIntersecting) return;
+        fsObs.unobserve(e.target);
+        setTimeout(() => setFlip(true), 500); // icons -> text on first view
+        if (!reduceMotion) {
+          setInterval(() => {
+            setFlip(false);                        // show icons again
+            setTimeout(() => setFlip(true), 1800); // then roll back to text
+          }, 30000);
         }
       });
     }, { threshold: 0.4 });
