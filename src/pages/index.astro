@@ -463,7 +463,7 @@ import Footer from '../components/Footer.astro';
   /* ── INSIDE STORIES STRIP ── */
   .stories-strip {
     display: block; position: relative; overflow: hidden;
-    background: var(--black); color: var(--white);
+    background: var(--gray-900); color: var(--white);
     transition: background 0.25s var(--ease);
   }
   .stories-strip::before {
@@ -471,7 +471,7 @@ import Footer from '../components/Footer.astro';
     background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
     background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px); opacity: 0.32;
   }
-  .stories-strip:hover { background: var(--gray-900); }
+  .stories-strip:hover { background: var(--black); }
   .stories-inner {
     position: relative; z-index: 1;
     display: flex; align-items: center; justify-content: space-between; gap: 32px;
