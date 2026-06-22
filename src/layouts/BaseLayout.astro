@@ -59,6 +59,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
   <title>{title}</title>
 
+  <!-- Show the intro loader before first paint, but only once per session
+       (no flash on navigation). Adding .intro-active locks scroll + reveals #intro. -->
+  <script is:inline>
+    try {
+      if (!sessionStorage.getItem('sndIntroSeen')) {
+        document.documentElement.classList.add('intro-active');
+      }
+    } catch (e) {}
+  </script>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -76,9 +86,74 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       width: 100%;
       position: relative;
     }
+
+    /* ── INTRO LOADER ── */
+    /* Lock the page under the loader so the hero can't show through or scroll. */
+    html.intro-active, html.intro-active body { overflow: hidden; height: 100%; }
+    #intro {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      background: #ffffff;
+      transition: opacity 0.45s ease;
+      will-change: opacity;
+    }
+    #intro.is-done { opacity: 0; pointer-events: none; }
+    #intro video {
+      width: clamp(96px, 22vw, 132px); height: auto;
+      display: block;
+      /* video has a baked white background; multiply drops it on the white screen */
+      mix-blend-mode: multiply;
+    }
+    /* Hidden until the script confirms it should run (avoids a flash on navigation) */
+    html:not(.intro-active) #intro { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      #intro video { display: none; }
+    }
   </style>
 </head>
 <body>
+  <div id="intro" aria-hidden="true">
+    <video src="/snd-logo.mp4" muted playsinline autoplay preload="auto"></video>
+  </div>
+
   <slot />
+
+  <script is:inline>
+    (function () {
+      const html = document.documentElement;
+      const intro = document.getElementById('intro');
+      // Not active this load? Make sure it's gone and the page is unlocked.
+      if (!intro || !html.classList.contains('intro-active')) {
+        html.classList.remove('intro-active');
+        intro && intro.remove();
+        return;
+      }
+      const video = intro.querySelector('video');
+      const start = Date.now();
+      const MIN = 1100;   // keep the loader up at least this long
+      const MAX = 3200;   // never hang longer than this
+      let done = false;
+
+      function finish() {
+        if (done) return;
+        done = true;
+        const wait = Math.max(0, MIN - (Date.now() - start));
+        setTimeout(function () {
+          intro.classList.add('is-done');
+          try { sessionStorage.setItem('sndIntroSeen', '1'); } catch (e) {}
+          // Unlock scroll only after the fade has started so the hero slides in cleanly.
+          setTimeout(function () {
+            html.classList.remove('intro-active');
+            intro.remove();
+          }, 500);
+        }, wait);
+      }
+
+      if (video && video.play) { video.play().catch(function () {}); }
+      video && video.addEventListener('ended', finish);
+      window.addEventListener('load', finish);
+      setTimeout(finish, MAX); // hard fallback
+    })();
+  </script>
 </body>
 </html>

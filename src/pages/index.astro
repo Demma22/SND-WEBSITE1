@@ -13,6 +13,7 @@ import Footer from '../components/Footer.astro';
 <aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Section details">
   <button class="panel-close" id="panelClose" aria-label="Close panel">&#x2715;</button>
   <div class="panel-inner" id="panelInner"></div>
+  <div class="panel-handle" id="panelHandle" role="button" tabindex="0" aria-label="Drag up to close"><span></span></div>
 </aside>
 
 <main id="main" tabindex="-1">
@@ -25,11 +26,11 @@ import Footer from '../components/Footer.astro';
       <span class="eyebrow">A creative studio</span>
       <h1 class="hero-title">Think It.<br />Create It.</h1>
       <p class="hero-subtitle">
-        SND turns ideas into reality through thoughtful design, development,
-        and close collaboration. Building intelligent, creative, and culturally relevant solutions.
+        The power of our creative minds is perhaps the greatest
+        gift each of us possess
       </p>
       <div class="hero-cta">
-        <a href="#work"    class="btn btn--dark">View our work <span class="arrow">&#8594;</span></a>
+        <a href="#studio"  class="btn btn--dark">About SND <span class="arrow">&#8594;</span></a>
         <a href="#contact" class="btn btn--ghost-dark">Join the community</a>
       </div>
     </div>
@@ -94,55 +95,54 @@ import Footer from '../components/Footer.astro';
 <section class="work" id="work">
   <div class="container">
     <div class="section-head reveal">
-      <span class="eyebrow">Selected work</span>
+      <span class="eyebrow">The Craft</span>
       <h2 class="section-title">Explore the studio.</h2>
-      <p class="section-desc">Three disciplines, one philosophy. Click any card to dive in.</p>
     </div>
     <div class="work-grid">
-      <article class="work-card reveal" data-panel="studio">
+      <article class="work-card reveal" data-panel="design">
         <div class="work-card-img">
-          <img src="/art_tech.jpg" alt="About SND" />
+          <img src="/design.jpg" alt="Design" />
           <span class="work-card-num">01</span>
         </div>
         <div class="work-card-body">
-          <h3>About SND</h3>
-          <p>The story, the mission, and the vision behind the studio.</p>
+          <h3>Design</h3>
+          <p>Branding, identity, UI/UX, and motion that communicate clearly.</p>
           <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
         </div>
       </article>
-      <article class="work-card reveal" data-panel="services">
+      <article class="work-card reveal" data-panel="art">
         <div class="work-card-img">
-          <img src="/design.jpg" alt="Design & Creative" />
+          <img src="/art.jpg" alt="Art" />
           <span class="work-card-num">02</span>
         </div>
         <div class="work-card-body">
-          <h3>Design &amp; Creative</h3>
-          <p>Branding, UI/UX, and motion that communicates clearly.</p>
+          <h3>Art</h3>
+          <p>Visual art and creative direction that combine clarity with aesthetics.</p>
           <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
         </div>
       </article>
-      <article class="work-card reveal" data-panel="products">
+      <article class="work-card reveal" data-panel="fashion">
         <div class="work-card-img">
-          <img src="/fashion.jpg" alt="Products" />
+          <img src="/fashion.jpg" alt="Fashion" />
           <span class="work-card-num">03</span>
         </div>
         <div class="work-card-body">
-          <h3>Products</h3>
-          <p>Physical goods that extend the studio into the world.</p>
+          <h3>Fashion</h3>
+          <p>Apparel and physical goods that carry the studio's aesthetic.</p>
           <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
         </div>
       </article>
-      <a class="work-card reveal" href="/inside-stories">
+      <article class="work-card reveal" data-panel="development">
         <div class="work-card-img">
-          <img src="/digital.jpg" alt="Inside Stories" />
+          <img src="/development.jpg" alt="Development" />
           <span class="work-card-num">04</span>
         </div>
         <div class="work-card-body">
-          <h3>Inside Stories</h3>
-          <p>Behind the studio, the craft, ideas, and culture.</p>
-          <span class="work-card-cta">Read <span class="arrow">&#8594;</span></span>
+          <h3>Development</h3>
+          <p>Applications, tools, and platforms built to solve real problems.</p>
+          <span class="work-card-cta">Explore <span class="arrow">&#8594;</span></span>
         </div>
-      </a>
+      </article>
     </div>
   </div>
 </section>
@@ -151,14 +151,21 @@ import Footer from '../components/Footer.astro';
 <section class="studio" id="studio">
   <div class="container studio-inner">
     <div class="studio-copy reveal">
-      <span class="eyebrow eyebrow--light">The studio</span>
-      <h2 class="section-title section-title--light">
-        Building world-class<br />products from Uganda.
-      </h2>
+      <span class="eyebrow eyebrow--light">Philosophy</span>
+      <h2 class="section-title section-title--light">The Muse.</h2>
       <p class="studio-lead">
-        SND is a creative studio combining technology, art, and design to build
-        intelligent, culturally relevant solutions. Built on the belief that world-class
-        digital products can originate from anywhere and serve both local and global audiences.
+        SND is driven by a deep passion for four interconnected disciplines: Design,
+        Art, Fashion, and Development.
+      </p>
+      <p class="studio-lead">
+        These disciplines are not isolated fields, they constantly influence and strengthen
+        one another. Development relies on thoughtful design, design and fashion draw from
+        art, and together they form a creative ecosystem that shapes how we live, work,
+        and interact.
+      </p>
+      <p class="studio-lead">
+        This understanding is the foundation of SND, fueling innovation and guiding the
+        creation of meaningful, impactful work.
       </p>
       <div class="studio-mv">
         <div class="mv-card">
@@ -183,62 +190,10 @@ import Footer from '../components/Footer.astro';
           <span class="stat-l">Projects</span>
         </div>
         <div class="stat">
-          <span class="stat-n" data-target="15">0</span><span class="stat-plus">+</span>
-          <span class="stat-l">Clients</span>
-        </div>
-        <div class="stat">
-          <span class="stat-n" data-target="3">0</span><span class="stat-plus">+</span>
-          <span class="stat-l">Years</span>
+          <span class="stat-n" data-target="5">0</span><span class="stat-plus">+</span>
+          <span class="stat-l">Partnerships</span>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── SERVICES ── -->
-<section class="services" id="services">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">What SND does</span>
-      <h2 class="section-title">Three disciplines, one standard.</h2>
-    </div>
-    <div class="services-grid">
-      <div class="service-card reveal">
-        <span class="service-num">01</span>
-        <div class="service-icon-wrap"><img src="/tech.jpg" alt="Technology" /></div>
-        <h3>Technology</h3>
-        <p>Building applications, tools, and platforms designed to solve real-world organizational and productivity problems. From concept to launch, scalable digital systems with long-term usability.</p>
-      </div>
-      <div class="service-card reveal">
-        <span class="service-num">02</span>
-        <div class="service-icon-wrap"><img src="/design.jpg" alt="Art & Design" /></div>
-        <h3>Art &amp; Design</h3>
-        <p>Creating visual identity systems, interfaces, motion graphics, and brand experiences that combine clarity with aesthetics. Every decision strengthens usability, communication, and perception.</p>
-      </div>
-      <div class="service-card reveal">
-        <span class="service-num">03</span>
-        <div class="service-icon-wrap"><img src="/fashion.jpg" alt="Fashion & Physical Goods" /></div>
-        <h3>Fashion &amp; Physical Goods</h3>
-        <p>Expanding the SND ecosystem through thoughtfully designed merchandise and physical products that increase visibility, strengthen identity, and create additional revenue channels.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── HIGHLIGHT / NOTEBOOK ── -->
-<section class="highlight">
-  <div class="container highlight-inner">
-    <div class="highlight-img reveal">
-      <img src="/notebook.jpg" alt="The Lineless Notebook" />
-    </div>
-    <div class="highlight-copy reveal">
-      <span class="eyebrow">Today's highlight &middot; Physical Goods</span>
-      <h2 class="section-title">The Lineless Notebook.</h2>
-      <p class="highlight-desc">
-        No rules, just space. A clean, minimal notebook designed for creative minds.
-        Sketch, write, and think freely without constraints.
-      </p>
-      <a href="/products" class="btn btn--dark">Shop now <span class="arrow">&#8594;</span></a>
     </div>
   </div>
 </section>
@@ -255,21 +210,39 @@ import Footer from '../components/Footer.astro';
   </div>
 </a>
 
+<!-- ── HIGHLIGHT / NOTEBOOK ── -->
+<section class="highlight">
+  <div class="container">
+    <span class="eyebrow highlight-eyebrow reveal">Today's highlight &middot; Physical Goods</span>
+    <div class="highlight-inner">
+      <div class="highlight-img reveal">
+        <img src="/notebook.jpg" alt="The Lineless Notebook" />
+      </div>
+      <div class="highlight-copy reveal">
+        <h2 class="section-title">The Lineless Notebook.</h2>
+        <p class="highlight-desc">
+          No rules, just space. A clean, minimal notebook designed for creative minds.
+          Sketch, write, and think freely without constraints.
+        </p>
+        <a href="/products" class="btn btn--dark">Shop now <span class="arrow">&#8594;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── CTA ── -->
 <section class="cta" id="contact">
   <div class="container cta-inner reveal">
-    <span class="eyebrow eyebrow--light">Join the community</span>
-    <h2 class="cta-title">Join our<br />community.</h2>
-    <p class="cta-desc">Follow along for new drops, stories, and a first look at what SND is building next.</p>
+    <span class="eyebrow eyebrow--light">Community</span>
+    <h2 class="cta-title">Join the<br />Community.</h2>
     <div class="cta-actions">
-      <a href="https://instagram.com/sndstudio.ug" target="_blank" rel="noopener" class="btn btn--light">Follow on Instagram <span class="arrow">&#8594;</span></a>
+      <a href="https://www.instagram.com/snd.studiio/" target="_blank" rel="noopener" class="btn btn--light">Follow on Instagram <span class="arrow">&#8594;</span></a>
       <a href="mailto:hello@sndstudio-ug.com" class="btn btn--ghost-light">hello@sndstudio-ug.com</a>
     </div>
     <div class="cta-socials">
-      <a href="https://instagram.com/sndstudio.ug" aria-label="Instagram" target="_blank" rel="noopener"><img src="/instagram.svg" alt="Instagram" /></a>
+      <a href="https://www.instagram.com/snd.studiio/" aria-label="Instagram" target="_blank" rel="noopener"><img src="/instagram.svg" alt="Instagram" /></a>
       <a href="https://tiktok.com/@sndstudio.ug"   aria-label="TikTok"    target="_blank" rel="noopener"><img src="/tiktok.svg"    alt="TikTok" /></a>
-      <a href="https://x.com/sndstudio_ug"          aria-label="X"         target="_blank" rel="noopener"><img src="/x.svg"         alt="X" /></a>
-      <a href="https://threads.net/@sndstudio.ug"   aria-label="Threads"   target="_blank" rel="noopener"><img src="/threads.svg"   alt="Threads" /></a>
+      <a href="https://www.threads.com/@snd.studiio"   aria-label="Threads"   target="_blank" rel="noopener"><img src="/threads.svg"   alt="Threads" /></a>
       <a href="https://pinterest.com/sndstudio_ug"  aria-label="Pinterest" target="_blank" rel="noopener"><img src="/pinterest.svg" alt="Pinterest" /></a>
     </div>
   </div>
@@ -465,31 +438,9 @@ import Footer from '../components/Footer.astro';
   .stat-plus { font-size: 1.4rem; font-weight: 500; }
   .stat-l    { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.38); margin-top: 6px; }
 
-  /* ── SERVICES ── */
-  .services { padding: 100px 0; background: var(--gray-50); }
-  .services-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
-  }
-  .service-card { background: var(--white); padding: 36px 30px; transition: background 0.18s, color 0.18s; }
-  .service-card:hover { background: var(--black); color: var(--white); }
-  .service-num {
-    font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--gray-400);
-  }
-  .service-card:hover .service-num { color: rgba(255,255,255,0.38); }
-  .service-icon-wrap {
-    width: 100%; aspect-ratio: 16/9; overflow: hidden;
-    margin: 16px 0 20px; border-radius: var(--r);
-  }
-  .service-icon-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-  .service-card:hover .service-icon-wrap img { transform: scale(1.04); }
-  .service-card h3 { font-size: 1.1rem; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 12px; }
-  .service-card p  { font-size: 0.84rem; color: var(--gray-600); line-height: 1.7; }
-  .service-card:hover p { color: rgba(255,255,255,0.65); }
-
   /* ── HIGHLIGHT ── */
   .highlight { padding: 100px 0; }
+  .highlight-eyebrow { display: block; margin-bottom: 32px; }
   .highlight-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
   .highlight-img {
     overflow: hidden; aspect-ratio: 5/4;
@@ -581,7 +532,22 @@ import Footer from '../components/Footer.astro';
     font-size: 0.88rem; z-index: 5; transition: all 0.18s;
   }
   .panel-close:hover { background: var(--black); color: var(--white); border-color: var(--black); }
-  .panel-inner { max-width: var(--maxw); margin: 0 auto; padding: 52px 32px 60px; }
+
+  /* Drag handle (grab + pull up to close) */
+  .panel-handle {
+    position: sticky; bottom: 0; z-index: 6;
+    display: flex; align-items: center; justify-content: center;
+    height: 32px; cursor: grab; touch-action: none;
+    background: transparent;
+  }
+  .panel-handle:active { cursor: grabbing; }
+  .panel-handle span {
+    width: 44px; height: 5px; border-radius: 999px;
+    background: var(--gray-400); transition: background 0.15s, width 0.15s;
+  }
+  .panel-handle:hover span { background: var(--gray-600); width: 52px; }
+
+  .panel-inner { max-width: var(--maxw); margin: 0 auto; padding: 64px 40px 40px; }
   :global(.panel-tag) {
     font-size: 0.6rem; font-weight: 700; letter-spacing: 0.2em;
     text-transform: uppercase; color: var(--gray-400); margin-bottom: 12px; display: block;
@@ -624,7 +590,6 @@ import Footer from '../components/Footer.astro';
   }
   @media (max-width: 700px) {
     .work-grid { grid-template-columns: 1fr 1fr; }
-    .services-grid { grid-template-columns: 1fr; }
     .stories-inner { flex-direction: column; align-items: flex-start; gap: 24px; padding: 56px 20px; }
     .hero-badge { display: none; }
     .scroll-cue { display: none; }
@@ -682,31 +647,40 @@ import Footer from '../components/Footer.astro';
 
   /* Panel */
   const PANEL_DATA = {
-    studio: {
-      tag: 'The studio', title: 'About SND',
-      body: 'SND turns ideas into reality through thoughtful design, development, and close collaboration, building intelligent, creative, and culturally relevant solutions.',
-      cards: [
-        { num: '01', h: 'Technology', p: 'Building applications, tools, and platforms designed to solve real-world problems. Scalable digital systems with long-term usability.' },
-        { num: '02', h: 'Art & Design', p: 'Visual identity systems, interfaces, motion graphics, and brand experiences that combine clarity with aesthetics.' },
-        { num: '03', h: 'Fashion & Physical Goods', p: 'Thoughtfully designed merchandise and physical products that increase visibility and strengthen identity.' },
-      ],
-    },
-    services: {
-      tag: 'Services', title: 'Design & Creative',
-      body: 'Interfaces designed for humans first: intuitive, accessible, and built to serve a clear purpose on every screen.',
+    design: {
+      tag: 'Discipline', title: 'Design',
+      body: 'Branding, identity systems, interfaces, and motion that combine clarity with aesthetics on every screen.',
       cards: [
         { num: '01', h: 'Branding', p: 'Visual identity systems, logos, and brand experiences that communicate clearly and build lasting recognition.' },
         { num: '02', h: 'UI / UX', p: 'Interfaces designed for humans first: intuitive, accessible, and built to serve a clear purpose on every screen.' },
-        { num: '03', h: 'Motion', p: 'Bring ideas to life through animation, motion graphics, and dynamic storytelling that captures attention.' },
+        { num: '03', h: 'Motion', p: 'Animation and motion graphics that bring ideas to life and hold attention.' },
       ],
     },
-    products: {
-      tag: 'Physical Goods', title: 'Products',
-      body: 'The SND ecosystem in physical form. Thoughtfully designed objects that extend the studio identity into the world.',
+    art: {
+      tag: 'Discipline', title: 'Art',
+      body: 'Visual art and creative direction that shape how the studio looks, feels, and communicates.',
       cards: [
-        { num: '01', h: 'Notebooks', p: 'Crafted for thinkers and makers. Clean layouts and quality materials that make the act of writing feel considered.' },
-        { num: '02', h: 'Apparel', p: 'Wear the brand. Minimal pieces that carry the SND aesthetic, designed to be worn, not just seen.' },
-        { num: '03', h: 'Merchandise', p: 'Objects that extend the studio identity into the physical world and create touchpoints beyond the screen.' },
+        { num: '01', h: 'Art Direction', p: 'A cohesive visual language across everything the studio makes.' },
+        { num: '02', h: 'Illustration', p: 'Original artwork and imagery that give the brand a distinct voice.' },
+        { num: '03', h: 'Visual Systems', p: 'Considered, repeatable systems that combine clarity with aesthetics.' },
+      ],
+    },
+    fashion: {
+      tag: 'Discipline', title: 'Fashion',
+      body: 'Apparel and physical goods that carry the SND aesthetic into the everyday.',
+      cards: [
+        { num: '01', h: 'Apparel', p: 'Minimal pieces that carry the studio aesthetic, designed to be worn, not just seen.' },
+        { num: '02', h: 'Physical Goods', p: 'Thoughtfully designed objects that extend the studio identity into the world.' },
+        { num: '03', h: 'Merchandise', p: 'Touchpoints beyond the screen that strengthen identity and visibility.' },
+      ],
+    },
+    development: {
+      tag: 'Discipline', title: 'Development',
+      body: 'Applications, tools, and platforms built to solve real-world problems with long-term usability.',
+      cards: [
+        { num: '01', h: 'Web', p: 'Fast, accessible, scalable websites and web apps built to last.' },
+        { num: '02', h: 'Product', p: 'Tools and platforms designed around real organisational and productivity needs.' },
+        { num: '03', h: 'Systems', p: 'Scalable digital systems engineered for reliability and growth.' },
       ],
     },
   };
@@ -767,6 +741,35 @@ import Footer from '../components/Footer.astro';
   panelClose?.addEventListener('click', closePanel);
   panelBackdrop?.addEventListener('click', closePanel);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+
+  /* Drag the handle up to dismiss the panel */
+  const panelHandle = $('#panelHandle');
+  let drag = null;
+  panelHandle?.addEventListener('pointerdown', (e) => {
+    drag = { startY: e.clientY, h: panel.offsetHeight, delta: 0 };
+    panel.style.transition = 'none';
+    panelHandle.setPointerCapture(e.pointerId);
+  });
+  panelHandle?.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    let d = e.clientY - drag.startY;
+    if (d > 0) d *= 0.25;                 // resist downward pull
+    drag.delta = d;
+    panel.style.transform = `translateY(${d}px)`;
+  });
+  function endDrag() {
+    if (!drag) return;
+    const shouldClose = drag.delta < -Math.min(120, drag.h * 0.3);
+    panel.style.transition = '';          // restore the slide animation
+    if (shouldClose) closePanel();
+    panel.style.transform = '';           // animate from current pos to rest/closed
+    drag = null;
+  }
+  panelHandle?.addEventListener('pointerup', endDrag);
+  panelHandle?.addEventListener('pointercancel', endDrag);
+  panelHandle?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); closePanel(); }
+  });
 
   /* Smooth anchor scroll */
   $$('a[href^="#"]').forEach((a) => {
