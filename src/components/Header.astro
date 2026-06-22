@@ -58,10 +58,6 @@ const resolve = (item: { anchor?: string; href?: string }) =>
   const toggle = document.getElementById('navToggle');
   const mobileNav = document.getElementById('mobileNav');
 
-  window.addEventListener('scroll', () => {
-    header?.classList.toggle('is-scrolled', window.scrollY > 20);
-  }, { passive: true });
-
   function setMenu(open: boolean) {
     toggle?.classList.toggle('is-open', open);
     mobileNav?.classList.toggle('is-open', open);
@@ -75,25 +71,25 @@ const resolve = (item: { anchor?: string; href?: string }) =>
     if (e.key === 'Escape') setMenu(false);
   });
 
-  /* Dot-grid parallax — lock the pattern to the viewport on every device.
-     background-attachment: fixed is ignored on mobile, so drive it with a
-     --dotY variable that counters the scroll position instead. */
+  /* Single rAF-throttled scroll pass — handles the header shadow AND the
+     dot-grid parallax together, so we read/write layout once per frame.
+     (background-attachment: fixed is ignored on mobile, so we drive the
+     pattern with a --dotY variable that counters the scroll position.) */
   const dotHosts = document.querySelectorAll(
     '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .soon, .page-hero'
   );
-  if (dotHosts.length) {
-    let dotTick = false;
-    const updateDots = () => {
-      dotHosts.forEach((el) => {
-        (el as HTMLElement).style.setProperty('--dotY', `${-el.getBoundingClientRect().top}px`);
-      });
-      dotTick = false;
-    };
-    const onScroll = () => { if (!dotTick) { dotTick = true; requestAnimationFrame(updateDots); } };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', updateDots);
-    updateDots();
-  }
+  let tick = false;
+  const onFrame = () => {
+    header?.classList.toggle('is-scrolled', window.scrollY > 20);
+    dotHosts.forEach((el) => {
+      (el as HTMLElement).style.setProperty('--dotY', `${-el.getBoundingClientRect().top}px`);
+    });
+    tick = false;
+  };
+  const onScroll = () => { if (!tick) { tick = true; requestAnimationFrame(onFrame); } };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  onFrame();
 
   /* Scroll reveal — global so every page's `.reveal` elements animate in.
      (Without this, `.reveal` stays at opacity:0 on pages that lack an observer.) */

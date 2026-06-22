@@ -36,7 +36,7 @@ import Footer from '../components/Footer.astro';
     </div>
     <div class="hero-visual reveal">
       <div class="hero-img-wrap">
-        <img src="/art_tech.jpg" alt="SND creative work" />
+        <img src="/art_tech.jpg" alt="SND creative work" fetchpriority="high" decoding="async" />
       </div>
       <div class="hero-badge">
         <span class="hero-badge-num">10+</span>
@@ -101,7 +101,7 @@ import Footer from '../components/Footer.astro';
     <div class="work-grid">
       <article class="work-card reveal" data-panel="design">
         <div class="work-card-img">
-          <img src="/design.jpg" alt="Design" />
+          <img src="/design.jpg" alt="Design" loading="lazy" decoding="async" />
           <span class="work-card-num">01</span>
         </div>
         <div class="work-card-body">
@@ -112,7 +112,7 @@ import Footer from '../components/Footer.astro';
       </article>
       <article class="work-card reveal" data-panel="art">
         <div class="work-card-img">
-          <img src="/art.jpg" alt="Art" />
+          <img src="/art.jpg" alt="Art" loading="lazy" decoding="async" />
           <span class="work-card-num">02</span>
         </div>
         <div class="work-card-body">
@@ -123,7 +123,7 @@ import Footer from '../components/Footer.astro';
       </article>
       <article class="work-card reveal" data-panel="fashion">
         <div class="work-card-img">
-          <img src="/fashion.jpg" alt="Fashion" />
+          <img src="/fashion.jpg" alt="Fashion" loading="lazy" decoding="async" />
           <span class="work-card-num">03</span>
         </div>
         <div class="work-card-body">
@@ -134,7 +134,7 @@ import Footer from '../components/Footer.astro';
       </article>
       <article class="work-card reveal" data-panel="development">
         <div class="work-card-img">
-          <img src="/development.jpg" alt="Development" />
+          <img src="/development.jpg" alt="Development" loading="lazy" decoding="async" />
           <span class="work-card-num">04</span>
         </div>
         <div class="work-card-body">
@@ -182,7 +182,7 @@ import Footer from '../components/Footer.astro';
     </div>
     <div class="studio-visual reveal">
       <div class="studio-img-main">
-        <img src="/physical.jpg" alt="SND physical goods" />
+        <img src="/physical.jpg" alt="SND physical goods" loading="lazy" decoding="async" />
       </div>
       <div class="studio-stats">
         <div class="stat">
@@ -216,7 +216,7 @@ import Footer from '../components/Footer.astro';
     <span class="eyebrow highlight-eyebrow reveal">Today's highlight &middot; Physical Goods</span>
     <div class="highlight-inner">
       <div class="highlight-img reveal">
-        <img src="/notebook.jpg" alt="The Lineless Notebook" />
+        <img src="/notebook.jpg" alt="The Lineless Notebook" loading="lazy" decoding="async" />
       </div>
       <div class="highlight-copy reveal">
         <h2 class="section-title">The Lineless Notebook.</h2>
@@ -298,11 +298,13 @@ import Footer from '../components/Footer.astro';
   .hero-img-wrap {
     border-radius: var(--r); overflow: hidden;
     aspect-ratio: 4/5; border: 1px solid var(--gray-200);
+    transition: box-shadow 0.4s var(--ease);
   }
   .hero-img-wrap img {
     width: 100%; height: 100%; object-fit: cover;
     transition: transform 0.6s var(--ease);
   }
+  .hero-img-wrap:hover { box-shadow: var(--shadow-md); }
   .hero-img-wrap:hover img { transform: scale(1.03); }
   .hero-badge {
     position: absolute; bottom: 24px; left: -20px;
@@ -372,10 +374,11 @@ import Footer from '../components/Footer.astro';
     gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
   }
   .work-card {
-    background: var(--white); cursor: pointer;
-    transition: background 0.18s; display: flex; flex-direction: column;
+    background: var(--white); cursor: pointer; position: relative;
+    transition: background 0.18s, box-shadow 0.25s var(--ease), z-index 0s;
+    display: flex; flex-direction: column;
   }
-  .work-card:hover { background: var(--gray-50); }
+  .work-card:hover { background: var(--white); z-index: 2; box-shadow: var(--shadow-md); }
   .work-card-img { position: relative; aspect-ratio: 1; overflow: hidden; }
   .work-card-img img {
     width: 100%; height: 100%; object-fit: cover;
@@ -445,8 +448,10 @@ import Footer from '../components/Footer.astro';
   .highlight-img {
     overflow: hidden; aspect-ratio: 5/4;
     border-radius: var(--r); border: 1px solid var(--gray-200);
+    transition: box-shadow 0.4s var(--ease);
   }
   .highlight-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+  .highlight-img:hover { box-shadow: var(--shadow-md); }
   .highlight-img:hover img { transform: scale(1.03); }
   .highlight-copy { max-width: 480px; }
   .highlight-desc { color: var(--gray-600); font-size: 1rem; line-height: 1.72; margin: 18px 0 28px; }
@@ -587,12 +592,21 @@ import Footer from '../components/Footer.astro';
     .highlight-inner { grid-template-columns: 1fr; gap: 40px; }
     :global(.panel-grid) { grid-template-columns: 1fr; }
     .feature-strip-inner { grid-template-columns: repeat(2, 1fr); }
+    /* In 2-col mode, drop the right-edge line and separate the two rows */
+    .feature-strip-item:nth-child(2n) { border-right: none; }
+    .feature-strip-item:nth-child(-n+2) { border-bottom: 1px solid rgba(255,255,255,0.07); }
   }
   @media (max-width: 700px) {
     .work-grid { grid-template-columns: 1fr 1fr; }
     .stories-inner { flex-direction: column; align-items: flex-start; gap: 24px; padding: 56px 20px; }
     .hero-badge { display: none; }
     .scroll-cue { display: none; }
+  }
+  @media (max-width: 380px) {
+    /* Keep the big display type from overflowing on the smallest phones */
+    .hero-title { font-size: 2.7rem; }
+    .work-grid { grid-template-columns: 1fr; }
+    .hero { padding-top: calc(var(--header-h) + 48px); }
   }
 </style>
 
