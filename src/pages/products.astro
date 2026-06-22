@@ -185,7 +185,7 @@ const WHATSAPP = '256742072661';
 
     function render() {
       qtyVal.textContent = String(qty);
-      priceVal.textContent = unit();
+      priceVal.textContent = total(qty);   // running total grows with quantity
       orderBtn.href = orderLink(qty);
     }
 
