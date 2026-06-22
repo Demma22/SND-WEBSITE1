@@ -55,15 +55,6 @@ const WHATSAPP = '256742072661';
           <span id="qtyVal" aria-live="polite">1</span>
           <button type="button" id="qtyPlus" aria-label="Increase quantity">&plus;</button>
         </div>
-        <button type="button" id="addCart" class="btn btn--ghost-dark">Add to cart</button>
-      </div>
-
-      <!-- Cart / order (revealed after add) -->
-      <div class="cart-box" id="cartBox" hidden>
-        <div class="cart-summary">
-          <span class="cart-label">In cart</span>
-          <span id="cartText">1 &times; Lineless Notebook</span>
-        </div>
         <a id="orderBtn" class="btn btn--dark" target="_blank" rel="noopener" href="#">
           Order on WhatsApp <span class="arrow">&#8594;</span>
         </a>
@@ -142,18 +133,6 @@ const WHATSAPP = '256742072661';
     padding: 0 6px; align-self: stretch; display: grid; place-items: center;
   }
 
-  /* Cart / order */
-  .cart-box {
-    margin-top: 20px; padding: 18px 20px;
-    border: 1px solid var(--gray-200); border-radius: var(--r);
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    flex-wrap: wrap; background: var(--gray-50);
-    animation: cartIn 0.3s var(--ease-out);
-  }
-  @keyframes cartIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .cart-summary { display: flex; flex-direction: column; gap: 3px; }
-  .cart-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-400); }
-  #cartText { font-size: 0.92rem; font-weight: 500; }
   .buy-note { margin-top: 14px; font-size: 0.76rem; color: var(--gray-400); line-height: 1.5; }
 
   /* Coming soon */
@@ -186,9 +165,6 @@ const WHATSAPP = '256742072661';
     const qtyVal   = document.getElementById('qtyVal');
     const minus    = document.getElementById('qtyMinus');
     const plus     = document.getElementById('qtyPlus');
-    const addCart  = document.getElementById('addCart');
-    const cartBox  = document.getElementById('cartBox');
-    const cartText = document.getElementById('cartText');
     const orderBtn = document.getElementById('orderBtn');
     const priceVal = document.getElementById('priceVal');
     const curBtns  = document.querySelectorAll('.cur-toggle button');
@@ -208,21 +184,13 @@ const WHATSAPP = '256742072661';
     }
 
     function render() {
-      const plural = qty > 1 ? 's' : '';
       qtyVal.textContent = String(qty);
       priceVal.textContent = unit();
-      cartText.innerHTML = `${qty} &times; Lineless Notebook${plural} &middot; ${total(qty)}`;
       orderBtn.href = orderLink(qty);
     }
 
     minus.addEventListener('click', () => { qty = Math.max(1, qty - 1); render(); });
     plus.addEventListener('click',  () => { qty = Math.min(99, qty + 1); render(); });
-    addCart.addEventListener('click', () => {
-      cartBox.hidden = false;
-      addCart.textContent = 'Added ✓';
-      addCart.disabled = true;
-      render();
-    });
     curBtns.forEach((b) => b.addEventListener('click', () => {
       cur = b.getAttribute('data-cur');
       curBtns.forEach((x) => x.classList.toggle('is-active', x === b));
