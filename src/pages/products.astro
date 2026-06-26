@@ -27,13 +27,13 @@ const WHATSAPP = '256742072661';
 <section class="product">
   <div class="container product-grid">
     <div class="product-media reveal">
-      <img src="/notebook.jpeg" alt="Lineless Notebook" fetchpriority="high" decoding="async" />
+      <img src="/notebook.jpeg" alt="Lineless Pocket Notebook" fetchpriority="high" decoding="async" />
       <span class="product-tag">01 / Notebook</span>
     </div>
 
     <div class="product-info reveal">
-      <span class="eyebrow">Lineless Notebook &middot; In stock</span>
-      <h2 class="product-title">Lineless Notebook.</h2>
+      <span class="eyebrow">Lineless Pocket Notebook &middot; In stock</span>
+      <h2 class="product-title">Lineless Pocket Notebook.</h2>
       <p class="product-desc">
         Somewhere to journal your thoughts, map out plans, and track your progress,
         then turn the page over to sketching and drawing. No lines. No rules.
@@ -178,7 +178,7 @@ const WHATSAPP = '256742072661';
     function orderLink(q) {
       const plural = q > 1 ? 's' : '';
       const msg =
-        `Hi SND! I would like to purchase ${q} Lineless Notebook${plural} ` +
+        `Hi SND! I would like to purchase ${q} Lineless Pocket Notebook${plural} ` +
         `(${unit()} each, total ${total(q)}). ` +
         `Could you please confirm availability and delivery details? Thank you.`;
       return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
