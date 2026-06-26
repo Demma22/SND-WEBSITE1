@@ -446,9 +446,10 @@ import Footer from '../components/Footer.astro';
   /* ── HIGHLIGHT ── */
   .highlight { padding: 100px 0; }
   .highlight-eyebrow { display: block; margin-bottom: 32px; }
-  .highlight-inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 64px; align-items: center; }
+  .highlight-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
   .highlight-img {
     overflow: hidden; aspect-ratio: 4/5;
+    max-width: 340px; width: 100%; justify-self: center;
     border-radius: var(--r); border: 1px solid var(--gray-200);
     transition: box-shadow 0.4s var(--ease);
   }
