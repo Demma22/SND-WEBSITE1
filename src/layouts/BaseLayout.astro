@@ -57,12 +57,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
   </noscript>
 
-  <!-- Favicons — SND1.png (1080×1080 square) is the canonical icon Google
-       uses in search results. Declared first/unambiguously so it isn't
-       overridden by a non-square icon. -->
+  <!-- Favicons — all SND. favicon.svg/ico are regenerated from the SND mark
+       (preview/share apps fetch /favicon.ico & /favicon.svg directly).
+       SND1.png stays as the large square icon Google uses in search results. -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" type="image/png" href="/SND1.png" sizes="any" />
-  <link rel="icon" type="image/png" href="/SND1.png" sizes="48x48" />
-  <link rel="shortcut icon" href="/SND1.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="/SND1.png" />
 
   <title>{title}</title>
