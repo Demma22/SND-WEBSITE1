@@ -54,30 +54,18 @@ const resolve = (item: { anchor?: string; href?: string }) =>
 </nav>
 
 <script>
-  const header = document.getElementById('siteHeader');
-  const toggle = document.getElementById('navToggle');
-  const mobileNav = document.getElementById('mobileNav');
+  /* This module runs ONCE per hard load; with the ClientRouter, page bodies
+     are swapped on navigation. So: persistent window/document listeners are
+     registered here exactly once and delegate to per-page state, while
+     init() re-binds fresh elements on every `astro:page-load`. */
 
-  function setMenu(open: boolean) {
-    toggle?.classList.toggle('is-open', open);
-    mobileNav?.classList.toggle('is-open', open);
-    toggle?.setAttribute('aria-expanded', String(open));
-  }
-  toggle?.addEventListener('click', () => {
-    setMenu(!mobileNav?.classList.contains('is-open'));
-  });
-  mobileNav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setMenu(false);
-  });
+  let header: HTMLElement | null = null;
+  let dotHosts: NodeListOf<Element> | [] = [];
+  let setMenuRef: (open: boolean) => void = () => {};
 
-  /* Single rAF-throttled scroll pass — handles the header shadow AND the
-     dot-grid parallax together, so we read/write layout once per frame.
-     (background-attachment: fixed is ignored on mobile, so we drive the
-     pattern with a --dotY variable that counters the scroll position.) */
-  const dotHosts = document.querySelectorAll(
-    '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .soon, .page-hero'
-  );
+  /* Single rAF-throttled scroll pass — header shadow + dot-grid parallax
+     together, one layout read/write per frame. (background-attachment: fixed
+     is ignored on mobile, so --dotY counters the scroll position instead.) */
   let tick = false;
   const onFrame = () => {
     header?.classList.toggle('is-scrolled', window.scrollY > 20);
@@ -89,21 +77,63 @@ const resolve = (item: { anchor?: string; href?: string }) =>
   const onScroll = () => { if (!tick) { tick = true; requestAnimationFrame(onFrame); } };
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
-  onFrame();
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setMenuRef(false);
+  });
 
-  /* Scroll reveal — global so every page's `.reveal` elements animate in.
-     (Without this, `.reveal` stays at opacity:0 on pages that lack an observer.) */
-  const revealEls = document.querySelectorAll('.reveal');
-  if (revealEls.length) {
-    const ro = new IntersectionObserver((entries, obs) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          const el = entry.target as HTMLElement;
-          setTimeout(() => el.classList.add('is-visible'), (i % 5) * 70);
-          obs.unobserve(el);
-        }
-      });
-    }, { threshold: 0.1 });
-    revealEls.forEach((el) => ro.observe(el));
+  function init() {
+    header = document.getElementById('siteHeader');
+    const toggle = document.getElementById('navToggle');
+    const mobileNav = document.getElementById('mobileNav');
+
+    const setMenu = (open: boolean) => {
+      toggle?.classList.toggle('is-open', open);
+      mobileNav?.classList.toggle('is-open', open);
+      toggle?.setAttribute('aria-expanded', String(open));
+      // Freeze the page while the menu sheet is open
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+    setMenuRef = setMenu;
+    toggle?.addEventListener('click', () => {
+      setMenu(!mobileNav?.classList.contains('is-open'));
+    });
+    mobileNav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+    dotHosts = document.querySelectorAll(
+      '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .soon, .page-hero'
+    );
+    onFrame();
+
+    /* Scroll reveal — global so every page's `.reveal` elements animate in.
+       - Trigger line at 88% of the viewport (threshold 0 + rootMargin) so tall
+         blocks reveal the moment they arrive, not after 10% of their height.
+       - If the intro loader is up, wait for its fade to start so the entrance
+         plays in front of the user instead of hidden behind the overlay. */
+    const revealEls = document.querySelectorAll('.reveal');
+    if (revealEls.length) {
+      const startReveals = () => {
+        const ro = new IntersectionObserver((entries, obs) => {
+          entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+              const el = entry.target as HTMLElement;
+              setTimeout(() => el.classList.add('is-visible'), (i % 5) * 60);
+              obs.unobserve(el);
+            }
+          });
+        }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
+        revealEls.forEach((el) => ro.observe(el));
+      };
+      if (document.documentElement.classList.contains('intro-active')) {
+        let started = false;
+        const once = () => { if (!started) { started = true; startReveals(); } };
+        document.addEventListener('snd:intro-done', once, { once: true });
+        setTimeout(once, 4000); // safety: never leave content hidden
+      } else {
+        startReveals();
+      }
+    }
   }
+
+  // Fires on the initial load AND after every client-side navigation.
+  document.addEventListener('astro:page-load', init);
 </script>

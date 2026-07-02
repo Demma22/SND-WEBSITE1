@@ -1,5 +1,6 @@
 ---
 import '../styles/app.css';
+import { ClientRouter } from 'astro:transitions';
 
 export interface Props {
   title: string;
@@ -67,6 +68,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <link rel="apple-touch-icon" sizes="180x180" href="/SND1.png" />
 
   <title>{title}</title>
+
+  <!-- Client-side routing: pages cross-fade instead of hard white flashes -->
+  <ClientRouter />
 
   <!-- Organization structured data — tells Google the canonical brand logo -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify({
@@ -136,7 +140,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
   <slot />
 
-  <script is:inline>
+  <!-- data-astro-rerun: re-runs after client-side navigation so the #intro
+       overlay swapped in with a new page body is always cleaned up -->
+  <script is:inline data-astro-rerun>
     (function () {
       const html = document.documentElement;
       const intro = document.getElementById('intro');
@@ -158,6 +164,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         const wait = Math.max(0, MIN - (Date.now() - start));
         setTimeout(function () {
           intro.classList.add('is-done');
+          // Let the page know the curtain is lifting — reveals choreograph to this
+          document.dispatchEvent(new CustomEvent('snd:intro-done'));
           try { sessionStorage.setItem('sndIntroSeen', '1'); } catch (e) {}
           // Unlock scroll only after the fade has started so the hero slides in cleanly.
           setTimeout(function () {
