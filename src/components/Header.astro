@@ -66,11 +66,20 @@ const resolve = (item: { anchor?: string; href?: string }) =>
   /* Single rAF-throttled scroll pass — header shadow + dot-grid parallax
      together, one layout read/write per frame. (background-attachment: fixed
      is ignored on mobile, so --dotY counters the scroll position instead.) */
+  /* The dot pattern repeats every 8rem, so translating by (top % period)
+     is visually identical to the full offset — the composited layer only
+     needs an 8rem bleed, and scrolling never repaints (transform-only). */
+  const DOT_PERIOD = 8 * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
   let tick = false;
   const onFrame = () => {
     header?.classList.toggle('is-scrolled', window.scrollY > 20);
+    // Read phase (all layouts first), then write phase — no interleaved thrash
+    const offsets: number[] = [];
     dotHosts.forEach((el) => {
-      (el as HTMLElement).style.setProperty('--dotY', `${-el.getBoundingClientRect().top}px`);
+      offsets.push(-(el.getBoundingClientRect().top % DOT_PERIOD));
+    });
+    dotHosts.forEach((el, i) => {
+      (el as HTMLElement).style.setProperty('--dotY', `${offsets[i]}px`);
     });
     tick = false;
   };
@@ -100,7 +109,7 @@ const resolve = (item: { anchor?: string; href?: string }) =>
     mobileNav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
     dotHosts = document.querySelectorAll(
-      '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .soon, .page-hero'
+      '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .stories-hero, .page-hero, .post-stripe'
     );
     onFrame();
 

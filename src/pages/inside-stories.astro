@@ -4,22 +4,47 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<BaseLayout title="Inside Stories — SND">
+<BaseLayout
+  title="Inside Stories — SND"
+  description="A look behind the studio, the craft, the ideas worth chasing, and the culture that shapes the work."
+>
 
 <Header active="Inside Stories" />
 
 <main id="main" tabindex="-1">
 
-<section class="soon">
-  <div class="soon-bg"></div>
-  <div class="container soon-inner">
-    <span class="eyebrow eyebrow--light">Inside Stories</span>
-    <h1 class="soon-title">Coming soon.</h1>
-    <p class="soon-sub">
-      A look behind the studio, the craft, the ideas worth chasing, and the
-      culture that shapes the work. The first stories are on the way.
+<!-- ── HERO ── -->
+<section class="stories-hero">
+  <div class="stories-hero-bg"></div>
+  <div class="container stories-hero-inner">
+    <span class="eyebrow eyebrow--light">From the studio</span>
+    <h1 class="stories-hero-title">Inside Stories.</h1>
+    <p class="stories-hero-sub">
+      Behind the studio, the craft, the ideas worth chasing, and the culture.
     </p>
-    <a href="/" class="btn btn--light">Back home <span class="arrow">&#8594;</span></a>
+  </div>
+</section>
+
+<!-- ── STORIES ── -->
+<section class="stories-list">
+  <div class="container">
+    <div class="stories-grid">
+
+      <a href="/inside-stories/filling-a-sketchbook" class="story-card reveal">
+        <div class="story-card-img">
+          <img src="/stories/tiger.webp" alt="Ballpoint drawing of a tiger's face, from the sketchbook" loading="lazy" decoding="async" />
+        </div>
+        <div class="story-card-body">
+          <span class="story-card-meta">Drawing Challenge &middot; 10 Jul 2026</span>
+          <h2>Filling a Sketchbook.</h2>
+          <p>On AI, creativity, and picking up the pen again.</p>
+          <span class="story-card-cta">Read story <span class="arrow">&#8594;</span></span>
+        </div>
+      </a>
+
+    </div>
+
+    <p class="stories-more reveal">More stories are on the way.</p>
   </div>
 </section>
 
@@ -30,24 +55,74 @@ import Footer from '../components/Footer.astro';
 </BaseLayout>
 
 <style>
-  .soon {
+  /* ── Hero — black dot-grid strip ── */
+  .stories-hero {
     position: relative; overflow: hidden;
     background: var(--black); color: var(--white);
-    min-height: calc(100vh - var(--header-h));
-    display: grid; place-items: center;
   }
-  .soon-bg {
-    position: absolute; inset: 0; pointer-events: none;
+  .stories-hero-bg {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    opacity: 0.32;
+  }
+  .stories-hero-bg::before {
+    content: ''; position: absolute; inset: -8rem 0;
     background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-    background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px); opacity: 0.32;
+    background-size: 8rem 8rem;
+    transform: translateY(var(--dotY, 0px)); will-change: transform;
   }
-  .soon-inner {
-    position: relative; z-index: 1; text-align: center;
-    padding: 100px 32px; max-width: 620px;
+  .stories-hero-inner {
+    position: relative; z-index: 1;
+    padding: calc(var(--header-h) + 72px) 32px 72px;
   }
-  .soon-title {
-    font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 500;
-    line-height: 0.94; letter-spacing: -0.045em; margin-bottom: 20px;
+  .stories-hero-title {
+    font-size: clamp(2.6rem, 6.5vw, 4.6rem); font-weight: 500;
+    line-height: 0.96; letter-spacing: -0.045em; margin-bottom: 16px;
   }
-  .soon-sub { color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1.75; margin-bottom: 36px; }
+  .stories-hero-sub { color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1.75; max-width: 480px; }
+
+  /* ── Story list ── */
+  .stories-list { padding: 72px 0 100px; }
+  .stories-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+  }
+  .story-card {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    overflow: hidden; background: var(--white);
+    transition: box-shadow 0.25s var(--ease);
+  }
+  .story-card:hover { box-shadow: var(--shadow-md); }
+  .story-card-img { aspect-ratio: 4/3; overflow: hidden; }
+  .story-card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s var(--ease);
+  }
+  .story-card:hover .story-card-img img { transform: scale(1.04); }
+  .story-card-body { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .story-card-meta {
+    font-size: 0.64rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+  .story-card-body h2 { font-size: 1.35rem; font-weight: 500; letter-spacing: -0.025em; line-height: 1.15; }
+  .story-card-body p { font-size: 0.9rem; color: var(--gray-600); line-height: 1.65; flex: 1; }
+  .story-card-cta {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .story-card:hover .story-card-cta .arrow { transform: translateX(4px); }
+
+  .stories-more {
+    margin-top: 56px; text-align: center;
+    font-size: 0.8rem; color: var(--gray-400);
+    letter-spacing: 0.08em; text-transform: uppercase; font-weight: 400;
+  }
+
+  @media (max-width: 1024px) {
+    .stories-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .stories-grid { grid-template-columns: 1fr; }
+    .stories-hero-inner { padding: calc(var(--header-h) + 56px) 20px 56px; }
+    .stories-list { padding: 56px 0 72px; }
+  }
 </style>

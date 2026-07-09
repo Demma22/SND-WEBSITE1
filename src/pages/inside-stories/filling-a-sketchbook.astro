@@ -1,0 +1,243 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Filling a Sketchbook — Inside Stories | SND"
+  description="Notes from a sketchbook challenge — on AI, creativity, and picking up the pen again."
+  image="/stories/tiger.webp"
+>
+
+<Header active="Inside Stories" />
+
+<main id="main" tabindex="-1">
+
+<article class="post">
+
+  <!-- ── SPLIT HERO — text left, image right (Untitled-UI conversation style) ── -->
+  <header class="post-split">
+    <div class="post-split-copy">
+      <div class="post-split-inner">
+        <div class="post-meta reveal">
+          <time datetime="2026-07-10">10 July 2026</time>
+          <span class="post-meta-dot" aria-hidden="true"></span>
+          <span>Day 10</span>
+        </div>
+        <h1 class="post-title reveal">Filling a<br />Sketchbook.</h1>
+        <p class="post-lede reveal">
+          Notes from a drawing challenge — on AI, creativity, and picking up
+          the pen again.
+        </p>
+        <div class="post-author reveal">
+          <img class="post-avatar" src="/stories/demma-avatar.webp" alt="" width="44" height="44" loading="lazy" decoding="async" />
+          <span class="post-author-meta">
+            <span class="post-author-name">Demma Ssendagire</span>
+            <span class="post-author-role">Artist</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="post-split-media">
+      <img src="/stories/tiger.webp" alt="Ballpoint drawing of a tiger's face emerging from darkness, in a sketchbook" fetchpriority="high" decoding="async" />
+    </div>
+  </header>
+
+  <!-- ── BODY ── -->
+  <div class="post-body">
+    <p class="reveal">
+      Some time back I caught myself asking a question I couldn't shake:
+      how can I be good at something and not care enough to develop it?
+    </p>
+
+    <aside class="post-stripe reveal">
+      <p>Why would I keep a dormant garden and go looking for food somewhere else?</p>
+    </aside>
+
+    <p class="reveal">
+      Around the same time, it felt like something was quietly being stripped
+      from me &mdash; my creativity. I was, and still am, into software
+      engineering. But somewhere along the way it started to feel too easy,
+      too crowded, and mentally tiring in a way it never used to be. AI had
+      a lot to do with that.
+    </p>
+
+    <p class="reveal">
+      I've used AI heavily since the year began &mdash; for projects, for
+      writing, for almost everything. It made things faster, but with every
+      prompt it felt like I was burying my own brain a little deeper. The
+      strongest muscles are the ones you train the most, and I was training
+      mine less and less.
+    </p>
+
+    <p class="reveal">
+      Don't get me wrong &mdash; I'm grateful for AI. It genuinely makes life
+      and work easier. But it changed my perspective, and it pushed me to
+      reconsider my interests. It sent me looking for things I could build
+      physically &mdash; things I could point at and proudly say:
+      <em>I brought this to life. I created this.</em>
+    </p>
+
+    <div class="post-grid reveal">
+      <figure>
+        <img src="/stories/sculpture.webp" alt="Crosshatched ballpoint study of a classical sculpture's face" loading="lazy" decoding="async" />
+        <figcaption>Study of a sculpture</figcaption>
+      </figure>
+      <figure>
+        <img src="/stories/sopranos.webp" alt="Ballpoint portrait study with a smoking silhouette in the background" loading="lazy" decoding="async" />
+        <figcaption>Portrait study</figcaption>
+      </figure>
+    </div>
+
+    <p class="reveal">
+      Underneath that longing was a simple reminder: I can draw. And I'm good
+      at it. So I challenged myself to start drawing again &mdash; one
+      sketchbook, filled page by page &mdash; and to share the work, mainly on
+      <a href="https://www.instagram.com/ss_demma/" target="_blank" rel="noopener">Instagram</a>
+      and YouTube.
+    </p>
+
+    <div class="post-grid reveal">
+      <figure>
+        <img src="/stories/woman.webp" alt="Stippled ink portrait of a face emerging from a black background" loading="lazy" decoding="async" />
+        <figcaption>Stippled portrait</figcaption>
+      </figure>
+      <figure>
+        <img src="/stories/woman-portrait.webp" alt="Colour portrait of a woman in oil pastel on a dark background" loading="lazy" decoding="async" />
+        <figcaption>Portrait in colour</figcaption>
+      </figure>
+    </div>
+
+    <p class="reveal">
+      Today is day ten. So far it's going great &mdash; and honestly, it feels
+      like I've found a missing piece in my puzzle of life.
+    </p>
+
+    <!-- ── FOLLOW ── -->
+    <div class="post-follow reveal">
+      <span class="eyebrow">Follow the challenge</span>
+      <div class="post-follow-actions">
+        <a href="https://www.instagram.com/ss_demma/" target="_blank" rel="noopener" class="btn btn--dark">Instagram <span class="arrow">&#8594;</span></a>
+        <a href="/inside-stories" class="btn btn--ghost">All stories</a>
+      </div>
+    </div>
+  </div>
+
+</article>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  .post { padding: 0 0 100px; }
+
+  /* ── Split hero — copy left, full-bleed image right ── */
+  .post-split {
+    display: grid; grid-template-columns: 1fr 1fr;
+    min-height: 88vh; border-bottom: 1px solid var(--gray-200);
+  }
+  .post-split-copy {
+    display: flex; align-items: center;
+    padding: calc(var(--header-h) + 48px) 24px 48px;
+  }
+  .post-split-inner { max-width: 480px; margin: 0 auto; }
+  .post-title {
+    font-size: clamp(2.6rem, 4.5vw, 4rem); font-weight: 500;
+    line-height: 1.02; letter-spacing: -0.045em; margin: 16px 0 20px;
+  }
+  .post-lede {
+    font-size: 1.05rem; color: var(--gray-600); line-height: 1.75;
+    margin-bottom: 36px;
+  }
+  .post-meta {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 0.72rem; font-weight: 400; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+  .post-meta-dot { width: 3px; height: 3px; background: var(--gray-200); border-radius: 50%; }
+
+  .post-author { display: flex; align-items: center; gap: 14px; }
+  .post-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    object-fit: cover; display: block;
+    border: 1px solid var(--gray-200);
+  }
+  .post-author-meta { display: flex; flex-direction: column; gap: 2px; }
+  .post-author-name { font-size: 0.9rem; font-weight: 500; }
+  .post-author-role { font-size: 0.78rem; color: var(--gray-400); }
+
+  .post-split-media { position: relative; overflow: hidden; }
+  .post-split-media img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  /* ── Highlight stripe — full-bleed black band carrying the pull quote ── */
+  .post-stripe {
+    position: relative; overflow: hidden;
+    width: 100vw; margin: 48px calc(50% - 50vw);
+    background: var(--black); color: var(--white);
+  }
+  .post-stripe::before {
+    content: ''; position: absolute; inset: -8rem 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem; opacity: 0.32;
+    transform: translateY(var(--dotY, 0px)); will-change: transform;
+  }
+  .post-stripe p {
+    position: relative; z-index: 1;
+    max-width: 680px; margin: 0 auto; padding: 56px 24px;
+    font-size: clamp(1.3rem, 2.6vw, 1.8rem); font-weight: 500;
+    line-height: 1.45; letter-spacing: -0.02em; text-align: center;
+  }
+
+  figcaption {
+    margin-top: 12px; text-align: center;
+    font-size: 0.68rem; font-weight: 400; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+
+  /* ── Body — single reading column ── */
+  .post-body { max-width: 680px; margin: 64px auto 0; padding: 0 24px; }
+  .post-body p {
+    font-size: 1.02rem; color: var(--gray-600); line-height: 1.9;
+    margin-bottom: 28px;
+  }
+  .post-body p em { color: var(--black); font-style: normal; font-weight: 500; }
+  .post-body p a { text-decoration: underline; text-underline-offset: 3px; color: var(--black); }
+
+  /* ── Inline figure grid ── */
+  .post-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    margin: 44px 0;
+  }
+  .post-grid img {
+    width: 100%; aspect-ratio: 3/4; object-fit: cover;
+    border-radius: var(--r); border: 1px solid var(--gray-200);
+  }
+
+  /* ── Follow / footer of the post ── */
+  .post-follow {
+    margin-top: 64px; padding-top: 40px;
+    border-top: 1px solid var(--gray-200);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    text-align: center;
+  }
+  .post-follow-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  @media (max-width: 900px) {
+    /* Stack the split hero: copy first, image below with the quote */
+    .post-split { grid-template-columns: 1fr; min-height: 0; }
+    .post-split-copy { padding: calc(var(--header-h) + 56px) 24px 40px; }
+    .post-split-inner { margin: 0; }
+    .post-split-media { position: relative; aspect-ratio: 4/5; }
+  }
+  @media (max-width: 700px) {
+    .post-body { margin-top: 48px; }
+    .post-grid { grid-template-columns: 1fr; }
+    .post-grid img { aspect-ratio: 4/5; }
+  }
+</style>

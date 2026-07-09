@@ -160,7 +160,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 11px 22px; border-radius: var(--r);
-  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;
+  font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em;
   transition: background 0.18s var(--ease), color 0.18s var(--ease),
               border-color 0.18s var(--ease),
               transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
@@ -187,7 +187,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ── LABELS ── */
 .eyebrow {
   display: inline-block;
-  font-size: 0.62rem; font-weight: 700;
+  font-size: 0.62rem; font-weight: 500;
   letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--gray-400); margin-bottom: 16px;
 }
@@ -197,9 +197,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .page-hero { position: relative; padding: calc(var(--header-h) + 80px) 0 80px; overflow: hidden; }
 .page-hero .hero-bg {
   position: absolute; inset: 0; z-index: 0;
-  background-image: radial-gradient(circle, rgba(0,0,0,0.5) 0.9px, transparent 0.9px);
-  background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px);
   opacity: 0.06;
+}
+/* Composited dot layer — translateY, never repaints on scroll */
+.page-hero .hero-bg::before {
+  content: ''; position: absolute; inset: -8rem 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.5) 0.9px, transparent 0.9px);
+  background-size: 8rem 8rem;
+  transform: translateY(var(--dotY, 0px)); will-change: transform;
 }
 .page-hero-inner { position: relative; z-index: 1; }
 .page-hero .hero-title {
@@ -217,9 +222,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    ============================================================ */
 .legal-hero { position: relative; background: var(--black); color: var(--white); overflow: hidden; }
 .legal-hero::before {
-  content: ''; position: absolute; inset: 0;
+  content: ''; position: absolute; inset: -8rem 0;
   background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
-  background-size: 8rem 8rem; background-position: 0 var(--dotY, 0px); opacity: 0.32;
+  background-size: 8rem 8rem; opacity: 0.32;
+  transform: translateY(var(--dotY, 0px)); will-change: transform;
 }
 .legal-hero-inner {
   position: relative; z-index: 1;
@@ -234,7 +240,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .legal-meta { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 36px; }
 .legal-meta-item { display: flex; flex-direction: column; gap: 4px; }
 .legal-meta-label {
-  font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em;
+  font-size: 0.58rem; font-weight: 500; letter-spacing: 0.2em;
   text-transform: uppercase; color: rgba(255,255,255,0.4);
 }
 .legal-meta-value { font-size: 0.85rem; color: rgba(255,255,255,0.82); font-weight: 500; }
@@ -246,7 +252,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .legal-toc { position: sticky; top: calc(var(--header-h) + 24px); }
 .toc-title {
-  font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em;
+  font-size: 0.58rem; font-weight: 500; letter-spacing: 0.2em;
   text-transform: uppercase; color: var(--gray-400); margin-bottom: 16px;
 }
 .toc-list { list-style: none; }
@@ -271,7 +277,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .legal-section { margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--gray-200); }
 .legal-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 .legal-section-num {
-  display: block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.2em;
+  display: block; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.2em;
   text-transform: uppercase; color: var(--gray-400); margin-bottom: 10px;
 }
 .legal-section h2 {
