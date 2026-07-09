@@ -486,9 +486,15 @@ import Footer from '../components/Footer.astro';
   .stories-sub { color: rgba(255,255,255,0.55); font-size: 0.96rem; max-width: 420px; }
   .stories-arrow {
     font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1; flex-shrink: 0;
-    transition: transform 0.3s var(--ease-out);
+    animation: arrowSlide 2.4s ease-in-out infinite;
   }
-  .stories-strip:hover .stories-arrow { transform: translateX(12px); }
+  /* Continuous glide: enters from the left, sweeps out to the right */
+  @keyframes arrowSlide {
+    0%   { transform: translateX(-18px); opacity: 0; }
+    25%  { transform: translateX(0);     opacity: 1; }
+    65%  { transform: translateX(8px);   opacity: 1; }
+    100% { transform: translateX(30px);  opacity: 0; }
+  }
 
   /* ── CTA ── */
   .cta { background: var(--black); color: var(--white); padding: 120px 0; text-align: center; position: relative; overflow: hidden; }
