@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Art Work — SND"
+  description="Original paintings, drawings, and prints by Demma Ssendagire. The SND art shop is coming soon."
+  image="/stories/sculpture.webp"
+>
+
+<Header active="Art" />
+
+<main id="main" tabindex="-1">
+
+<!-- ── HERO ── -->
+<section class="art-hero">
+  <div class="art-hero-bg"></div>
+  <div class="container art-hero-inner">
+    <span class="eyebrow eyebrow--light">SND Art</span>
+    <h1 class="art-hero-title">Art Work.</h1>
+    <p class="art-hero-sub">
+      Original paintings, drawings, and prints from the studio.
+      The shop is on its way.
+    </p>
+  </div>
+</section>
+
+<!-- ── COLLECTIONS PREVIEW ── -->
+<section class="art-collections">
+  <div class="container">
+    <div class="collections-grid">
+      <div class="collection reveal">
+        <span class="collection-num">01</span>
+        <h2>Originals</h2>
+        <p>One-of-one paintings and drawings, signed.</p>
+        <span class="collection-tag">Coming soon</span>
+      </div>
+      <div class="collection reveal">
+        <span class="collection-num">02</span>
+        <h2>Prints</h2>
+        <p>Limited and open editions of selected works.</p>
+        <span class="collection-tag">Coming soon</span>
+      </div>
+      <div class="collection reveal">
+        <span class="collection-num">03</span>
+        <h2>Commissions</h2>
+        <p>A piece made for you — portraits and beyond.</p>
+        <span class="collection-tag">Coming soon</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEASER — from the sketchbook ── -->
+<section class="art-teaser">
+  <div class="container">
+    <span class="eyebrow reveal">A taste of what's coming</span>
+    <div class="teaser-grid">
+      <figure class="reveal"><img src="/stories/sculpture.webp" alt="Crosshatched ballpoint study of a classical sculpture" loading="lazy" decoding="async" /></figure>
+      <figure class="reveal"><img src="/stories/tiger.webp" alt="Ballpoint drawing of a tiger" loading="lazy" decoding="async" /></figure>
+      <figure class="reveal"><img src="/stories/woman.webp" alt="Stippled ink portrait" loading="lazy" decoding="async" /></figure>
+      <figure class="reveal"><img src="/stories/woman-portrait.webp" alt="Colour portrait in oil pastel" loading="lazy" decoding="async" /></figure>
+    </div>
+    <p class="teaser-note reveal">
+      Follow the work in progress — new pieces are shared as they're made.
+    </p>
+    <div class="teaser-actions reveal">
+      <a href="https://www.instagram.com/ss_demma/" target="_blank" rel="noopener" class="btn btn--dark">Follow on Instagram <span class="arrow">&#8594;</span></a>
+      <a href="mailto:sndstudio.ug@gmail.com?subject=Art%20Work%20—%20first%20access" class="btn btn--ghost">Get first access</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  /* ── Hero — black dot-grid, consistent with dark sections ── */
+  .art-hero {
+    position: relative; overflow: hidden;
+    background: var(--black); color: var(--white);
+  }
+  .art-hero-bg {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.32;
+  }
+  .art-hero-bg::before {
+    content: ''; position: absolute; inset: -8rem 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem;
+    transform: translateY(var(--dotY, 0px)); will-change: transform;
+  }
+  .art-hero-inner {
+    position: relative; z-index: 1;
+    padding: calc(var(--header-h) + 72px) 32px 72px;
+  }
+  .art-hero-title {
+    font-size: clamp(2.6rem, 6.5vw, 4.6rem); font-weight: 500;
+    line-height: 0.96; letter-spacing: -0.045em; margin-bottom: 16px;
+  }
+  .art-hero-sub { color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1.75; max-width: 460px; }
+
+  /* ── Collections — flush 1px grid, Nothing-style ── */
+  .art-collections { padding: 72px 0 0; }
+  .collections-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
+  }
+  .collection {
+    background: var(--white); padding: 28px 28px 32px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: background 0.18s;
+  }
+  .collection:hover { background: var(--gray-50); }
+  .collection-num {
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.12em;
+    color: var(--gray-400);
+  }
+  .collection h2 { font-size: 1.2rem; font-weight: 500; letter-spacing: -0.02em; }
+  .collection p { font-size: 0.86rem; color: var(--gray-600); line-height: 1.65; flex: 1; }
+  .collection-tag {
+    align-self: flex-start;
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gray-400);
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    padding: 5px 10px;
+  }
+
+  /* ── Teaser ── */
+  .art-teaser { padding: 72px 0 100px; text-align: center; }
+  .teaser-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-top: 8px;
+  }
+  .teaser-grid figure { margin: 0; }
+  .teaser-grid img {
+    width: 100%; aspect-ratio: 4/5; object-fit: cover;
+    border-radius: var(--r); border: 1px solid var(--gray-200);
+  }
+  .teaser-note {
+    margin: 36px auto 24px; max-width: 420px;
+    font-size: 0.95rem; color: var(--gray-600); line-height: 1.7;
+  }
+  .teaser-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .collections-grid { grid-template-columns: 1fr; }
+    .teaser-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .art-hero-inner { padding: calc(var(--header-h) + 56px) 20px 56px; }
+    .art-collections { padding-top: 56px; }
+    .art-teaser { padding: 56px 0 72px; }
+  }
+</style>

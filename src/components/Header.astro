@@ -12,6 +12,7 @@ const { homepage = false, active = '' } = Astro.props;
 
 const items = [
   { label: 'The Craft', anchor: '#work' },
+  { label: 'Art', href: '/art' },
   { label: 'Products', href: '/products' },
   { label: 'About',    anchor: '#studio' },
   { label: 'Inside Stories', href: '/inside-stories' },
@@ -109,7 +110,7 @@ const resolve = (item: { anchor?: string; href?: string }) =>
     mobileNav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
     dotHosts = document.querySelectorAll(
-      '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .stories-hero, .page-hero, .post-stripe'
+      '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .stories-hero, .page-hero, .post-stripe, .art-hero'
     );
     onFrame();
 
