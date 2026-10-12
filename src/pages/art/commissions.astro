@@ -1,0 +1,265 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ArtSubnav from '../../components/ArtSubnav.astro';
+import { getRates, formatMoney, DEFAULT_CURRENCY } from '../../lib/money';
+import { whatsappLink, mailtoLink, INSTAGRAM_ART } from '../../lib/site';
+
+const rates = await getRates();
+
+const steps = [
+  {
+    num: '01',
+    title: 'Tell me what you have in mind',
+    body: 'A photo, a person, a place, or just a feeling. The looser the brief, the more questions I will ask — both work.',
+  },
+  {
+    num: '02',
+    title: 'We agree size, medium and price',
+    body: 'Ballpoint, ink, or oil pastel; paper or canvas. You get a fixed price and a timeline before anything starts.',
+  },
+  {
+    num: '03',
+    title: 'Half up front',
+    body: 'Half to begin, half when it is finished and you have seen it. No surprises at the end.',
+  },
+  {
+    num: '04',
+    title: 'Progress as it happens',
+    body: 'You see the work at the stages that matter, and there is room to adjust before it is sealed and signed.',
+  },
+  {
+    num: '05',
+    title: 'Signed, packed, shipped',
+    body: 'Rolled in a rigid tube and sent by DHL from Kampala, tracked and insured, with a certificate of authenticity.',
+  },
+];
+
+// Indicative starting prices in USD, converted like every other price on the site.
+const tiers = [
+  {
+    title: 'Study',
+    size: 'A4 · 21 × 29.7 cm',
+    fromUSD: 150,
+    body: 'A single subject in ballpoint or ink. The most direct way to own a piece made for you.',
+    weeks: '2–3 weeks',
+  },
+  {
+    title: 'Portrait',
+    size: 'A3 · 29.7 × 42 cm',
+    fromUSD: 350,
+    body: 'One or two figures, worked up in detail. Ink, or oil pastel if you want colour.',
+    weeks: '3–5 weeks',
+  },
+  {
+    title: 'Large work',
+    size: 'A2 and above',
+    fromUSD: 700,
+    body: 'A piece built for a wall. Composition, medium and surface decided together.',
+    weeks: '6–10 weeks',
+  },
+];
+
+const enquiry = whatsappLink(
+  "Hi SND! I'd like to commission a piece. Here's what I have in mind:\n\n"
+);
+const enquiryMail = mailtoLink(
+  'Commission enquiry',
+  'Hi SND,\n\nI would like to commission a piece.\n\nSubject:\nRough size:\nMedium (if you have a preference):\nWhen you would like it by:\n\nThanks,\n'
+);
+---
+
+<BaseLayout
+  title="Commissions — Art Work | SND"
+  description="Commission an original drawing or painting by Demma Ssendagire — portraits and beyond, shipped worldwide from Kampala."
+  image="/stories/woman-portrait.webp"
+>
+
+<Header active="Art" />
+
+<main id="main" tabindex="-1">
+
+<section class="page-hero">
+  <div class="hero-bg"></div>
+  <div class="container page-hero-inner">
+    <span class="eyebrow">Made for you</span>
+    <h1 class="hero-title">Commissions.</h1>
+    <p class="hero-sub">
+      A piece made for you — a portrait, a place, or an idea you have been
+      carrying around. Open for a small number of commissions at a time.
+    </p>
+    <ArtSubnav active="Commissions" />
+  </div>
+</section>
+
+<!-- ── PROCESS ── -->
+<section class="commission-process">
+  <div class="container">
+    <div class="art-section-head reveal">
+      <div>
+        <span class="eyebrow">How it works</span>
+        <h2 class="section-title">Five steps.</h2>
+      </div>
+    </div>
+    <ol class="process-grid">
+      {steps.map((step) => (
+        <li class="process-step reveal">
+          <span class="process-num">{step.num}</span>
+          <h3>{step.title}</h3>
+          <p>{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="commission-pricing">
+  <div class="container">
+    <div class="art-section-head reveal">
+      <div>
+        <span class="eyebrow">Starting points</span>
+        <h2 class="section-title">What it costs.</h2>
+      </div>
+    </div>
+
+    <div class="tier-grid">
+      {tiers.map((tier) => (
+        <div class="tier reveal">
+          <h3>{tier.title}</h3>
+          <span class="tier-size">{tier.size}</span>
+          <p class="tier-body">{tier.body}</p>
+          <div class="tier-foot">
+            <span class="tier-from">From</span>
+            <span class="price" data-usd={tier.fromUSD}>{formatMoney(tier.fromUSD, DEFAULT_CURRENCY, rates, { USD: tier.fromUSD })}</span>
+            <span class="tier-weeks">{tier.weeks}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <p class="pricing-note reveal">
+      Starting prices, not quotes — the final figure depends on size, medium and
+      how much is in the picture. Shipping is quoted separately once we know
+      where it is going. Import duties and taxes are the buyer's responsibility.
+    </p>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="commission-cta">
+  <div class="container commission-cta-inner reveal">
+    <span class="eyebrow eyebrow--light">Start a commission</span>
+    <h2 class="commission-cta-title">Tell me what<br />you want made.</h2>
+    <p>
+      Send a note with the subject, a rough size, and when you would like it by.
+      I answer personally, usually the same day.
+    </p>
+    <div class="commission-cta-actions">
+      <a href={enquiry} target="_blank" rel="noopener" class="btn btn--light">
+        Start on WhatsApp <span class="arrow">&#8594;</span>
+      </a>
+      <a href={enquiryMail} class="btn btn--ghost-light">Email instead</a>
+    </div>
+    <a href={INSTAGRAM_ART} target="_blank" rel="noopener" class="commission-cta-link">
+      See recent work on Instagram &#8594;
+    </a>
+  </div>
+</section>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  /* ── Process ── */
+  .commission-process { padding: 56px 0 0; }
+  .process-grid {
+    list-style: none; display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
+  }
+  .process-step {
+    background: var(--white); padding: 26px 22px 30px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: background 0.18s;
+  }
+  .process-step:hover { background: var(--gray-50); }
+  .process-num { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.12em; color: var(--gray-400); }
+  .process-step h3 { font-size: 0.98rem; font-weight: 500; letter-spacing: -0.015em; line-height: 1.25; }
+  .process-step p { font-size: 0.82rem; color: var(--gray-600); line-height: 1.6; }
+
+  /* ── Pricing ── */
+  .commission-pricing { padding: 80px 0 0; }
+  .tier-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
+  }
+  .tier {
+    background: var(--white); padding: 28px 26px 30px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .tier h3 { font-size: 1.2rem; font-weight: 500; letter-spacing: -0.02em; }
+  .tier-size {
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+  .tier-body { font-size: 0.86rem; color: var(--gray-600); line-height: 1.65; flex: 1; margin-top: 6px; }
+  .tier-foot {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--gray-200);
+  }
+  .tier-from {
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+  .tier-weeks {
+    font-size: 0.68rem; font-weight: 400; color: var(--gray-400);
+    letter-spacing: 0.08em; margin-left: auto;
+  }
+  .pricing-note {
+    margin-top: 28px; max-width: 620px;
+    font-size: 0.8rem; color: var(--gray-400); line-height: 1.75;
+  }
+
+  /* ── CTA ── */
+  .commission-cta {
+    background: var(--black); color: var(--white);
+    padding: 100px 0; margin-top: 100px;
+    position: relative; overflow: hidden;
+  }
+  .commission-cta::before {
+    content: ''; position: absolute; inset: -8rem 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem; opacity: 0.32;
+    transform: translateY(var(--dotY, 0px)); will-change: transform;
+  }
+  .commission-cta-inner { position: relative; z-index: 1; max-width: 620px; }
+  .commission-cta-title {
+    font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 500;
+    line-height: 0.98; letter-spacing: -0.045em; margin: 8px 0 18px;
+  }
+  .commission-cta-inner p {
+    color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1.75;
+    margin-bottom: 32px; max-width: 460px;
+  }
+  .commission-cta-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+  .commission-cta-link {
+    font-size: 0.78rem; color: rgba(255,255,255,0.55);
+    letter-spacing: 0.04em; transition: color 0.18s;
+  }
+  .commission-cta-link:hover { color: var(--white); }
+
+  @media (max-width: 1024px) {
+    .process-grid { grid-template-columns: repeat(2, 1fr); }
+    .tier-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    .process-grid { grid-template-columns: 1fr; }
+    .commission-process { padding-top: 40px; }
+    .commission-pricing { padding-top: 56px; }
+    .commission-cta { padding: 72px 0; margin-top: 72px; }
+  }
+</style>

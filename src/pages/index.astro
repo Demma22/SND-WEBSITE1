@@ -2,6 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ArtGrid from '../components/ArtGrid.astro';
+import { allArtworks } from '../lib/artworks';
+import { getRates } from '../lib/money';
+
+/* Recent creations — the newest pieces, read straight from the art collection,
+   so the homepage updates itself whenever a work is added. */
+const rates = await getRates();
+const recent = (await allArtworks()).slice(0, 4);
+// Size the row to what exists, so a short catalogue never looks half-empty.
+const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
 ---
 
 <BaseLayout title="SND: Think It. Create It.">
@@ -142,6 +152,25 @@ import Footer from '../components/Footer.astro';
     </div>
   </div>
 </section>
+
+<!-- ── RECENT CREATIONS ── -->
+{recent.length > 0 && (
+  <section class="recent" id="recent">
+    <div class="container">
+      <div class="recent-head reveal">
+        <div>
+          <span class="eyebrow">Recent creations</span>
+          <h2 class="section-title">Fresh from the studio.</h2>
+        </div>
+        <a href="/art" class="btn btn--ghost btn--small">
+          All work <span class="arrow">&#8594;</span>
+        </a>
+      </div>
+
+      <ArtGrid pieces={recent} rates={rates} columns={recentCols} />
+    </div>
+  </section>
+)}
 
 <!-- ── STUDIO ── -->
 <section class="studio" id="studio">
@@ -394,6 +423,13 @@ import Footer from '../components/Footer.astro';
     display: inline-flex; align-items: center; gap: 6px;
   }
   .work-card:hover .work-card-cta .arrow { transform: translateX(4px); }
+
+  /* ── RECENT CREATIONS ── */
+  .recent { padding: 0 0 100px; }
+  .recent-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap; margin-bottom: 36px;
+  }
 
   /* ── STUDIO ── */
   .studio { background: var(--black); color: var(--white); padding: 100px 0; position: relative; overflow: hidden; }

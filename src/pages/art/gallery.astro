@@ -1,0 +1,18 @@
+---
+import ArtCollection from '../../layouts/ArtCollection.astro';
+import { allArtworks } from '../../lib/artworks';
+
+const pieces = await allArtworks();
+---
+
+<ArtCollection
+  title="Gallery — Art Work | SND"
+  description="The complete body of work from the SND studio — paintings, drawings, and prints by Demma Ssendagire."
+  eyebrow="The archive"
+  heading="Gallery."
+  sub="Everything, in one place — available work, sold pieces, and the drawings that sit in the studio. The record of what has been made."
+  active="Gallery"
+  pieces={pieces}
+  emptyTitle="The gallery is being hung."
+  emptyBody="The first pieces go up shortly."
+/>

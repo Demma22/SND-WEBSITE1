@@ -1,0 +1,70 @@
+---
+/**
+ * One artwork in a listing.
+ *
+ * Borderless: the piece sits in open space with no card frame, and the only
+ * separation is whitespace. Text stacks under the image as
+ * category → title → price, with status shown as a small label rather than a
+ * badge stuck on the artwork.
+ *
+ * The image is `contain`, not `cover` — a painting must never be cropped to
+ * fit a grid cell.
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatMoney, resolvePrice, DEFAULT_CURRENCY, type Rates } from '../lib/money';
+
+interface Props {
+  piece: CollectionEntry<'artworks'>;
+  rates: Rates;
+  /** First row of a grid shouldn't lazy-load. */
+  eager?: boolean;
+}
+
+const { piece, rates, eager = false } = Astro.props;
+const { title, cover, status, year, kind, edition } = piece.data;
+const price = resolvePrice(piece.data, rates);
+
+/* Only states worth calling out get a label — "Available" on everything is
+   noise, the same way a gallery doesn't label every unsold piece. */
+const STATUS_LABELS: Record<string, string> = {
+  reserved: 'Reserved',
+  sold: 'Sold',
+  'not-for-sale': 'Archive',
+};
+const statusLabel = STATUS_LABELS[status];
+const sellable = status === 'available' || status === 'reserved';
+
+const category = kind === 'print'
+  ? (edition ? `Print · edition of ${edition.size}` : 'Print')
+  : 'Original';
+---
+
+<a href={`/art/${piece.id}`} class="art-card reveal" data-status={status}>
+  <div class="art-card-img">
+    <Image
+      src={cover}
+      alt={`${title} — ${piece.data.medium}, ${year}`}
+      widths={[400, 600, 900]}
+      sizes="(max-width: 700px) 50vw, (max-width: 1024px) 33vw, 25vw"
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  </div>
+
+  <div class="art-card-body">
+    <span class="art-card-cat">
+      {category}{statusLabel && <span class="art-card-status"> · {statusLabel}</span>}
+    </span>
+    <h3>{title}</h3>
+    {sellable && price ? (
+      <span class="price" data-usd={price.usd} data-ugx={price.authored.UGX}>
+        {formatMoney(price.usd, DEFAULT_CURRENCY, rates, price.authored)}
+      </span>
+    ) : sellable ? (
+      <span class="price price--poa">Price on request</span>
+    ) : (
+      <span class="price price--poa">{year}</span>
+    )}
+  </div>
+</a>

@@ -4,6 +4,8 @@
 //   homepage : when true, section links are in-page anchors (#work);
 //              otherwise they point back to the home page (/#work).
 //   active   : label of the current section to highlight (e.g. "Journal").
+import CurrencySelect from './CurrencySelect.astro';
+
 interface Props {
   homepage?: boolean;
   active?: string;
@@ -40,6 +42,8 @@ const resolve = (item: { anchor?: string; href?: string }) =>
       ))}
     </nav>
     <div class="nav-actions">
+      <!-- Site-wide: sets the currency for every price on every page. -->
+      <CurrencySelect showLabel={false} />
       <a href={homepage ? '#contact' : '/#contact'} class="btn btn--dark btn--small">Join community</a>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
         <span></span><span></span><span></span>
@@ -110,7 +114,7 @@ const resolve = (item: { anchor?: string; href?: string }) =>
     mobileNav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
     dotHosts = document.querySelectorAll(
-      '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .stories-hero, .page-hero, .post-stripe, .art-hero'
+      '.hero, .feature-strip, .studio, .cta, .stories-strip, .legal-hero, .stories-hero, .page-hero, .post-stripe, .art-hero, .commission-cta'
     );
     onFrame();
 

@@ -1,0 +1,160 @@
+---
+/**
+ * The currency converter itself — rate data plus the script that rewrites
+ * prices. Rendered once by BaseLayout, so it is present on every page.
+ *
+ * It lives here rather than inside CurrencySelect because prices and the
+ * selector are not always on the same part of a page: a sold artwork has no
+ * price of its own (so no selector) but still lists related work with prices,
+ * and those must honour the currency the visitor already chose.
+ *
+ * Any element marked `data-usd="180"` is converted. The default currency is
+ * already rendered server-side, so this only ever rewrites an existing,
+ * correct price — first paint and no-JS visitors are unaffected.
+ */
+import { CURRENCIES, DEFAULT_CURRENCY, STORAGE_KEY, BASE_CURRENCY, getRates } from '../lib/money';
+
+const rates = await getRates();
+
+// Only what the client needs to re-format a price.
+const payload = {
+  base: BASE_CURRENCY,
+  fallback: DEFAULT_CURRENCY,
+  key: STORAGE_KEY,
+  rates,
+  currencies: CURRENCIES.map(({ code, symbol, step }) => ({ code, symbol, step })),
+};
+---
+
+<script type="application/json" id="sndRates" set:html={JSON.stringify(payload)} />
+
+<script>
+  /* Registered once per hard load; init() re-runs on every client-side
+     navigation, because the ClientRouter swaps the body (and with it the
+     rates tag, the prices and any selector). Mirrors Header.astro. */
+
+  interface CurrencyMeta { code: string; symbol: string; step: number }
+  interface Payload {
+    base: string;
+    fallback: string;
+    key: string;
+    rates: Record<string, number>;
+    currencies: CurrencyMeta[];
+  }
+
+  let payload: Payload | null = null;
+
+  const read = (key: string): string | null => {
+    try { return localStorage.getItem(key); } catch { return null; }
+  };
+  const write = (key: string, value: string) => {
+    try { localStorage.setItem(key, value); } catch { /* private mode */ }
+  };
+
+  /* Same rounding as formatMoney() in src/lib/money.ts — keep the two in step.
+     `exact` is an authored price (data-ugx), shown verbatim and without the
+     "≈", because it is the real price rather than a conversion. */
+  function format(usd: number, code: string, p: Payload, exact?: number): string {
+    const meta = p.currencies.find((c) => c.code === code) ?? p.currencies[0];
+    const rate = p.rates[code] ?? 1;
+    const step = meta.step;
+    const raw = usd * rate;
+    /* Coarse step only once the amount clears it — see roundTo() in money.ts.
+       Keeps a $7 notebook from rounding to $5 under artwork-sized steps. */
+    const amount =
+      exact ??
+      (step > 0 && raw >= step * 10
+        ? Math.round(raw / step) * step
+        : raw >= 10
+          ? Math.round(raw)
+          : Math.round(raw * 100) / 100);
+    const digits = amount < 10 ? 2 : 0;
+    const formatted = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    }).format(amount);
+    // Exact only in the authored currency — mirrors formatMoney() in money.ts.
+    const approx = exact !== undefined ? '' : '≈ ';
+    return `${approx}${meta.symbol}${formatted}`;
+  }
+
+  /** Announce the active currency so pages that compute prices themselves
+      (the products page's running total) can re-render. Always fires on init,
+      so a listener never has to guess the starting currency. */
+  function broadcast(code: string) {
+    if (!payload) return;
+    const api = {
+      code,
+      /** format(usd, { UGX: 30000 }) — authored amounts shown verbatim. */
+      format: (usd: number, authored: Record<string, number> = {}) =>
+        format(usd, code, payload!, authored[code]),
+    };
+    (window as any).sndCurrency = api;
+    document.dispatchEvent(new CustomEvent('snd:currency', { detail: api }));
+  }
+
+  /** The real <select> is transparent, so its styled face has to be updated
+      by hand to show the chosen flag and code. */
+  function syncFace(select: HTMLSelectElement) {
+    const option = select.selectedOptions[0];
+    if (!option) return;
+    const face = select.closest('.currency-select');
+    const flag = face?.querySelector<HTMLElement>('[data-currency-flag]');
+    const code = face?.querySelector<HTMLElement>('[data-currency-code]');
+    if (flag && option.dataset.flag) flag.textContent = option.dataset.flag;
+    if (code) code.textContent = select.value;
+  }
+
+  function apply(code: string) {
+    if (!payload) return;
+    document.querySelectorAll<HTMLElement>('[data-usd]').forEach((el) => {
+      const usd = Number(el.dataset.usd);
+      if (!Number.isFinite(usd)) return;
+      /* The currency the price was written in wins over any conversion.
+         data-ugx is present only on UGX-authored prices; otherwise data-usd
+         is itself the authored figure. */
+      const authoredCode = el.dataset.ugx ? 'UGX' : 'USD';
+      const exact =
+        code === authoredCode ? (authoredCode === 'UGX' ? Number(el.dataset.ugx) : usd) : undefined;
+      el.textContent = format(usd, code, payload!, exact);
+    });
+    document.documentElement.dataset.currency = code;
+    broadcast(code);
+  }
+
+  function init() {
+    const tag = document.getElementById('sndRates');
+    if (!tag?.textContent) return;
+
+    try {
+      payload = JSON.parse(tag.textContent) as Payload;
+    } catch {
+      return;   // malformed payload: leave the server-rendered prices alone
+    }
+
+    const known = new Set(payload.currencies.map((c) => c.code));
+    const stored = read(payload.key);
+    const code = stored && known.has(stored) ? stored : payload.fallback;
+
+    document.querySelectorAll<HTMLSelectElement>('select[data-currency-select]').forEach((select) => {
+      select.value = code;
+      syncFace(select);
+      select.addEventListener('change', () => {
+        write(payload!.key, select.value);
+        syncFace(select);
+        apply(select.value);
+      });
+    });
+
+    // Only rewrite the DOM when the stored choice differs from what was
+    // rendered — but always announce, so dynamic pages know where to start.
+    if (code !== payload.fallback) {
+      apply(code);
+    } else {
+      document.documentElement.dataset.currency = code;
+      broadcast(code);
+    }
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

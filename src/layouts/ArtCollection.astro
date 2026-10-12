@@ -1,0 +1,100 @@
+---
+/**
+ * Shared skin for the art collection pages (Gallery, Originals, Prints).
+ * All three are the same page with a different query behind them, so the
+ * chrome lives here and each page supplies only its copy and its pieces.
+ *
+ * Uses the global light .page-hero from app.css, which plays against the dark
+ * hero on the /art hub.
+ */
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ArtSubnav from '../components/ArtSubnav.astro';
+import ArtGrid from '../components/ArtGrid.astro';
+import type { Artwork } from '../lib/artworks';
+import { getRates } from '../lib/money';
+
+interface Props {
+  title: string;
+  description: string;
+  eyebrow: string;
+  heading: string;
+  sub: string;
+  /** Which ArtSubnav item to mark current. */
+  active: string;
+  pieces: Artwork[];
+  emptyTitle?: string;
+  emptyBody?: string;
+  /** Social image; defaults to the first piece in the collection. */
+  image?: string;
+}
+
+const {
+  title,
+  description,
+  eyebrow,
+  heading,
+  sub,
+  active,
+  pieces,
+  emptyTitle,
+  emptyBody,
+  image,
+} = Astro.props;
+
+const rates = await getRates();
+
+const count = pieces.length;
+const available = pieces.filter((p) => p.data.status === 'available').length;
+---
+
+<BaseLayout title={title} description={description} image={image}>
+
+<Header active="Art" />
+
+<main id="main" tabindex="-1">
+
+<section class="page-hero">
+  <div class="hero-bg"></div>
+  <div class="container page-hero-inner">
+    <span class="eyebrow">{eyebrow}</span>
+    <h1 class="hero-title">{heading}</h1>
+    <p class="hero-sub">{sub}</p>
+    <ArtSubnav active={active} />
+  </div>
+</section>
+
+<section class="art-list">
+  <div class="container">
+    <div class="art-section-head reveal">
+      <p class="art-count">
+        {count === 0
+          ? 'Nothing listed yet'
+          : `${count} ${count === 1 ? 'piece' : 'pieces'}${available ? ` · ${available} available` : ''}`}
+      </p>
+    </div>
+
+    <ArtGrid pieces={pieces} rates={rates} emptyTitle={emptyTitle} emptyBody={emptyBody} />
+
+    <slot />
+  </div>
+</section>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  .art-list { padding: 56px 0 100px; }
+  .art-count {
+    font-size: 0.72rem; font-weight: 400; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+
+  @media (max-width: 700px) {
+    .art-list { padding: 40px 0 72px; }
+  }
+</style>

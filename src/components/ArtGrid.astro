@@ -1,0 +1,51 @@
+---
+/**
+ * Flush 1px grid of artworks — the same hairline treatment as .work-grid on
+ * the homepage, so the shop reads as part of the same system.
+ *
+ * Renders its own empty state, because /art/prints ships before there are any
+ * prints and an empty grid should say so rather than collapse to nothing.
+ */
+import type { CollectionEntry } from 'astro:content';
+import type { Rates } from '../lib/money';
+import ArtCard from './ArtCard.astro';
+
+interface Props {
+  pieces: CollectionEntry<'artworks'>[];
+  rates: Rates;
+  /** Shown when there is nothing to list. */
+  emptyTitle?: string;
+  emptyBody?: string;
+  /** Cards above the fold load eagerly. */
+  eagerCount?: number;
+  /**
+   * Fixed column count. CSS repeat() can't take a custom property, so this
+   * maps to a modifier class. Used by the homepage teaser, which sizes itself
+   * to the number of pieces rather than leaving half a row empty.
+   */
+  columns?: 2 | 3 | 4;
+}
+
+const {
+  pieces,
+  rates,
+  emptyTitle = 'Nothing here yet.',
+  emptyBody = 'New work is added as it comes out of the studio.',
+  eagerCount = 4,
+  columns,
+} = Astro.props;
+---
+
+{pieces.length > 0 ? (
+  <div class:list={['art-grid', columns && `art-grid--${columns}`]}>
+    {pieces.map((piece, i) => (
+      <ArtCard piece={piece} rates={rates} eager={i < eagerCount} />
+    ))}
+  </div>
+) : (
+  <div class="art-empty reveal">
+    <h3>{emptyTitle}</h3>
+    <p>{emptyBody}</p>
+    <a href="/art/gallery" class="btn btn--ghost">See the full gallery</a>
+  </div>
+)}

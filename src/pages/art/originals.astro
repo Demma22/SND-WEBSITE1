@@ -1,0 +1,18 @@
+---
+import ArtCollection from '../../layouts/ArtCollection.astro';
+import { artworksByKind } from '../../lib/artworks';
+
+const pieces = await artworksByKind('original');
+---
+
+<ArtCollection
+  title="Originals — Art Work | SND"
+  description="One-of-one paintings and drawings by Demma Ssendagire, signed and shipped worldwide from Kampala."
+  eyebrow="One of one"
+  heading="Originals."
+  sub="Each piece exists once. Signed, dated, and shipped with a certificate of authenticity. Sold work stays listed — it is part of the history."
+  active="Originals"
+  pieces={pieces}
+  emptyTitle="No originals listed right now."
+  emptyBody="Work is added as it is finished. A commission is always open."
+/>

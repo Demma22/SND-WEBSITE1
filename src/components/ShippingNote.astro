@@ -1,0 +1,33 @@
+---
+/**
+ * Shipping terms, shown on every piece.
+ *
+ * The duties line is the important one: it sets DAP terms, so the carrier
+ * collects any import VAT from the buyer on delivery rather than billing it
+ * back to Kampala. Saying it before the sale is what keeps that from becoming
+ * an argument afterwards.
+ *
+ * Wording to be reviewed against an actual DHL Kampala quote before relying on
+ * the stated transit times.
+ */
+interface Props {
+  framed?: boolean;
+}
+const { framed = false } = Astro.props;
+
+const items = [
+  framed
+    ? 'Framed pieces are packed rigid and quoted individually — ask before ordering.'
+    : 'Shipped rolled, unstretched, in a rigid tube — the safest way for a work to travel.',
+  'Sent from Kampala by DHL Express, tracked and insured. Typically 3–7 business days to Europe and North America.',
+  'Import duties and taxes are the buyer’s responsibility and are collected on delivery.',
+  'Original works are signed, dated, and ship with a certificate of authenticity.',
+];
+---
+
+<aside class="shipping-note">
+  <span class="eyebrow">Delivery</span>
+  <ul>
+    {items.map((item) => <li>{item}</li>)}
+  </ul>
+</aside>

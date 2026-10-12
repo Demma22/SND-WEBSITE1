@@ -6,9 +6,16 @@
     <div class="footer-col">
       <h4>Studio</h4>
       <a href="/#work">The Craft</a>
-      <a href="/art">Art Work</a>
       <a href="/#studio">About</a>
+      <a href="/products">Products</a>
       <a href="/inside-stories">Inside Stories</a>
+    </div>
+    <div class="footer-col">
+      <h4>Art</h4>
+      <a href="/art/gallery">Gallery</a>
+      <a href="/art/originals">Originals</a>
+      <a href="/art/prints">Prints</a>
+      <a href="/art/commissions">Commissions</a>
     </div>
     <div class="footer-col">
       <h4>Contact</h4>
@@ -26,7 +33,7 @@
 <style>
   .footer { background: var(--white); border-top: 1px solid var(--gray-200); padding-top: 60px; }
   .footer-inner {
-    display: grid; grid-template-columns: 1.6fr 1fr 1fr;
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
     gap: 40px; padding-bottom: 48px; border-bottom: 1px solid var(--gray-200);
     max-width: var(--maxw, 1280px); margin: 0 auto; padding-inline: 32px;
   }
@@ -47,7 +54,8 @@
   }
 
   @media (max-width: 900px) {
-    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .footer-inner { grid-template-columns: repeat(3, 1fr); }
+    .footer-brand { grid-column: 1 / -1; }
   }
   @media (max-width: 700px) {
     .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px 20px; padding-inline: 20px; }

@@ -1,0 +1,18 @@
+---
+import ArtCollection from '../../layouts/ArtCollection.astro';
+import { artworksByKind } from '../../lib/artworks';
+
+const pieces = await artworksByKind('print');
+---
+
+<ArtCollection
+  title="Prints — Art Work | SND"
+  description="Limited and open edition prints of selected works by Demma Ssendagire."
+  eyebrow="Editions"
+  heading="Prints."
+  sub="Editions of selected works, for when the original has gone — or when a wall wants the piece at a different size."
+  active="Prints"
+  pieces={pieces}
+  emptyTitle="Prints are coming."
+  emptyBody="Editions of the drawings are being prepared. Follow along, or ask to be told when the first ones land."
+/>

@@ -2,9 +2,21 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { WHATSAPP } from '../lib/site';
+import { getRates, formatMoney, DEFAULT_CURRENCY } from '../lib/money';
 
-// WhatsApp business number in international format, no "+" (wa.me requirement).
-const WHATSAPP = '256742072661';
+/* The notebook is priced locally, in UGX — that round number is the real
+   price, so it stays authored here. Only the USD conversion needs a rate, and
+   that now comes from the shared live table (it was hardcoded at 3800, which
+   had drifted ~5% out of date). */
+const rates = await getRates();
+const UGX_PER_USD = rates.UGX;
+
+/* Render the opening price in the site default so there is no flash of the
+   wrong currency before the header selector's choice is applied — and so the
+   page still shows a correct price with JavaScript off. */
+const PRICE_UGX = 30000;
+const initialPrice = formatMoney(PRICE_UGX / UGX_PER_USD, DEFAULT_CURRENCY, rates, { UGX: PRICE_UGX });
 ---
 
 <BaseLayout title="Products — SND">
@@ -39,13 +51,9 @@ const WHATSAPP = '256742072661';
         then turn the page over to sketching and drawing. No lines. No rules.
       </p>
 
-      <!-- Price + currency toggle -->
+      <!-- Price. Currency is set site-wide from the header selector. -->
       <div class="price-row">
-        <span class="price" id="priceVal" aria-live="polite">UGX 30,000</span>
-        <div class="cur-toggle" role="group" aria-label="Currency">
-          <button type="button" data-cur="UGX" class="is-active">UGX</button>
-          <button type="button" data-cur="USD">USD</button>
-        </div>
+        <span class="price price--lg" id="priceVal" aria-live="polite">{initialPrice}</span>
       </div>
 
       <!-- Buy controls -->
@@ -108,14 +116,6 @@ const WHATSAPP = '256742072661';
   /* Price */
   .price-row { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
   .price { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.02em; }
-  .cur-toggle { display: inline-flex; border: 1px solid var(--gray-200); border-radius: var(--r); overflow: hidden; }
-  .cur-toggle button {
-    padding: 6px 14px; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em;
-    color: var(--gray-400); transition: background 0.15s, color 0.15s;
-  }
-  .cur-toggle button + button { border-left: 1px solid var(--gray-200); }
-  .cur-toggle button.is-active { background: var(--black); color: var(--white); }
-
   /* Buy controls */
   .buy-row { display: flex; align-items: stretch; gap: 12px; flex-wrap: wrap; }
   .qty {
@@ -155,49 +155,52 @@ const WHATSAPP = '256742072661';
   }
 </style>
 
-<script is:inline data-astro-rerun define:vars={{ WHATSAPP }}>
+<script is:inline data-astro-rerun define:vars={{ WHATSAPP, UGX_PER_USD }}>
   (function () {
-    const PRICE_UGX = 30000;   // unit price in UGX
-    const USD_RATE  = 3800;    // UGX per 1 USD (approximate — edit to adjust)
+    /* The notebook is priced locally: 30,000 UGX is the real figure, so it is
+       shown verbatim to UGX visitors and every other currency is derived from
+       the USD pivot — the same rule the artwork pages follow.
+
+       Currency itself comes from the header selector, broadcast by
+       CurrencyEngine as `snd:currency`. That event always fires on load, so
+       this never has to guess which currency to start in. */
+    const PRICE_UGX = 30000;
+    const UNIT_USD  = PRICE_UGX / UGX_PER_USD;
 
     let qty = 1;
-    let cur = 'UGX';
+    let money = null;   // set by the first snd:currency event
 
     const qtyVal   = document.getElementById('qtyVal');
     const minus    = document.getElementById('qtyMinus');
     const plus     = document.getElementById('qtyPlus');
     const orderBtn = document.getElementById('orderBtn');
     const priceVal = document.getElementById('priceVal');
-    const curBtns  = document.querySelectorAll('.cur-toggle button');
 
-    const fmtUGX = (n) => 'UGX ' + n.toLocaleString('en-US');
-    const fmtUSD = (n) => '≈ $' + (n / USD_RATE).toFixed(2);
-    const unit   = () => (cur === 'UGX' ? fmtUGX(PRICE_UGX) : fmtUSD(PRICE_UGX));
-    const total  = (q) => (cur === 'UGX' ? fmtUGX(PRICE_UGX * q) : fmtUSD(PRICE_UGX * q));
+    const totalLabel = (q) =>
+      money
+        ? money.format(UNIT_USD * q, { UGX: PRICE_UGX * q })
+        : 'USh' + (PRICE_UGX * q).toLocaleString('en-US');
 
     function orderLink(q) {
       const plural = q > 1 ? 's' : '';
       const msg =
         `Hi SND! I would like to purchase ${q} Lineless Pocket Notebook${plural} ` +
-        `(${unit()} each, total ${total(q)}). ` +
+        `(total ${totalLabel(q)}). ` +
         `Could you please confirm availability and delivery details? Thank you.`;
       return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
     }
 
     function render() {
       qtyVal.textContent = String(qty);
-      priceVal.textContent = total(qty);   // running total grows with quantity
+      priceVal.textContent = totalLabel(qty);   // running total grows with quantity
       orderBtn.href = orderLink(qty);
     }
 
     minus.addEventListener('click', () => { qty = Math.max(1, qty - 1); render(); });
     plus.addEventListener('click',  () => { qty = Math.min(99, qty + 1); render(); });
-    curBtns.forEach((b) => b.addEventListener('click', () => {
-      cur = b.getAttribute('data-cur');
-      curBtns.forEach((x) => x.classList.toggle('is-active', x === b));
-      render();
-    }));
 
-    render(); // initialise price, link + labels
+    document.addEventListener('snd:currency', (e) => { money = e.detail; render(); });
+
+    render(); // initialise before the first event lands
   })();
 </script>

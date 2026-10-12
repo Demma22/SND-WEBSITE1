@@ -71,6 +71,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .feature-strip :focus-visible,
 .studio :focus-visible,
 .cta :focus-visible,
+.art-hero :focus-visible,
+.commission-cta :focus-visible,
+.stories-hero :focus-visible,
 .legal-hero :focus-visible { outline-color: var(--white); }
 
 .skip-link {
@@ -306,6 +309,196 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .legal-layout { grid-template-columns: 1fr; gap: 32px; padding: 48px 24px 72px; }
   .legal-toc { position: static; }
   .legal-hero-inner { padding-left: 24px; padding-right: 24px; }
+}
+
+/* ============================================================
+   ART SHOP — shared primitives
+   Grid, cards, prices, currency selector and the art sub-nav.
+   Page-specific layout stays in each page's own <style>.
+   ============================================================ */
+
+/* ── Sub-navigation (sits under the hero on every art page) ── */
+.art-subnav {
+  display: flex; flex-wrap: wrap; gap: 2px;
+  margin-top: 32px; padding-top: 24px;
+  border-top: 1px solid var(--gray-200);
+}
+.art-subnav--light { border-top-color: rgba(255,255,255,0.12); }
+.art-subnav-link {
+  position: relative;
+  padding: 10px 16px 12px;
+  font-size: 0.78rem; font-weight: 500; letter-spacing: 0.02em;
+  color: var(--gray-400); transition: color 0.15s;
+}
+.art-subnav-link::after {
+  content: ''; position: absolute; left: 16px; right: 16px; bottom: 4px;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.24s var(--ease-out);
+}
+.art-subnav-link:hover { color: var(--black); }
+.art-subnav-link:hover::after,
+.art-subnav-link.is-active::after { transform: scaleX(1); transform-origin: left; }
+.art-subnav-link.is-active { color: var(--black); }
+.art-subnav--light .art-subnav-link { color: rgba(255,255,255,0.5); }
+.art-subnav--light .art-subnav-link:hover,
+.art-subnav--light .art-subnav-link.is-active { color: var(--white); }
+
+/* The first element after a hero's subnav needs room on narrow screens */
+@media (max-width: 700px) {
+  .art-subnav { margin-top: 24px; gap: 0; }
+  .art-subnav-link { padding: 9px 12px 11px; font-size: 0.74rem; }
+  .art-subnav-link::after { left: 12px; right: 12px; }
+}
+
+/* ── Section head: title on the left, currency selector on the right ── */
+.art-section-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap; margin-bottom: 32px;
+}
+
+/* ── Artwork listing — borderless tiles, separated by space alone ──
+   Deliberately unlike the hairline .work-grid on the homepage: a piece of art
+   should sit in open space, not inside a boxed cell. ── */
+.art-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  column-gap: 28px; row-gap: 52px;
+}
+/* Fixed column counts — CSS repeat() can't take a custom property, so the
+   homepage teaser picks a class sized to how many pieces it has. */
+.art-grid--2 { grid-template-columns: repeat(2, 1fr); }
+.art-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.art-grid--4 { grid-template-columns: repeat(4, 1fr); }
+.art-card { display: flex; flex-direction: column; background: none; }
+
+.art-card-img {
+  position: relative; overflow: hidden;
+  aspect-ratio: 4/5; background: var(--white);
+  display: grid; place-items: center;
+}
+.art-card-img img {
+  width: 100%; height: 100%;
+  /* contain, never cover — a painting must not be cropped to fit a cell */
+  object-fit: contain;
+  transition: transform 0.5s var(--ease), opacity 0.3s var(--ease);
+}
+.art-card:hover .art-card-img img { transform: scale(1.03); }
+/* Work that can no longer be bought sits back until looked at */
+.art-card[data-status="sold"] .art-card-img img,
+.art-card[data-status="not-for-sale"] .art-card-img img { opacity: 0.55; }
+.art-card[data-status="sold"]:hover .art-card-img img,
+.art-card[data-status="not-for-sale"]:hover .art-card-img img { opacity: 1; }
+
+.art-card-body { padding: 16px 2px 0; display: flex; flex-direction: column; gap: 5px; }
+.art-card-cat {
+  font-size: 0.6rem; font-weight: 500; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--gray-400);
+}
+.art-card-status { color: var(--black); }
+.art-card-body h3 {
+  font-size: 0.98rem; font-weight: 500; letter-spacing: -0.015em; line-height: 1.3;
+}
+.art-card-body h3::after {
+  /* Hairline that wipes in on hover — the nav's gesture, borrowed */
+  content: ''; display: block; width: 100%; height: 1px;
+  background: var(--black); margin-top: 3px;
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.3s var(--ease-out);
+}
+.art-card:hover .art-card-body h3::after { transform: scaleX(1); transform-origin: left; }
+
+/* ── Prices ── */
+.price { font-size: 0.88rem; font-weight: 500; letter-spacing: -0.01em; color: var(--gray-900); }
+.price--lg { font-size: 1.6rem; letter-spacing: -0.025em; color: var(--black); }
+.price--poa { color: var(--gray-400); font-weight: 400; }
+
+/* ── Currency selector ──
+   The real <select> sits transparent on top of a styled face, so the control
+   looks custom while staying a native select: the iOS/Android picker, keyboard
+   operation and screen-reader semantics all come for free. ── */
+.currency-select { position: relative; display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.currency-select-label {
+  font-size: 0.58rem; font-weight: 500; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--gray-400);
+}
+.currency-face {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid var(--gray-200); border-radius: var(--r);
+  font-size: 0.76rem; font-weight: 500; letter-spacing: 0.04em;
+  color: var(--gray-600); background: var(--white);
+  transition: border-color 0.18s, color 0.18s;
+}
+.currency-flag { font-size: 0.95rem; line-height: 1; }
+.currency-chevron { width: 9px; height: 6px; opacity: 0.6; }
+
+/* The select covers the face exactly and is invisible but fully interactive. */
+.currency-select select {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  border: 0; padding: 0; font: inherit;
+}
+.currency-select:hover .currency-face { border-color: var(--black); color: var(--black); }
+/* The focus ring has to be drawn on the face — the real control is invisible. */
+.currency-select:has(select:focus-visible) .currency-face {
+  outline: 2px solid var(--black); outline-offset: 2px; color: var(--black);
+}
+
+/* Header variant — borderless until hovered, so it sits quietly beside the nav
+   without competing with the brand mark. */
+.nav-actions .currency-face {
+  border-color: transparent; background: none; padding: 6px 8px;
+}
+.nav-actions .currency-select { gap: 0; }
+
+/* ── Empty state (an unfilled collection, e.g. prints before launch) ── */
+.art-empty {
+  border: 1px solid var(--gray-200); border-radius: var(--r);
+  padding: 72px 40px; text-align: center;
+}
+.art-empty h3 { font-size: 1.4rem; font-weight: 500; letter-spacing: -0.025em; margin-bottom: 10px; }
+.art-empty p {
+  color: var(--gray-600); font-size: 0.92rem; line-height: 1.7;
+  max-width: 400px; margin: 0 auto 24px;
+}
+
+/* ── Enquiry block on a piece ── */
+.enquire-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.enquire-note {
+  margin-top: 14px; font-size: 0.76rem; color: var(--gray-400); line-height: 1.6;
+  max-width: 400px;
+}
+
+/* ── Shipping terms ── */
+.shipping-note {
+  margin-top: 32px; padding-top: 24px;
+  border-top: 1px solid var(--gray-200);
+}
+.shipping-note ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.shipping-note li {
+  display: flex; align-items: flex-start; gap: 11px;
+  font-size: 0.8rem; color: var(--gray-600); line-height: 1.6;
+}
+.shipping-note li::before {
+  content: ''; width: 4px; height: 4px; background: var(--gray-200);
+  margin-top: 8px; flex-shrink: 0;
+}
+
+/* ── Art responsive ── */
+@media (max-width: 1024px) {
+  .art-grid, .art-grid--4 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  .art-section-head { align-items: flex-start; }
+}
+@media (max-width: 700px) {
+  .art-grid, .art-grid--3, .art-grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .art-card-body { padding: 13px 14px 16px; }
+  .art-empty { padding: 48px 24px; }
+}
+@media (max-width: 380px) {
+  .art-grid, .art-grid--2, .art-grid--3, .art-grid--4 { grid-template-columns: 1fr; }
 }
 
 /* ── RESPONSIVE: header / shared ── */

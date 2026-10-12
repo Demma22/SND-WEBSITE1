@@ -1,0 +1,100 @@
+---
+/**
+ * What a visitor can actually do about a piece, which depends on its status.
+ *
+ * The primary path is an enquiry — a prefilled WhatsApp message carrying the
+ * piece's title, size and price. That lands on the phone directly, so it
+ * doubles as the order notification until a real checkout exists.
+ *
+ * "Buy now" appears only for pieces that have a `paymentLink` in their
+ * frontmatter, so payment can be switched on one artwork at a time.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { whatsappLink, mailtoLink } from '../lib/site';
+import { formatMoney, resolvePrice, BASE_CURRENCY, type Rates } from '../lib/money';
+
+interface Props {
+  piece: CollectionEntry<'artworks'>;
+  rates: Rates;
+}
+
+const { piece, rates } = Astro.props;
+const { title, medium, width, height, status, paymentLink } = piece.data;
+const price = resolvePrice(piece.data, rates);
+
+/* Quote the piece in the currency it was authored in — that is the figure the
+   sale is actually settled against, and the one the studio recognises. */
+const priceLabel = price
+  ? formatMoney(price.usd, price.authored.UGX ? 'UGX' : BASE_CURRENCY, rates, price.authored)
+  : 'price on request';
+const descriptor = `"${title}" (${medium}, ${width} × ${height} cm, ${priceLabel})`;
+
+const enquiry = whatsappLink(
+  `Hi SND! I'm interested in ${descriptor}. Is it still available, and what would delivery look like?`
+);
+const enquiryMail = mailtoLink(
+  `Enquiry — ${title}`,
+  `Hi SND,\n\nI'm interested in ${descriptor}.\n\nIs it still available, and what would delivery look like?\n\nThanks,\n`
+);
+const waitlist = whatsappLink(
+  `Hi SND! ${descriptor} is marked reserved — could you let me know if it becomes available again?`
+);
+---
+
+<div class="enquire">
+  {status === 'available' && (
+    <>
+      <div class="enquire-actions">
+        {paymentLink && (
+          <a href={paymentLink} class="btn btn--dark" target="_blank" rel="noopener">
+            Buy now <span class="arrow">&#8594;</span>
+          </a>
+        )}
+        <a
+          href={enquiry}
+          class:list={['btn', paymentLink ? 'btn--ghost-dark' : 'btn--dark']}
+          target="_blank"
+          rel="noopener"
+        >
+          Enquire on WhatsApp <span class="arrow">&#8594;</span>
+        </a>
+        <a href={enquiryMail} class="btn btn--ghost">Email instead</a>
+      </div>
+      <p class="enquire-note">
+        {paymentLink
+          ? 'Secure checkout. Every piece is signed and shipped with a certificate of authenticity.'
+          : 'Enquiries are answered personally, usually the same day. Every piece is signed and shipped with a certificate of authenticity.'}
+      </p>
+    </>
+  )}
+
+  {status === 'reserved' && (
+    <>
+      <div class="enquire-actions">
+        <a href={waitlist} class="btn btn--ghost-dark" target="_blank" rel="noopener">
+          Tell me if it frees up <span class="arrow">&#8594;</span>
+        </a>
+      </div>
+      <p class="enquire-note">This piece is on hold for another collector while a sale is finalised.</p>
+    </>
+  )}
+
+  {status === 'sold' && (
+    <>
+      <div class="enquire-actions">
+        <a href="/art/commissions" class="btn btn--dark">Commission something <span class="arrow">&#8594;</span></a>
+        <a href="/art/originals" class="btn btn--ghost">See available work</a>
+      </div>
+      <p class="enquire-note">This piece has found its home. A commission can start from a piece like it.</p>
+    </>
+  )}
+
+  {status === 'not-for-sale' && (
+    <>
+      <div class="enquire-actions">
+        <a href="/art/originals" class="btn btn--dark">See available work <span class="arrow">&#8594;</span></a>
+      </div>
+      <p class="enquire-note">Part of the archive — kept in the studio and not for sale.</p>
+    </>
+  )}
+</div>

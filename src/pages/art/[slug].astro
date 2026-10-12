@@ -1,0 +1,331 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ArtSubnav from '../../components/ArtSubnav.astro';
+import ArtGrid from '../../components/ArtGrid.astro';
+import EnquireActions from '../../components/EnquireActions.astro';
+import ShippingNote from '../../components/ShippingNote.astro';
+import { relatedArtworks, type Artwork } from '../../lib/artworks';
+import { formatMoney, resolvePrice, getRates, DEFAULT_CURRENCY, BASE_CURRENCY } from '../../lib/money';
+
+export async function getStaticPaths() {
+  const artworks = await getCollection('artworks');
+  return artworks.map((piece) => ({
+    params: { slug: piece.id },
+    props: { piece },
+  }));
+}
+
+interface Props { piece: Artwork }
+const { piece } = Astro.props;
+const { title, year, medium, width, height, kind, status, edition, cover, gallery, framed } =
+  piece.data;
+
+const rates = await getRates();
+const price = resolvePrice(piece.data, rates);
+const related = await relatedArtworks(piece, 4);
+const { Content } = await render(piece);
+
+const sellable = status === 'available' || status === 'reserved';
+
+const STATUS_LABELS: Record<string, string> = {
+  available: 'Available',
+  reserved: 'Reserved',
+  sold: 'Sold',
+  'not-for-sale': 'Not for sale',
+};
+
+const specs = [
+  { label: 'Medium', value: medium },
+  { label: 'Size', value: `${width} × ${height} cm` },
+  { label: 'Year', value: String(year) },
+  ...(edition
+    ? [{
+        label: 'Edition',
+        value: edition.number ? `${edition.number} of ${edition.size}` : `Edition of ${edition.size}`,
+      }]
+    : []),
+  { label: kind === 'print' ? 'Type' : 'Work', value: kind === 'print' ? 'Print' : 'Original, one of one' },
+];
+
+// Structured data — lets Google show the price and availability in results.
+const AVAILABILITY: Record<string, string> = {
+  available: 'https://schema.org/InStock',
+  reserved: 'https://schema.org/PreOrder',
+  sold: 'https://schema.org/SoldOut',
+  'not-for-sale': 'https://schema.org/OutOfStock',
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'VisualArtwork',
+  name: title,
+  artform: kind === 'print' ? 'Print' : 'Painting',
+  artMedium: medium,
+  dateCreated: String(year),
+  width: { '@type': 'Distance', name: `${width} cm` },
+  height: { '@type': 'Distance', name: `${height} cm` },
+  image: new URL(cover.src, Astro.site).toString(),
+  creator: {
+    '@type': 'Person',
+    name: 'Demma Ssendagire',
+  },
+  /* A sold piece still carries its offer, marked SoldOut — that is accurate and
+     lets search results say so. Archive pieces were never offered, so they get
+     no offer at all. */
+  ...(price && status !== 'not-for-sale'
+    ? {
+        offers: {
+          '@type': 'Offer',
+          price: price.usd,
+          priceCurrency: BASE_CURRENCY,
+          availability: AVAILABILITY[status],
+          url: new URL(`/art/${piece.id}`, Astro.site).toString(),
+        },
+      }
+    : {}),
+};
+---
+
+<BaseLayout
+  title={`${title} — Art Work | SND`}
+  description={`${title} — ${medium}, ${width} × ${height} cm, ${year}. ${
+    sellable ? 'Available' : STATUS_LABELS[status]
+  } from the SND studio in Kampala.`}
+  image={cover.src}
+>
+
+<Header active="Art" />
+
+<main id="main" tabindex="-1">
+
+<article class="piece">
+
+  <div class="container">
+    <ArtSubnav active="Gallery" />
+  </div>
+
+  <div class="container piece-inner">
+
+    <!-- ── IMAGES ── -->
+    <div class="piece-media">
+      <figure class="piece-figure">
+        <Image
+          src={cover}
+          alt={`${title} — ${medium}, ${year}`}
+          widths={[600, 900, 1200]}
+          sizes="(max-width: 900px) 100vw, 55vw"
+          fetchpriority="high"
+          decoding="async"
+        />
+        {!sellable && <span class="piece-badge">{STATUS_LABELS[status]}</span>}
+      </figure>
+
+      {gallery.length > 0 && (
+        <div class="piece-thumbs" style={`grid-template-columns: repeat(${Math.min(gallery.length, 4)}, 1fr)`}>
+          {gallery.map((img, i) => (
+            <figure>
+              <Image
+                src={img}
+                alt={`${title} — detail ${i + 1}`}
+                widths={[300, 500]}
+                sizes="25vw"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- ── DETAILS ── -->
+    <div class="piece-info">
+      <div class="piece-head">
+        <span class:list={['piece-status', `piece-status--${status}`]}>{STATUS_LABELS[status]}</span>
+        <h1 class="piece-title">{title}</h1>
+      </div>
+
+      <div class="piece-price-row">
+        {price && sellable ? (
+          <span class="price price--lg" data-usd={price.usd} data-ugx={price.authored.UGX}>
+            {formatMoney(price.usd, DEFAULT_CURRENCY, rates, price.authored)}
+          </span>
+        ) : (
+          <span class="price price--lg price--poa">
+            {sellable ? 'Price on request' : STATUS_LABELS[status]}
+          </span>
+        )}
+      </div>
+
+      {price && sellable && (
+        <p class="piece-price-note">
+          Priced in {price.authored.UGX ? 'Ugandan shillings' : 'US dollars'}. Other
+          currencies are indicative — the final amount is confirmed when you order.
+        </p>
+      )}
+
+      <dl class="piece-specs">
+        {specs.map((spec) => (
+          <div class="piece-spec">
+            <dt>{spec.label}</dt>
+            <dd>{spec.value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <EnquireActions piece={piece} rates={rates} />
+
+      <ShippingNote framed={framed} />
+    </div>
+  </div>
+
+  <!-- ── STORY ── -->
+  {piece.body?.trim() && (
+    <div class="container">
+      <div class="piece-story reveal">
+        <span class="eyebrow">About this piece</span>
+        <div class="piece-story-body">
+          <Content />
+        </div>
+      </div>
+    </div>
+  )}
+
+  <!-- ── MORE WORK ── -->
+  {related.length > 0 && (
+    <section class="piece-related">
+      <div class="container">
+        <div class="art-section-head reveal">
+          <div>
+            <span class="eyebrow">More work</span>
+            <h2 class="piece-related-title">From the studio.</h2>
+          </div>
+          <a href="/art/gallery" class="btn btn--ghost btn--small">Full gallery <span class="arrow">&#8594;</span></a>
+        </div>
+        <ArtGrid pieces={related} rates={rates} />
+      </div>
+    </section>
+  )}
+
+</article>
+
+</main>
+
+<Footer />
+
+<!-- Inside the layout slot on purpose: an is:inline script is left exactly
+     where it sits (unlike <style>, which Astro hoists to the head), so after
+     </BaseLayout> it would land outside </html>. JSON-LD in the body is valid. -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
+
+</BaseLayout>
+
+<style>
+  .piece { padding: calc(var(--header-h) + 32px) 0 100px; }
+
+  .piece-inner {
+    display: grid; grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px; align-items: start; margin-top: 32px;
+  }
+
+  /* ── Media ── */
+  .piece-figure {
+    position: relative; margin: 0; overflow: hidden;
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    background: var(--gray-50);
+  }
+  .piece-figure img { width: 100%; height: auto; display: block; }
+  .piece-badge {
+    position: absolute; top: 14px; left: 14px;
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--white); background: var(--black);
+    padding: 5px 11px; border-radius: var(--r);
+  }
+  /* The aspect ratio lives on the <figure>, never on the <img>.
+     Astro's <Image> emits width/height attributes; those presentational hints
+     make the image's height definite, which silently cancels an aspect-ratio
+     set on the img itself — the image then renders at its full intrinsic
+     height inside a narrow column and object-fit crops it to a sliver. */
+  .piece-thumbs { display: grid; gap: 10px; margin-top: 10px; }
+  .piece-thumbs figure {
+    margin: 0; aspect-ratio: 4/5; overflow: hidden;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+  }
+  .piece-thumbs img {
+    width: 100%; height: 100%;
+    /* contain, not cover — these show the piece in a room; cropping them
+       throws away the context that makes them worth including */
+    object-fit: contain;
+  }
+
+  /* ── Info column ── */
+  .piece-info { position: sticky; top: calc(var(--header-h) + 24px); }
+  .piece-status {
+    display: inline-block; margin-bottom: 12px;
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+  .piece-status--available { color: var(--black); }
+  .piece-title {
+    font-size: clamp(1.9rem, 3.6vw, 2.9rem); font-weight: 500;
+    letter-spacing: -0.04em; line-height: 1.04; margin-bottom: 22px;
+  }
+
+  .piece-price-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap; margin-bottom: 8px;
+  }
+  .piece-price-note {
+    font-size: 0.72rem; color: var(--gray-400); line-height: 1.6;
+    margin-bottom: 28px; max-width: 380px;
+  }
+
+  /* ── Specs ── */
+  .piece-specs {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 1px; background: var(--gray-200);
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    margin: 24px 0 32px; overflow: hidden;
+  }
+  .piece-spec { background: var(--white); padding: 14px 16px; }
+  .piece-spec dt {
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gray-400); margin-bottom: 5px;
+  }
+  .piece-spec dd { font-size: 0.86rem; font-weight: 500; color: var(--gray-900); margin: 0; line-height: 1.45; }
+
+  /* ── Story ── */
+  .piece-story {
+    max-width: 680px; margin: 80px auto 0;
+    padding-top: 48px; border-top: 1px solid var(--gray-200);
+  }
+  .piece-story-body :global(p) {
+    font-size: 1.02rem; color: var(--gray-600); line-height: 1.9; margin-bottom: 24px;
+  }
+  .piece-story-body :global(p:last-child) { margin-bottom: 0; }
+  .piece-story-body :global(em) { color: var(--black); font-style: normal; font-weight: 500; }
+  .piece-story-body :global(a) { text-decoration: underline; text-underline-offset: 3px; color: var(--black); }
+
+  /* ── Related ── */
+  .piece-related { margin-top: 90px; padding-top: 56px; border-top: 1px solid var(--gray-200); }
+  .piece-related-title {
+    font-size: clamp(1.5rem, 2.6vw, 2rem); font-weight: 500;
+    letter-spacing: -0.03em; line-height: 1.1;
+  }
+
+  @media (max-width: 900px) {
+    .piece-inner { grid-template-columns: 1fr; gap: 36px; }
+    .piece-info { position: static; }
+    .piece-related { margin-top: 64px; }
+    .piece-story { margin-top: 56px; }
+  }
+  @media (max-width: 700px) {
+    .piece { padding-top: calc(var(--header-h) + 20px); padding-bottom: 72px; }
+    .piece-specs { grid-template-columns: 1fr; }
+  }
+</style>

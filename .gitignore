@@ -29,3 +29,6 @@ dist/
 .DS_Store
 *.log
 .vercel
+
+# raw artwork photos — run `npm run art:prep` to process into src/assets/art
+art-src/

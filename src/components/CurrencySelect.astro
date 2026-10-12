@@ -1,0 +1,47 @@
+---
+/**
+ * The visible currency control — flag, code, chevron.
+ *
+ * A native <select> can't render images in its options, so the real select is
+ * laid transparently over a styled face. That keeps everything native where it
+ * matters — the iOS/Android picker wheel, keyboard operation, screen readers —
+ * while the face carries the look.
+ *
+ * Flags are emoji. They render on macOS, iOS and Android; Windows ships no
+ * flag glyphs and falls back to the two-letter code, which still reads fine.
+ * Swapping them for SVGs later is a change to CURRENCIES alone.
+ *
+ * Rate data and the conversion itself live in CurrencyEngine.astro, which
+ * BaseLayout renders on every page. Safe to use more than once per page.
+ */
+import { CURRENCIES, DEFAULT_CURRENCY, getCurrency } from '../lib/money';
+
+interface Props {
+  /** Hide the "Currency" label where context already makes it obvious. */
+  showLabel?: boolean;
+}
+const { showLabel = true } = Astro.props;
+
+const id = `currencySelect-${Math.random().toString(36).slice(2, 8)}`;
+const initial = getCurrency(DEFAULT_CURRENCY);
+---
+
+<div class="currency-select">
+  {showLabel && <label class="currency-select-label" for={id}>Currency</label>}
+
+  <span class="currency-face" aria-hidden="true">
+    <span class="currency-flag" data-currency-flag>{initial.flag}</span>
+    <span class="currency-code" data-currency-code>{initial.code}</span>
+    <svg class="currency-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+      <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+    </svg>
+  </span>
+
+  <select id={id} data-currency-select aria-label="Display currency">
+    {CURRENCIES.map((c) => (
+      <option value={c.code} data-flag={c.flag} selected={c.code === DEFAULT_CURRENCY}>
+        {c.flag} {c.code} {c.symbol}
+      </option>
+    ))}
+  </select>
+</div>

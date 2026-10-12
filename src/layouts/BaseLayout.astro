@@ -1,6 +1,7 @@
 ---
 import '../styles/app.css';
 import { ClientRouter } from 'astro:transitions';
+import CurrencyEngine from '../components/CurrencyEngine.astro';
 
 export interface Props {
   title: string;
@@ -139,6 +140,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   </div>
 
   <slot />
+
+  <!-- Converts any [data-usd] price to the visitor's chosen currency. Lives
+       here so prices work on any page, with or without a visible selector. -->
+  <CurrencyEngine />
 
   <!-- data-astro-rerun: re-runs after client-side navigation so the #intro
        overlay swapped in with a new page body is always cleaned up -->

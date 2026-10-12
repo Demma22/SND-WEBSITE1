@@ -1,0 +1,199 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ArtSubnav from '../../components/ArtSubnav.astro';
+import ArtGrid from '../../components/ArtGrid.astro';
+import { featuredArtworks, artworkCounts } from '../../lib/artworks';
+import { getRates } from '../../lib/money';
+import { INSTAGRAM_ART, mailtoLink } from '../../lib/site';
+
+const rates = await getRates();
+const featured = await featuredArtworks(4);
+const counts = await artworkCounts();
+
+const collections = [
+  {
+    num: '01',
+    title: 'Originals',
+    href: '/art/originals',
+    body: 'One-of-one paintings and drawings, signed and dated.',
+    meta: counts.originals === 0
+      ? 'Coming soon'
+      : `${counts.originals} ${counts.originals === 1 ? 'piece' : 'pieces'} · ${counts.available} available`,
+  },
+  {
+    num: '02',
+    title: 'Prints',
+    href: '/art/prints',
+    body: 'Limited and open editions of selected works.',
+    meta: counts.prints === 0 ? 'Coming soon' : `${counts.prints} available`,
+  },
+  {
+    num: '03',
+    title: 'Commissions',
+    href: '/art/commissions',
+    body: 'A piece made for you — portraits and beyond.',
+    meta: 'Open',
+  },
+];
+
+const firstAccess = mailtoLink(
+  'Art Work — first access',
+  'Hi SND,\n\nPlease add me to the list for first access to new work.\n\nThanks,\n'
+);
+---
+
+<BaseLayout
+  title="Art Work — SND"
+  description="Original paintings, drawings, and prints by Demma Ssendagire. Shipped worldwide from Kampala."
+  image="/stories/sculpture.webp"
+>
+
+<Header active="Art" />
+
+<main id="main" tabindex="-1">
+
+<!-- ── HERO ── -->
+<section class="art-hero">
+  <div class="art-hero-bg"></div>
+  <div class="container art-hero-inner">
+    <span class="eyebrow eyebrow--light">SND Art</span>
+    <h1 class="art-hero-title">Art Work.</h1>
+    <p class="art-hero-sub">
+      Original paintings, drawings, and prints from the studio in Kampala —
+      signed, and shipped worldwide.
+    </p>
+    <ArtSubnav active="Overview" light={true} />
+  </div>
+</section>
+
+<!-- ── COLLECTIONS ── -->
+<section class="art-collections">
+  <div class="container">
+    <div class="collections-grid">
+      {collections.map((c) => (
+        <a class="collection reveal" href={c.href}>
+          <span class="collection-num">{c.num}</span>
+          <h2>{c.title}</h2>
+          <p>{c.body}</p>
+          <span class="collection-tag">{c.meta}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURED WORK ── -->
+<section class="art-featured">
+  <div class="container">
+    <div class="art-section-head reveal">
+      <div>
+        <span class="eyebrow">Selected work</span>
+        <h2 class="section-title">Recent pieces.</h2>
+      </div>
+    </div>
+
+    <ArtGrid pieces={featured} rates={rates} />
+
+    <div class="art-featured-actions reveal">
+      <a href="/art/gallery" class="btn btn--dark">See the full gallery <span class="arrow">&#8594;</span></a>
+      <a href="/art/originals" class="btn btn--ghost">Available originals</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FIRST ACCESS ── -->
+<section class="art-access">
+  <div class="container art-access-inner reveal">
+    <div>
+      <span class="eyebrow">Stay close to the work</span>
+      <h2 class="art-access-title">New pieces, as they're made.</h2>
+      <p>
+        Work in progress goes up as it happens. Ask to be on the list and you'll
+        hear about new pieces before they're listed here.
+      </p>
+    </div>
+    <div class="art-access-actions">
+      <a href={INSTAGRAM_ART} target="_blank" rel="noopener" class="btn btn--dark">
+        Follow on Instagram <span class="arrow">&#8594;</span>
+      </a>
+      <a href={firstAccess} class="btn btn--ghost">Get first access</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  /* Hero keeps the black dot-grid treatment shared with the other dark
+     sections; .art-hero is already registered in Header.astro's dotHosts. */
+  .art-hero { position: relative; overflow: hidden; background: var(--black); color: var(--white); }
+  .art-hero-bg { position: absolute; inset: 0; pointer-events: none; opacity: 0.32; }
+  .art-hero-bg::before {
+    content: ''; position: absolute; inset: -8rem 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.5) 0.9px, transparent 0.9px);
+    background-size: 8rem 8rem;
+    transform: translateY(var(--dotY, 0px)); will-change: transform;
+  }
+  .art-hero-inner { position: relative; z-index: 1; padding: calc(var(--header-h) + 72px) 32px 0; }
+  .art-hero-title {
+    font-size: clamp(2.6rem, 6.5vw, 4.6rem); font-weight: 500;
+    line-height: 0.96; letter-spacing: -0.045em; margin-bottom: 16px;
+  }
+  .art-hero-sub { color: rgba(255,255,255,0.6); font-size: 1rem; line-height: 1.75; max-width: 460px; }
+
+  /* Collections — flush 1px grid */
+  .art-collections { padding: 72px 0 0; }
+  .collections-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200);
+  }
+  .collection {
+    background: var(--white); padding: 28px 28px 32px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: background 0.18s;
+  }
+  .collection:hover { background: var(--gray-50); }
+  .collection-num { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.12em; color: var(--gray-400); }
+  .collection h2 { font-size: 1.2rem; font-weight: 500; letter-spacing: -0.02em; }
+  .collection p { font-size: 0.86rem; color: var(--gray-600); line-height: 1.65; flex: 1; }
+  .collection-tag {
+    align-self: flex-start;
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gray-400);
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    padding: 5px 10px;
+  }
+
+  .art-featured { padding: 72px 0 0; }
+  .art-featured-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 40px; }
+
+  /* First access */
+  .art-access { padding: 100px 0; }
+  .art-access-inner {
+    display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 48px; align-items: center;
+    border-top: 1px solid var(--gray-200); padding-top: 56px;
+  }
+  .art-access-title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 500;
+    letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 14px;
+  }
+  .art-access-inner p { color: var(--gray-600); font-size: 0.96rem; line-height: 1.7; max-width: 440px; }
+  .art-access-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+
+  @media (max-width: 900px) {
+    .collections-grid { grid-template-columns: 1fr; }
+    .art-access-inner { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 700px) {
+    .art-hero-inner { padding: calc(var(--header-h) + 56px) 20px 0; }
+    .art-collections { padding-top: 56px; }
+    .art-featured { padding-top: 56px; }
+    .art-access { padding: 72px 0; }
+  }
+</style>
