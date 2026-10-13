@@ -1,6 +1,6 @@
 ---
-import ArtCollection from '../../layouts/ArtCollection.astro';
-import { artworksByKind } from '../../lib/artworks';
+import ArtCollection from '../layouts/ArtCollection.astro';
+import { artworksByKind } from '../lib/artworks';
 
 const pieces = await artworksByKind('print');
 ---

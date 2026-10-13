@@ -1,0 +1,216 @@
+---
+/**
+ * Cart — a drawer, a count badge, and an order message.
+ *
+ * Deliberately account-free: everything lives in localStorage on the visitor's
+ * own device. Nothing is stored about anyone, nobody signs up to buy, and there
+ * is no personal data on the studio's side until a person chooses to send an
+ * order.
+ *
+ * Checkout composes one WhatsApp message listing every item and the total, so
+ * orders land on the phone. When a payment rail is live, only the checkout
+ * button changes — the cart itself stays as it is.
+ *
+ * Prices follow the site-wide currency: the cart re-renders on `snd:currency`
+ * (broadcast by CurrencyEngine) and uses its formatter, so an item authored in
+ * UGX keeps its exact shilling figure here too.
+ *
+ * Rendered by BaseLayout, NOT by Header — and that placement is load-bearing.
+ * The header sets `backdrop-filter`, which makes it a containing block for
+ * position:fixed descendants. Inside it, the drawer's top/bottom:0 resolved
+ * against a 60px-tall header instead of the viewport, so its background only
+ * covered 60px while its contents spilled out over the page. The trigger
+ * button lives in the header; the drawer itself must not.
+ */
+import { WHATSAPP } from '../lib/site';
+---
+
+<div class="cart-backdrop" id="cartBackdrop"></div>
+
+<aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Your cart">
+  <header class="cart-head">
+    <span class="eyebrow">Your selection</span>
+    <button class="cart-close" id="cartClose" aria-label="Close cart">&#x2715;</button>
+  </header>
+
+  <div class="cart-body" id="cartBody"><!-- rendered client-side --></div>
+
+  <footer class="cart-foot" id="cartFoot" hidden>
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-value" id="cartTotal"></span>
+    </div>
+    <a class="btn btn--dark cart-checkout" id="cartCheckout" target="_blank" rel="noopener" href="#">
+      Order on WhatsApp <span class="arrow">&#8594;</span>
+    </a>
+    <p class="cart-note">
+      No account needed. Orders are confirmed personally over WhatsApp.
+    </p>
+  </footer>
+</aside>
+
+<script define:vars={{ WHATSAPP }}>
+  /* Classic (non-module) inline script so it is available to the markup
+     immediately; re-bound on every client-side navigation like the rest. */
+  (function () {
+    const KEY = 'sndCart';
+
+    const read = () => {
+      try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
+    };
+    const write = (items) => {
+      try { localStorage.setItem(KEY, JSON.stringify(items)); } catch { /* private mode */ }
+    };
+
+    /* Format via the site-wide currency engine when it has announced itself;
+       fall back to the authored figure so the cart is never blank. */
+    function money(usd, authored) {
+      const api = window.sndCurrency;
+      if (api) return api.format(usd, authored || {});
+      return authored && authored.UGX
+        ? 'USh' + authored.UGX.toLocaleString('en-US')
+        : '$' + Math.round(usd).toLocaleString('en-US');
+    }
+
+    const lineAuthored = (item) => (item.ugx ? { UGX: item.ugx * item.qty } : {});
+
+    /* The authored currency only stays exact if every line carries one. */
+    function totals(items) {
+      const usd = items.reduce((n, i) => n + i.usd * i.qty, 0);
+      const allUgx = items.length > 0 && items.every((i) => i.ugx);
+      const authored = allUgx
+        ? { UGX: items.reduce((n, i) => n + i.ugx * i.qty, 0) }
+        : {};
+      return { usd, authored };
+    }
+
+    function orderLink(items) {
+      const { usd, authored } = totals(items);
+      const lines = items
+        .map((i) => `• ${i.qty} × ${i.title} — ${money(i.usd * i.qty, lineAuthored(i))}`)
+        .join('\n');
+      const msg =
+        `Hi SND! I would like to order:\n\n${lines}\n\n` +
+        `Total: ${money(usd, authored)}\n\n` +
+        `Could you confirm availability and how to pay? Thank you.`;
+      return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function render() {
+      const items = read();
+      const body = document.getElementById('cartBody');
+      const foot = document.getElementById('cartFoot');
+      const count = document.getElementById('cartCount');
+      const total = document.getElementById('cartTotal');
+      const checkout = document.getElementById('cartCheckout');
+      if (!body) return;
+
+      const n = items.reduce((a, i) => a + i.qty, 0);
+      if (count) { count.textContent = String(n); count.hidden = n === 0; }
+
+      // Any "Add to cart" button for something already in the cart says so.
+      document.querySelectorAll('[data-add-to-cart]').forEach((btn) => {
+        const inCart = items.some((i) => i.id === btn.dataset.id);
+        btn.classList.toggle('is-added', inCart);
+        btn.textContent = inCart ? 'In cart' : 'Add to cart';
+      });
+
+      if (!items.length) {
+        body.innerHTML = '<p class="cart-empty">Nothing selected yet.</p>';
+        if (foot) foot.hidden = true;
+        return;
+      }
+
+      body.innerHTML = items.map((i) => `
+        <div class="cart-line" data-id="${i.id}">
+          <div class="cart-line-main">
+            <a href="/art/${i.id}" class="cart-line-title">${i.title}</a>
+            <span class="cart-line-price">${money(i.usd * i.qty, lineAuthored(i))}</span>
+          </div>
+          <div class="cart-line-actions">
+            ${i.max === 1
+              ? '<span class="cart-line-unique">One of one</span>'
+              : `<span class="cart-qty">
+                   <button type="button" data-qty="-1" aria-label="Decrease quantity">&minus;</button>
+                   <span>${i.qty}</span>
+                   <button type="button" data-qty="1" aria-label="Increase quantity">&plus;</button>
+                 </span>`}
+            <button type="button" class="cart-remove" data-remove aria-label="Remove ${i.title}">Remove</button>
+          </div>
+        </div>`).join('');
+
+      const t = totals(items);
+      if (total) total.textContent = money(t.usd, t.authored);
+      if (checkout) checkout.href = orderLink(items);
+      if (foot) foot.hidden = false;
+    }
+
+    function add(data) {
+      const items = read();
+      const found = items.find((i) => i.id === data.id);
+      if (found) {
+        // One-of-one work can only ever be in the cart once.
+        if (found.max === 1) { open(true); return; }
+        found.qty = Math.min(found.qty + 1, 99);
+      } else {
+        items.push({ ...data, qty: 1 });
+      }
+      write(items);
+      render();
+      open(true);
+    }
+
+    function open(isOpen) {
+      const drawer = document.getElementById('cartDrawer');
+      const backdrop = document.getElementById('cartBackdrop');
+      const button = document.getElementById('cartButton');
+      drawer?.classList.toggle('is-open', isOpen);
+      backdrop?.classList.toggle('is-open', isOpen);
+      button?.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    function init() {
+      render();
+
+      document.getElementById('cartButton')?.addEventListener('click', () => open(true));
+      document.getElementById('cartClose')?.addEventListener('click', () => open(false));
+      document.getElementById('cartBackdrop')?.addEventListener('click', () => open(false));
+
+      document.querySelectorAll('[data-add-to-cart]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          add({
+            id: btn.dataset.id,
+            title: btn.dataset.title,
+            usd: Number(btn.dataset.usd),
+            ugx: btn.dataset.ugx ? Number(btn.dataset.ugx) : undefined,
+            max: btn.dataset.max ? Number(btn.dataset.max) : undefined,
+          });
+        });
+      });
+
+      // Quantity and removal are delegated, since lines are re-rendered.
+      document.getElementById('cartBody')?.addEventListener('click', (e) => {
+        const line = e.target.closest('.cart-line');
+        if (!line) return;
+        const items = read();
+        const item = items.find((i) => i.id === line.dataset.id);
+        if (!item) return;
+
+        if (e.target.closest('[data-remove]')) {
+          write(items.filter((i) => i.id !== item.id));
+        } else if (e.target.closest('[data-qty]')) {
+          item.qty = Math.max(1, Math.min(99, item.qty + Number(e.target.closest('[data-qty]').dataset.qty)));
+          write(items);
+        } else return;
+        render();
+      });
+    }
+
+    document.addEventListener('astro:page-load', init);
+    // Prices re-render whenever the site-wide currency changes.
+    document.addEventListener('snd:currency', render);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') open(false); });
+  })();
+</script>

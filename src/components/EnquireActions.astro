@@ -30,11 +30,11 @@ const priceLabel = price
 const descriptor = `"${title}" (${medium}, ${width} × ${height} cm, ${priceLabel})`;
 
 const enquiry = whatsappLink(
-  `Hi SND! I'm interested in ${descriptor}. Is it still available, and what would delivery look like?`
+  `Hi SND! I'm interested in ${descriptor}. Is it still available?`
 );
 const enquiryMail = mailtoLink(
   `Enquiry — ${title}`,
-  `Hi SND,\n\nI'm interested in ${descriptor}.\n\nIs it still available, and what would delivery look like?\n\nThanks,\n`
+  `Hi SND,\n\nI'm interested in ${descriptor}.\n\nIs it still available?\n\nThanks,\n`
 );
 const waitlist = whatsappLink(
   `Hi SND! ${descriptor} is marked reserved — could you let me know if it becomes available again?`
@@ -50,20 +50,25 @@ const waitlist = whatsappLink(
             Buy now <span class="arrow">&#8594;</span>
           </a>
         )}
-        <a
-          href={enquiry}
-          class:list={['btn', paymentLink ? 'btn--ghost-dark' : 'btn--dark']}
-          target="_blank"
-          rel="noopener"
-        >
+        {price && (
+          <button
+            type="button"
+            class:list={['btn', paymentLink ? 'btn--ghost-dark' : 'btn--dark']}
+            data-add-to-cart
+            data-id={piece.id}
+            data-title={title}
+            data-usd={price.usd}
+            data-ugx={price.authored.UGX}
+            data-max={piece.data.kind === 'original' ? 1 : undefined}
+          >Add to cart</button>
+        )}
+        <a href={enquiry} class="btn btn--ghost" target="_blank" rel="noopener">
           Enquire on WhatsApp <span class="arrow">&#8594;</span>
         </a>
         <a href={enquiryMail} class="btn btn--ghost">Email instead</a>
       </div>
       <p class="enquire-note">
-        {paymentLink
-          ? 'Secure checkout. Every piece is signed and shipped with a certificate of authenticity.'
-          : 'Enquiries are answered personally, usually the same day. Every piece is signed and shipped with a certificate of authenticity.'}
+        {paymentLink ? 'Secure checkout.' : 'Enquiries are answered personally, usually the same day.'}
       </p>
     </>
   )}
@@ -82,8 +87,8 @@ const waitlist = whatsappLink(
   {status === 'sold' && (
     <>
       <div class="enquire-actions">
-        <a href="/art/commissions" class="btn btn--dark">Commission something <span class="arrow">&#8594;</span></a>
-        <a href="/art/originals" class="btn btn--ghost">See available work</a>
+        <a href="/commissions" class="btn btn--dark">Commission something <span class="arrow">&#8594;</span></a>
+        <a href="/originals" class="btn btn--ghost">See available work</a>
       </div>
       <p class="enquire-note">This piece has found its home. A commission can start from a piece like it.</p>
     </>
@@ -92,7 +97,7 @@ const waitlist = whatsappLink(
   {status === 'not-for-sale' && (
     <>
       <div class="enquire-actions">
-        <a href="/art/originals" class="btn btn--dark">See available work <span class="arrow">&#8594;</span></a>
+        <a href="/originals" class="btn btn--dark">See available work <span class="arrow">&#8594;</span></a>
       </div>
       <p class="enquire-note">Part of the archive — kept in the studio and not for sale.</p>
     </>

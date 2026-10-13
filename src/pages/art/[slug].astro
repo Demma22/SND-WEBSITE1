@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
@@ -7,7 +7,6 @@ import Footer from '../../components/Footer.astro';
 import ArtSubnav from '../../components/ArtSubnav.astro';
 import ArtGrid from '../../components/ArtGrid.astro';
 import EnquireActions from '../../components/EnquireActions.astro';
-import ShippingNote from '../../components/ShippingNote.astro';
 import { relatedArtworks, type Artwork } from '../../lib/artworks';
 import { formatMoney, resolvePrice, getRates, DEFAULT_CURRENCY, BASE_CURRENCY } from '../../lib/money';
 
@@ -21,13 +20,12 @@ export async function getStaticPaths() {
 
 interface Props { piece: Artwork }
 const { piece } = Astro.props;
-const { title, year, medium, width, height, kind, status, edition, cover, gallery, framed } =
+const { title, year, medium, width, height, kind, status, edition, cover, gallery } =
   piece.data;
 
 const rates = await getRates();
 const price = resolvePrice(piece.data, rates);
 const related = await relatedArtworks(piece, 4);
-const { Content } = await render(piece);
 
 const sellable = status === 'available' || status === 'reserved';
 
@@ -179,21 +177,8 @@ const structuredData = {
 
       <EnquireActions piece={piece} rates={rates} />
 
-      <ShippingNote framed={framed} />
     </div>
   </div>
-
-  <!-- ── STORY ── -->
-  {piece.body?.trim() && (
-    <div class="container">
-      <div class="piece-story reveal">
-        <span class="eyebrow">About this piece</span>
-        <div class="piece-story-body">
-          <Content />
-        </div>
-      </div>
-    </div>
-  )}
 
   <!-- ── MORE WORK ── -->
   {related.length > 0 && (
@@ -204,7 +189,7 @@ const structuredData = {
             <span class="eyebrow">More work</span>
             <h2 class="piece-related-title">From the studio.</h2>
           </div>
-          <a href="/art/gallery" class="btn btn--ghost btn--small">Full gallery <span class="arrow">&#8594;</span></a>
+          <a href="/gallery" class="btn btn--ghost btn--small">Full gallery <span class="arrow">&#8594;</span></a>
         </div>
         <ArtGrid pieces={related} rates={rates} />
       </div>
@@ -299,18 +284,6 @@ const structuredData = {
   }
   .piece-spec dd { font-size: 0.86rem; font-weight: 500; color: var(--gray-900); margin: 0; line-height: 1.45; }
 
-  /* ── Story ── */
-  .piece-story {
-    max-width: 680px; margin: 80px auto 0;
-    padding-top: 48px; border-top: 1px solid var(--gray-200);
-  }
-  .piece-story-body :global(p) {
-    font-size: 1.02rem; color: var(--gray-600); line-height: 1.9; margin-bottom: 24px;
-  }
-  .piece-story-body :global(p:last-child) { margin-bottom: 0; }
-  .piece-story-body :global(em) { color: var(--black); font-style: normal; font-weight: 500; }
-  .piece-story-body :global(a) { text-decoration: underline; text-underline-offset: 3px; color: var(--black); }
-
   /* ── Related ── */
   .piece-related { margin-top: 90px; padding-top: 56px; border-top: 1px solid var(--gray-200); }
   .piece-related-title {
@@ -322,7 +295,6 @@ const structuredData = {
     .piece-inner { grid-template-columns: 1fr; gap: 36px; }
     .piece-info { position: static; }
     .piece-related { margin-top: 64px; }
-    .piece-story { margin-top: 56px; }
   }
   @media (max-width: 700px) {
     .piece { padding-top: calc(var(--header-h) + 20px); padding-bottom: 72px; }

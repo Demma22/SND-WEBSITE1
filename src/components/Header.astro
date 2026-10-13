@@ -12,13 +12,16 @@ interface Props {
 }
 const { homepage = false, active = '' } = Astro.props;
 
+/* Art leads. "Art" as a single label said too little — what is actually for
+   sale is originals, prints and commissions, so the nav names them. */
 const items = [
-  { label: 'The Craft', anchor: '#work' },
-  { label: 'Art', href: '/art' },
-  { label: 'Products', href: '/products' },
-  { label: 'About',    anchor: '#studio' },
+  { label: 'Originals',   href: '/originals' },
+  { label: 'Prints',      href: '/prints' },
+  { label: 'Commissions', href: '/commissions' },
+  { label: 'The Craft',   anchor: '#work' },
+  { label: 'About',       anchor: '#studio' },
   { label: 'Inside Stories', href: '/inside-stories' },
-  { label: 'Contact',  anchor: '#contact' },
+  { label: 'Contact',     anchor: '#contact' },
 ];
 
 const resolve = (item: { anchor?: string; href?: string }) =>
@@ -44,7 +47,18 @@ const resolve = (item: { anchor?: string; href?: string }) =>
     <div class="nav-actions">
       <!-- Site-wide: sets the currency for every price on every page. -->
       <CurrencySelect showLabel={false} />
-      <a href={homepage ? '#contact' : '/#contact'} class="btn btn--dark btn--small">Join community</a>
+      <!-- Trigger only. The drawer is rendered by BaseLayout: this header sets
+           backdrop-filter, which would trap a position:fixed drawer inside it. -->
+      <button class="cart-button" id="cartButton" aria-label="Open cart" aria-expanded="false">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="cart-icon">
+          <path d="M3 5h2l1.6 8.4a1 1 0 0 0 1 .8h7.1a1 1 0 0 0 1-.78L17.5 7.5H6"
+                stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="8.5" cy="17" r="1.1" fill="currentColor" />
+          <circle cx="15" cy="17" r="1.1" fill="currentColor" />
+        </svg>
+        <span class="cart-count" id="cartCount" hidden>0</span>
+      </button>
+      <a href="/community" class="btn btn--dark btn--small">Join community</a>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
         <span></span><span></span><span></span>
       </button>

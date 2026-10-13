@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import ArtSubnav from '../../components/ArtSubnav.astro';
-import { getRates, formatMoney, DEFAULT_CURRENCY } from '../../lib/money';
-import { whatsappLink, mailtoLink, INSTAGRAM_ART } from '../../lib/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ArtSubnav from '../components/ArtSubnav.astro';
+import { getRates, formatMoney, DEFAULT_CURRENCY } from '../lib/money';
+import { whatsappLink, mailtoLink, INSTAGRAM_ART } from '../lib/site';
 
 const rates = await getRates();
 
@@ -32,7 +32,7 @@ const steps = [
   {
     num: '05',
     title: 'Signed, packed, shipped',
-    body: 'Rolled in a rigid tube and sent by DHL from Kampala, tracked and insured, with a certificate of authenticity.',
+    body: 'Signed when it is finished, then packed and sent to you. Delivery is arranged once the piece is done.',
   },
 ];
 
@@ -141,8 +141,7 @@ const enquiryMail = mailtoLink(
 
     <p class="pricing-note reveal">
       Starting prices, not quotes — the final figure depends on size, medium and
-      how much is in the picture. Shipping is quoted separately once we know
-      where it is going. Import duties and taxes are the buyer's responsibility.
+      how much is in the picture.
     </p>
   </div>
 </section>

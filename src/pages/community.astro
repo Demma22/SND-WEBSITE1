@@ -1,0 +1,213 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { EMAIL, INSTAGRAM_ART, mailtoLink } from '../lib/site';
+
+/* No accounts, by choice. This is a list, not a login: there is nothing to
+   sign into, no password to lose, and no personal data held studio-side beyond
+   an email address someone chose to give. */
+const fallback = mailtoLink(
+  'Join the community',
+  'Hi SND,\n\nPlease add me to the list for first access to new work.\n\nThanks,\n'
+);
+
+const perks = [
+  {
+    num: '01',
+    title: 'New work first',
+    body: 'Pieces are shown to the list before they are listed publicly. On a one-of-one, that is the whole difference between seeing it and owning it.',
+  },
+  {
+    num: '02',
+    title: 'From inside the studio',
+    body: 'What is on the easel, what failed, what is being learned. The parts that do not make it to Instagram.',
+  },
+  {
+    num: '03',
+    title: 'No noise',
+    body: 'Only when there is something worth sending. Leave in one click, and the address is never passed on.',
+  },
+];
+---
+
+<BaseLayout
+  title="Join the Community — SND"
+  description="First access to new original work from the SND studio in Kampala, before it is listed publicly."
+>
+
+<Header active="Community" />
+
+<main id="main" tabindex="-1">
+
+<section class="page-hero">
+  <div class="hero-bg"></div>
+  <div class="container page-hero-inner">
+    <span class="eyebrow">The community</span>
+    <h1 class="hero-title">Get there first.</h1>
+    <p class="hero-sub">
+      New pieces go to the list before they reach the shop. No account, no
+      password — just an address, and only when there is something worth sending.
+    </p>
+  </div>
+</section>
+
+<section class="community">
+  <div class="container community-inner">
+
+    <div class="community-form-wrap reveal">
+      <form class="community-form" id="joinForm" novalidate>
+        <label class="community-label" for="joinEmail">Email address</label>
+        <div class="community-row">
+          <input
+            type="email" id="joinEmail" name="email" required
+            placeholder="you@example.com" autocomplete="email" spellcheck="false"
+          />
+          <button type="submit" class="btn btn--dark" id="joinSubmit">
+            Join <span class="arrow">&#8594;</span>
+          </button>
+        </div>
+        <p class="community-status" id="joinStatus" role="status" aria-live="polite"></p>
+        <p class="community-fine">
+          Your address is used for this list and nothing else. It is never sold or
+          shared. Prefer to just write? <a href={fallback}>Email the studio</a>.
+        </p>
+      </form>
+    </div>
+
+    <ul class="community-perks">
+      {perks.map((p) => (
+        <li class="community-perk reveal">
+          <span class="community-perk-num">{p.num}</span>
+          <h2>{p.title}</h2>
+          <p>{p.body}</p>
+        </li>
+      ))}
+    </ul>
+
+    <p class="community-alt reveal">
+      Work in progress goes up on
+      <a href={INSTAGRAM_ART} target="_blank" rel="noopener">Instagram</a>
+      as it happens, or write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  .community { padding: 56px 0 100px; }
+  .community-inner { max-width: 760px; }
+
+  .community-form-wrap {
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    padding: 32px 32px 28px;
+  }
+  .community-label {
+    display: block; margin-bottom: 12px;
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+  .community-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .community-row input {
+    flex: 1; min-width: 220px;
+    font-family: inherit; font-size: 0.92rem; color: var(--black);
+    padding: 12px 14px;
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    background: var(--white); transition: border-color 0.18s;
+  }
+  .community-row input::placeholder { color: var(--gray-400); }
+  .community-row input:focus { outline: none; border-color: var(--black); }
+  .community-row input[aria-invalid='true'] { border-color: var(--black); }
+
+  .community-status { margin-top: 14px; font-size: 0.82rem; line-height: 1.6; color: var(--gray-600); }
+  .community-status:empty { margin: 0; }
+  .community-fine {
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--gray-200);
+    font-size: 0.74rem; color: var(--gray-400); line-height: 1.65;
+  }
+  .community-fine a { color: var(--gray-600); text-decoration: underline; text-underline-offset: 3px; }
+  .community-fine a:hover { color: var(--black); }
+
+  .community-perks {
+    list-style: none; display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--gray-200);
+    border: 1px solid var(--gray-200); margin-top: 48px;
+  }
+  .community-perk {
+    background: var(--white); padding: 26px 24px 28px;
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  .community-perk-num { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.12em; color: var(--gray-400); }
+  .community-perk h2 { font-size: 1rem; font-weight: 500; letter-spacing: -0.015em; line-height: 1.25; }
+  .community-perk p { font-size: 0.84rem; color: var(--gray-600); line-height: 1.65; }
+
+  .community-alt {
+    margin-top: 40px; font-size: 0.86rem; color: var(--gray-600); line-height: 1.75;
+  }
+  .community-alt a { color: var(--black); text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 900px) {
+    .community-perks { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    .community { padding: 40px 0 72px; }
+    .community-form-wrap { padding: 24px 20px 22px; }
+  }
+</style>
+
+<script>
+  /* Posts to /api/subscribe. If that endpoint is not configured yet the form
+     says so plainly and points at the mailto fallback, rather than pretending
+     the signup worked and quietly losing the address. */
+  function initJoinForm() {
+    const form = document.getElementById('joinForm') as HTMLFormElement | null;
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = 'true';
+
+    const input = document.getElementById('joinEmail') as HTMLInputElement;
+    const button = document.getElementById('joinSubmit') as HTMLButtonElement;
+    const status = document.getElementById('joinStatus') as HTMLElement;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) {
+        input.setAttribute('aria-invalid', 'true');
+        status.textContent = 'That address does not look right — mind checking it?';
+        input.focus();
+        return;
+      }
+      input.removeAttribute('aria-invalid');
+
+      button.disabled = true;
+      status.textContent = 'Adding you…';
+
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        if (res.ok) {
+          form.innerHTML =
+            '<p class="community-status">You are on the list. New work comes your way first.</p>';
+          return;
+        }
+        const data = await res.json().catch(() => ({}));
+        status.textContent =
+          data.error || 'That did not go through. Please email the studio instead.';
+      } catch {
+        status.textContent = 'No connection. Please email the studio instead.';
+      }
+      button.disabled = false;
+    });
+  }
+
+  document.addEventListener('astro:page-load', initJoinForm);
+</script>

@@ -9,6 +9,9 @@
  *
  * The image is `contain`, not `cover` — a painting must never be cropped to
  * fit a grid cell.
+ *
+ * "Add to cart" sits outside the link, not inside it: a button nested in an
+ * anchor is invalid, and the two need separate targets anyway.
  */
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
@@ -34,37 +37,53 @@ const STATUS_LABELS: Record<string, string> = {
 };
 const statusLabel = STATUS_LABELS[status];
 const sellable = status === 'available' || status === 'reserved';
+const buyable = status === 'available' && !!price;
 
 const category = kind === 'print'
   ? (edition ? `Print · edition of ${edition.size}` : 'Print')
   : 'Original';
 ---
 
-<a href={`/art/${piece.id}`} class="art-card reveal" data-status={status}>
-  <div class="art-card-img">
-    <Image
-      src={cover}
-      alt={`${title} — ${piece.data.medium}, ${year}`}
-      widths={[400, 600, 900]}
-      sizes="(max-width: 700px) 50vw, (max-width: 1024px) 33vw, 25vw"
-      loading={eager ? 'eager' : 'lazy'}
-      decoding="async"
-    />
-  </div>
+<div class="art-card reveal" data-status={status}>
+  <a href={`/art/${piece.id}`} class="art-card-link">
+    <div class="art-card-img">
+      <Image
+        src={cover}
+        alt={`${title} — ${piece.data.medium}, ${year}`}
+        widths={[400, 600, 900]}
+        sizes="(max-width: 700px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+      />
+    </div>
 
-  <div class="art-card-body">
-    <span class="art-card-cat">
-      {category}{statusLabel && <span class="art-card-status"> · {statusLabel}</span>}
-    </span>
-    <h3>{title}</h3>
-    {sellable && price ? (
-      <span class="price" data-usd={price.usd} data-ugx={price.authored.UGX}>
-        {formatMoney(price.usd, DEFAULT_CURRENCY, rates, price.authored)}
+    <div class="art-card-body">
+      <span class="art-card-cat">
+        {category}{statusLabel && <span class="art-card-status"> · {statusLabel}</span>}
       </span>
-    ) : sellable ? (
-      <span class="price price--poa">Price on request</span>
-    ) : (
-      <span class="price price--poa">{year}</span>
-    )}
-  </div>
-</a>
+      <h3>{title}</h3>
+      {sellable && price ? (
+        <span class="price" data-usd={price.usd} data-ugx={price.authored.UGX}>
+          {formatMoney(price.usd, DEFAULT_CURRENCY, rates, price.authored)}
+        </span>
+      ) : sellable ? (
+        <span class="price price--poa">Price on request</span>
+      ) : (
+        <span class="price price--poa">{year}</span>
+      )}
+    </div>
+  </a>
+
+  {buyable && (
+    <button
+      type="button"
+      class="art-card-add"
+      data-add-to-cart
+      data-id={piece.id}
+      data-title={title}
+      data-usd={price!.usd}
+      data-ugx={price!.authored.UGX}
+      data-max={kind === 'original' ? 1 : undefined}
+    >Add to cart</button>
+  )}
+</div>

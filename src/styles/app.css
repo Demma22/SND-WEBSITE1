@@ -452,6 +452,107 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .nav-actions .currency-select { gap: 0; }
 
+/* ── CART ──
+   Account-free by design: the cart is localStorage on the visitor's device,
+   so nothing is stored studio-side until someone chooses to send an order. ── */
+.cart-button {
+  position: relative; display: inline-flex; align-items: center;
+  padding: 6px; color: var(--gray-600); transition: color 0.18s;
+}
+.cart-button:hover { color: var(--black); }
+.cart-icon { width: 20px; height: 20px; }
+.cart-count {
+  position: absolute; top: -2px; right: -4px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  border-radius: 999px; background: var(--black); color: var(--white);
+  font-size: 0.56rem; font-weight: 500; line-height: 16px; text-align: center;
+}
+
+.cart-backdrop {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(10,10,10,0.28);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease);
+}
+.cart-backdrop.is-open { opacity: 1; visibility: visible; }
+
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 310;
+  width: min(380px, 88vw);
+  display: flex; flex-direction: column;
+  background: var(--white); border-left: 1px solid var(--gray-200);
+  transform: translateX(101%); will-change: transform;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cart-drawer.is-open { transform: translateX(0); }
+
+.cart-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 24px 16px; border-bottom: 1px solid var(--gray-200);
+}
+.cart-head .eyebrow { margin-bottom: 0; }
+.cart-close {
+  width: 30px; height: 30px; border-radius: var(--r);
+  display: grid; place-items: center; font-size: 0.82rem;
+  border: 1px solid var(--gray-200); transition: all 0.18s;
+}
+.cart-close:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+
+.cart-body { flex: 1; overflow-y: auto; padding: 8px 24px; -webkit-overflow-scrolling: touch; }
+.cart-empty { padding: 40px 0; font-size: 0.88rem; color: var(--gray-400); }
+
+.cart-line { padding: 18px 0; border-bottom: 1px solid var(--gray-200); }
+.cart-line:last-child { border-bottom: none; }
+.cart-line-main { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+.cart-line-title { font-size: 0.92rem; font-weight: 500; letter-spacing: -0.01em; }
+.cart-line-title:hover { text-decoration: underline; text-underline-offset: 3px; }
+.cart-line-price { font-size: 0.86rem; font-weight: 500; white-space: nowrap; }
+.cart-line-actions { display: flex; align-items: center; gap: 14px; margin-top: 10px; }
+.cart-line-unique {
+  font-size: 0.58rem; font-weight: 500; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--gray-400);
+}
+.cart-qty { display: inline-flex; align-items: center; border: 1px solid var(--gray-200); border-radius: var(--r); }
+.cart-qty button { width: 26px; height: 26px; font-size: 0.9rem; line-height: 1; color: var(--gray-600); }
+.cart-qty button:hover { background: var(--black); color: var(--white); }
+.cart-qty span { min-width: 26px; text-align: center; font-size: 0.78rem; font-weight: 500; }
+.cart-remove {
+  font-size: 0.68rem; font-weight: 400; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--gray-400); transition: color 0.15s;
+}
+.cart-remove:hover { color: var(--black); }
+
+.cart-foot { padding: 18px 24px 24px; border-top: 1px solid var(--gray-200); }
+.cart-total { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+.cart-total-label {
+  font-size: 0.58rem; font-weight: 500; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gray-400);
+}
+.cart-total-value { font-size: 1.25rem; font-weight: 500; letter-spacing: -0.02em; }
+.cart-checkout { width: 100%; justify-content: center; }
+.cart-note { margin-top: 12px; font-size: 0.7rem; color: var(--gray-400); line-height: 1.5; text-align: center; }
+
+/* "Add to cart" on a listing tile */
+.art-card-link { display: flex; flex-direction: column; }
+.art-card-add {
+  margin-top: 14px; align-self: flex-start;
+  font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gray-600);
+  padding: 10px 18px;
+  border: 1px solid var(--gray-200); border-radius: var(--r);
+  background: var(--white);
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
+}
+.art-card-add:hover { color: var(--black); border-color: var(--black); }
+/* Already chosen — the box fills in, so the state reads at a glance in a grid */
+.art-card-add.is-added {
+  color: var(--white); background: var(--black); border-color: var(--black);
+}
+
+@media (max-width: 700px) {
+  .cart-drawer { width: 100%; }
+}
+
 /* ── Empty state (an unfilled collection, e.g. prints before launch) ── */
 .art-empty {
   border: 1px solid var(--gray-200); border-radius: var(--r);

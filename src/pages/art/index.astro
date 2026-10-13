@@ -16,7 +16,7 @@ const collections = [
   {
     num: '01',
     title: 'Originals',
-    href: '/art/originals',
+    href: '/originals',
     body: 'One-of-one paintings and drawings, signed and dated.',
     meta: counts.originals === 0
       ? 'Coming soon'
@@ -25,14 +25,14 @@ const collections = [
   {
     num: '02',
     title: 'Prints',
-    href: '/art/prints',
+    href: '/prints',
     body: 'Limited and open editions of selected works.',
     meta: counts.prints === 0 ? 'Coming soon' : `${counts.prints} available`,
   },
   {
     num: '03',
     title: 'Commissions',
-    href: '/art/commissions',
+    href: '/commissions',
     body: 'A piece made for you — portraits and beyond.',
     meta: 'Open',
   },
@@ -97,8 +97,8 @@ const firstAccess = mailtoLink(
     <ArtGrid pieces={featured} rates={rates} />
 
     <div class="art-featured-actions reveal">
-      <a href="/art/gallery" class="btn btn--dark">See the full gallery <span class="arrow">&#8594;</span></a>
-      <a href="/art/originals" class="btn btn--ghost">Available originals</a>
+      <a href="/gallery" class="btn btn--dark">See the full gallery <span class="arrow">&#8594;</span></a>
+      <a href="/originals" class="btn btn--ghost">Available originals</a>
     </div>
   </div>
 </section>
