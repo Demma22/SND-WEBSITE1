@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import ArtSubnav from '../components/ArtSubnav.astro';
 import { getRates, formatMoney, DEFAULT_CURRENCY } from '../lib/money';
 import { whatsappLink, mailtoLink, INSTAGRAM_ART } from '../lib/site';
 
@@ -89,7 +88,6 @@ const enquiryMail = mailtoLink(
       A piece made for you — a portrait, a place, or an idea you have been
       carrying around. Open for a small number of commissions at a time.
     </p>
-    <ArtSubnav active="Commissions" />
   </div>
 </section>
 

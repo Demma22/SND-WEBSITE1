@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import ArtSubnav from '../../components/ArtSubnav.astro';
 import ArtGrid from '../../components/ArtGrid.astro';
 import { featuredArtworks, artworkCounts } from '../../lib/artworks';
 import { getRates } from '../../lib/money';
@@ -64,7 +63,6 @@ const firstAccess = mailtoLink(
       Original paintings, drawings, and prints from the studio in Kampala —
       signed, and shipped worldwide.
     </p>
-    <ArtSubnav active="Overview" light={true} />
   </div>
 </section>
 

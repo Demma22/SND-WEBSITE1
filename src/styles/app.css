@@ -317,40 +317,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
    Page-specific layout stays in each page's own <style>.
    ============================================================ */
 
-/* ── Sub-navigation (sits under the hero on every art page) ── */
-.art-subnav {
-  display: flex; flex-wrap: wrap; gap: 2px;
-  margin-top: 32px; padding-top: 24px;
-  border-top: 1px solid var(--gray-200);
-}
-.art-subnav--light { border-top-color: rgba(255,255,255,0.12); }
-.art-subnav-link {
-  position: relative;
-  padding: 10px 16px 12px;
-  font-size: 0.78rem; font-weight: 500; letter-spacing: 0.02em;
-  color: var(--gray-400); transition: color 0.15s;
-}
-.art-subnav-link::after {
-  content: ''; position: absolute; left: 16px; right: 16px; bottom: 4px;
-  height: 1px; background: currentColor;
-  transform: scaleX(0); transform-origin: right;
-  transition: transform 0.24s var(--ease-out);
-}
-.art-subnav-link:hover { color: var(--black); }
-.art-subnav-link:hover::after,
-.art-subnav-link.is-active::after { transform: scaleX(1); transform-origin: left; }
-.art-subnav-link.is-active { color: var(--black); }
-.art-subnav--light .art-subnav-link { color: rgba(255,255,255,0.5); }
-.art-subnav--light .art-subnav-link:hover,
-.art-subnav--light .art-subnav-link.is-active { color: var(--white); }
-
-/* The first element after a hero's subnav needs room on narrow screens */
-@media (max-width: 700px) {
-  .art-subnav { margin-top: 24px; gap: 0; }
-  .art-subnav-link { padding: 9px 12px 11px; font-size: 0.74rem; }
-  .art-subnav-link::after { left: 12px; right: 12px; }
-}
-
 /* ── Section head: title on the left, currency selector on the right ── */
 .art-section-head {
   display: flex; align-items: flex-end; justify-content: space-between;
@@ -373,7 +339,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .art-card-img {
   position: relative; overflow: hidden;
-  aspect-ratio: 4/5; background: var(--white);
+  /* Square, so a landscape still life and a portrait canvas sit in tiles of
+     the same shape. The artwork files are letterboxed onto white, which is
+     invisible here because the tile is white too. */
+  aspect-ratio: 1; background: var(--white);
   display: grid; place-items: center;
 }
 .art-card-img img {
@@ -603,8 +572,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 /* ── RESPONSIVE: header / shared ── */
-@media (max-width: 700px) {
-  .container { padding: 0 20px; }
+/* The nav carries eight items, which stop fitting well before the phone
+   breakpoint — they were being squashed from about 880px down. The menu
+   therefore takes over at 960px, not 700px. */
+@media (max-width: 960px) {
   .nav-links { display: none; }
   .nav-toggle { display: flex; }
   .nav-actions .btn--small { display: none; }
@@ -612,6 +583,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .nav-toggle.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
   .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
   .nav-toggle.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+}
+
+@media (max-width: 700px) {
+  .container { padding: 0 20px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

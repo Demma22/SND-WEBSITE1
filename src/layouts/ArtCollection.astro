@@ -10,7 +10,6 @@
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import ArtSubnav from '../components/ArtSubnav.astro';
 import ArtGrid from '../components/ArtGrid.astro';
 import type { Artwork } from '../lib/artworks';
 import { getRates } from '../lib/money';
@@ -20,9 +19,6 @@ interface Props {
   description: string;
   eyebrow: string;
   heading: string;
-  sub: string;
-  /** Which ArtSubnav item to mark current. */
-  active: string;
   pieces: Artwork[];
   emptyTitle?: string;
   emptyBody?: string;
@@ -35,8 +31,6 @@ const {
   description,
   eyebrow,
   heading,
-  sub,
-  active,
   pieces,
   emptyTitle,
   emptyBody,
@@ -60,8 +54,6 @@ const available = pieces.filter((p) => p.data.status === 'available').length;
   <div class="container page-hero-inner">
     <span class="eyebrow">{eyebrow}</span>
     <h1 class="hero-title">{heading}</h1>
-    <p class="hero-sub">{sub}</p>
-    <ArtSubnav active={active} />
   </div>
 </section>
 

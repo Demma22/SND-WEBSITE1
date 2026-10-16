@@ -4,7 +4,6 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import ArtSubnav from '../../components/ArtSubnav.astro';
 import ArtGrid from '../../components/ArtGrid.astro';
 import EnquireActions from '../../components/EnquireActions.astro';
 import { relatedArtworks, type Artwork } from '../../lib/artworks';
@@ -103,7 +102,6 @@ const structuredData = {
 <article class="piece">
 
   <div class="container">
-    <ArtSubnav active="Gallery" />
   </div>
 
   <div class="container piece-inner">

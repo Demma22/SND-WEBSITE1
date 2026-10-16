@@ -22,22 +22,39 @@ export async function allArtworks(): Promise<Artwork[]> {
   return (await getCollection('artworks')).sort(byDisplayOrder);
 }
 
-/** A collection page: one `kind`, available work surfaced first. */
+/**
+ * A shop page: one `kind`, available work first. Archive pieces are excluded —
+ * sold work stays listed as part of the record, but a sketchbook page that was
+ * never for sale does not belong on a page of things to buy.
+ */
 export async function artworksByKind(kind: 'original' | 'print'): Promise<Artwork[]> {
-  return (await getCollection('artworks', ({ data }) => data.kind === kind)).sort(byAvailability);
+  return (
+    await getCollection('artworks', ({ data }) => data.kind === kind && data.status !== 'not-for-sale')
+  ).sort(byAvailability);
+}
+
+/** The gallery: the sketchbook pages, and anything else kept but not sold. */
+export async function archiveArtworks(): Promise<Artwork[]> {
+  return (await getCollection('artworks', ({ data }) => data.status === 'not-for-sale')).sort(byDisplayOrder);
+}
+
+/** Work that is, or once was, for sale — what the homepage teaser shows. */
+export async function sellableArtworks(): Promise<Artwork[]> {
+  return (await getCollection('artworks', ({ data }) => data.status !== 'not-for-sale')).sort(byDisplayOrder);
 }
 
 export async function featuredArtworks(limit = 4): Promise<Artwork[]> {
-  const featured = (await getCollection('artworks', ({ data }) => data.featured)).sort(byDisplayOrder);
+  const sellable = await sellableArtworks();
+  const featured = sellable.filter((p) => p.data.featured);
   // Fall back to the newest work if nothing is flagged, so the hub is never bare.
   if (featured.length >= limit) return featured.slice(0, limit);
-  const rest = (await allArtworks()).filter((p) => !p.data.featured);
-  return [...featured, ...rest].slice(0, limit);
+  return [...featured, ...sellable.filter((p) => !p.data.featured)].slice(0, limit);
 }
 
 /** Other pieces to show at the foot of a detail page. */
 export async function relatedArtworks(current: Artwork, limit = 4): Promise<Artwork[]> {
-  const pool = (await getCollection('artworks', ({ id }) => id !== current.id)).sort(byAvailability);
+  const pool = (await getCollection('artworks',
+    ({ id, data }) => id !== current.id && data.status !== 'not-for-sale')).sort(byAvailability);
   const sameKind = pool.filter((p) => p.data.kind === current.data.kind);
   return [...sameKind, ...pool.filter((p) => p.data.kind !== current.data.kind)].slice(0, limit);
 }
