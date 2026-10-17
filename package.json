@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "art:prep": "node scripts/art-prep.mjs"
+    "art:prep": "node scripts/art-prep.mjs",
+    "dev:fresh": "rm -rf node_modules/.vite && astro dev --force"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.3",
