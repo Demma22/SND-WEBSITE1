@@ -26,6 +26,13 @@ const artworks = defineCollection({
       height: z.number(),
 
       kind: z.enum(['original', 'print']),
+
+      /**
+       * Groups related work under one name, e.g. "Face Collection". Pieces
+       * that share a collection are listed together under its heading;
+       * anything without one is listed on its own.
+       */
+      collection: z.string().optional(),
       status: z.enum(['available', 'reserved', 'sold', 'not-for-sale']),
 
       /**

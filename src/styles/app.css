@@ -376,6 +376,27 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .art-card:hover .art-card-body h3::after { transform: scaleX(1); transform-origin: left; }
 
+/* ── Collections within a listing ──
+   A named set (the Face Collection, say) reads as one body of work rather
+   than loose items, so it gets its own heading under the standalone pieces. */
+.art-collection-group { margin-top: 64px; }
+.art-collection-head {
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  padding-bottom: 14px; margin-bottom: 28px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.art-collection-head h2 {
+  font-size: 1.25rem; font-weight: 500; letter-spacing: -0.025em; line-height: 1.2;
+}
+.art-collection-count {
+  font-size: 0.6rem; font-weight: 500; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--gray-400);
+}
+
+@media (max-width: 700px) {
+  .art-collection-group { margin-top: 48px; }
+}
+
 /* ── Prices ── */
 .price { font-size: 0.88rem; font-weight: 500; letter-spacing: -0.01em; color: var(--gray-900); }
 .price--lg { font-size: 1.6rem; letter-spacing: -0.025em; color: var(--black); }

@@ -6,6 +6,7 @@ medium: Acrylic on paper
 width: 14.8
 height: 21
 kind: original
+collection: Face Collection
 status: available
 # Authored in UGX: this exact figure is what UGX visitors see.
 priceUGX: 30000

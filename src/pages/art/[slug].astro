@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 
 interface Props { piece: Artwork }
 const { piece } = Astro.props;
-const { title, year, medium, width, height, kind, status, edition, cover, gallery } =
+const { title, year, medium, width, height, kind, status, edition, cover, gallery, collection } =
   piece.data;
 
 const rates = await getRates();
@@ -36,6 +36,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const specs = [
+  ...(collection ? [{ label: 'Collection', value: collection }] : []),
   { label: 'Medium', value: medium },
   { label: 'Size', value: `${width} × ${height} cm` },
   { label: 'Year', value: String(year) },

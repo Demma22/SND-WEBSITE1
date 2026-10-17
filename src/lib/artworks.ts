@@ -69,3 +69,23 @@ export async function artworkCounts() {
     available: all.filter((p) => p.data.status === 'available').length,
   };
 }
+
+/**
+ * Split a listing into standalone pieces and named collections.
+ *
+ * Singles come first so individual work still leads the page, then each
+ * collection in the order its strongest piece sorts. Keeps a set like the
+ * Face Collection reading as one body of work rather than four loose items.
+ */
+export function groupByCollection(pieces: Artwork[]) {
+  const singles: Artwork[] = [];
+  const groups = new Map<string, Artwork[]>();
+
+  for (const piece of pieces) {
+    const name = piece.data.collection;
+    if (!name) singles.push(piece);
+    else groups.set(name, [...(groups.get(name) ?? []), piece]);
+  }
+
+  return { singles, collections: [...groups.entries()].map(([name, items]) => ({ name, items })) };
+}
