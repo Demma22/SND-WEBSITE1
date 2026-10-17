@@ -134,8 +134,10 @@ export function resolvePrice(
 ): ResolvedPrice | null {
   if (typeof data.priceUGX === 'number') {
     const rate = rates.UGX ?? FALLBACK_RATES.UGX;
-    // Round the pivot to a tidy USD figure so other currencies stay clean too.
-    const usd = Math.max(5, Math.round(data.priceUGX / rate / 5) * 5);
+    /* Tidy the pivot, but through roundTo so the step scales with the amount.
+       A flat round-to-5 priced a 30,000 UGX study at $10 instead of $7.50 —
+       33% out in every currency but the one it was written in. */
+    const usd = roundTo(data.priceUGX / rate, 5);
     return { usd, authored: { UGX: data.priceUGX } };
   }
   if (typeof data.priceUSD === 'number') {
