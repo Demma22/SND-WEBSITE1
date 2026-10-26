@@ -46,7 +46,7 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
     </div>
     <div class="hero-visual reveal">
       <div class="hero-img-wrap">
-        <img src="/hero-image.webp" alt="SND creative work" fetchpriority="high" decoding="async" />
+        <img src="/work/hero-image.webp" alt="SND creative work" fetchpriority="high" decoding="async" />
       </div>
     </div>
   </div>
@@ -107,7 +107,7 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
     <div class="work-grid">
       <article class="work-card reveal" data-panel="design">
         <div class="work-card-img">
-          <img src="/design.webp" alt="Design" loading="lazy" decoding="async" />
+          <img src="/work/design.webp" alt="Design" loading="lazy" decoding="async" />
           <span class="work-card-num">01</span>
         </div>
         <div class="work-card-body">
@@ -118,7 +118,7 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
       </article>
       <article class="work-card reveal" data-panel="art">
         <div class="work-card-img">
-          <img src="/art.jpg" alt="Art" loading="lazy" decoding="async" />
+          <img src="/work/art.jpg" alt="Art" loading="lazy" decoding="async" />
           <span class="work-card-num">02</span>
         </div>
         <div class="work-card-body">
@@ -129,7 +129,7 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
       </article>
       <article class="work-card reveal" data-panel="fashion">
         <div class="work-card-img">
-          <img src="/fashion.webp" alt="Fashion" loading="lazy" decoding="async" />
+          <img src="/work/fashion.webp" alt="Fashion" loading="lazy" decoding="async" />
           <span class="work-card-num">03</span>
         </div>
         <div class="work-card-body">
@@ -140,7 +140,7 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
       </article>
       <article class="work-card reveal" data-panel="development">
         <div class="work-card-img">
-          <img src="/development2.png" alt="Development" loading="lazy" decoding="async" />
+          <img src="/work/development2.png" alt="Development" loading="lazy" decoding="async" />
           <span class="work-card-num">04</span>
         </div>
         <div class="work-card-body">
@@ -207,7 +207,7 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
     </div>
     <div class="studio-visual reveal">
       <div class="studio-img-main">
-        <img src="/muse.webp" alt="The Muse" loading="lazy" decoding="async" />
+        <img src="/work/muse.webp" alt="The Muse" loading="lazy" decoding="async" />
       </div>
       <div class="studio-stats">
         <div class="stat">
@@ -223,7 +223,15 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
   </div>
 </section>
 
-<!-- ── INSIDE STORIES STRIP ── -->
+{/* ── INSIDE STORIES STRIP — parked ──
+     Commented out, not deleted: /inside-stories still exists and still
+     builds, it is just no longer surfaced anywhere on the site. Restore it
+     by uncommenting this block and the two nav links (Header.astro,
+     Footer.astro). This is a JS comment rather than an HTML one so the
+     markup leaves the build entirely instead of shipping to visitors as a
+     comment in the page source. The .stories-strip CSS below is left in
+     place so uncommenting is all it takes.
+
 <a class="stories-strip" id="stories" href="/inside-stories">
   <div class="container stories-inner">
     <div class="stories-text">
@@ -234,6 +242,7 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
     <span class="stories-arrow" aria-hidden="true">&#8594;</span>
   </div>
 </a>
+*/}
 
 <!-- ── HIGHLIGHT / NOTEBOOK ── -->
 <section class="highlight">
@@ -241,7 +250,7 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
     <span class="eyebrow highlight-eyebrow reveal">Today's highlight &middot; Physical Goods</span>
     <div class="highlight-inner">
       <div class="highlight-img reveal">
-        <img src="/notebook.jpeg" alt="Lineless Pocket Notebook" loading="lazy" decoding="async" />
+        <img src="/work/notebook.jpeg" alt="Lineless Pocket Notebook" loading="lazy" decoding="async" />
       </div>
       <div class="highlight-copy reveal">
         <h2 class="section-title">Lineless Pocket Notebook.</h2>
@@ -265,10 +274,10 @@ const recentCols = Math.min(Math.max(recent.length, 2), 4) as 2 | 3 | 4;
       <a href="mailto:sndstudio.ug@gmail.com" class="btn btn--ghost-light">sndstudio.ug@gmail.com</a>
     </div>
     <div class="cta-socials">
-      <a href="https://www.instagram.com/snd.studiio/" aria-label="Instagram" target="_blank" rel="noopener"><img src="/instagram.svg" alt="Instagram" /></a>
-      <a href="https://tiktok.com/@sndstudio.ug"   aria-label="TikTok"    target="_blank" rel="noopener"><img src="/tiktok.svg"    alt="TikTok" /></a>
-      <a href="https://www.threads.com/@snd.studiio"   aria-label="Threads"   target="_blank" rel="noopener"><img src="/threads.svg"   alt="Threads" /></a>
-      <a href="https://pinterest.com/sndstudio_ug"  aria-label="Pinterest" target="_blank" rel="noopener"><img src="/pinterest.svg" alt="Pinterest" /></a>
+      <a href="https://www.instagram.com/snd.studiio/" aria-label="Instagram" target="_blank" rel="noopener"><img src="/social/instagram.svg" alt="Instagram" /></a>
+      <a href="https://tiktok.com/@sndstudio.ug"   aria-label="TikTok"    target="_blank" rel="noopener"><img src="/social/tiktok.svg"    alt="TikTok" /></a>
+      <a href="https://www.threads.com/@snd.studiio"   aria-label="Threads"   target="_blank" rel="noopener"><img src="/social/threads.svg"   alt="Threads" /></a>
+      <a href="https://pinterest.com/sndstudio_ug"  aria-label="Pinterest" target="_blank" rel="noopener"><img src="/social/pinterest.svg" alt="Pinterest" /></a>
     </div>
   </div>
 </section>

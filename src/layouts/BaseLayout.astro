@@ -13,7 +13,7 @@ export interface Props {
 const {
   title,
   description = "SND Studio — A creative studio from Uganda building digital products, brand identities, and physical goods. Think It. Create It.",
-  image = "/SND1.png"
+  image = "/brand/SND1.png"
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -65,9 +65,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
        SND1.png stays as the large square icon Google uses in search results. -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
-  <link rel="icon" type="image/png" href="/SND1.png" sizes="any" />
+  <link rel="icon" type="image/png" href="/brand/SND1.png" sizes="any" />
   <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/SND1.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/brand/SND1.png" />
 
   <title>{title}</title>
 
@@ -80,7 +80,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     "@type": "Organization",
     "name": "SND Studio",
     "url": Astro.site?.toString(),
-    "logo": new URL("/SND1.png", Astro.site).toString()
+    "logo": new URL("/brand/SND1.png", Astro.site).toString()
   })} />
 
   <!-- Show the intro loader before first paint, but only once per session
@@ -137,7 +137,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 </head>
 <body>
   <div id="intro" aria-hidden="true">
-    <video src="/snd-logo.mp4" muted playsinline autoplay preload="auto"></video>
+    <video src="/brand/snd-logo.mp4" muted playsinline autoplay preload="auto"></video>
   </div>
 
   <slot />

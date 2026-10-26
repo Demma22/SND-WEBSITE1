@@ -1,16 +1,132 @@
 ---
-import ArtCollection from '../layouts/ArtCollection.astro';
-import { archiveArtworks } from '../lib/artworks';
+/**
+ * Gallery — a contact sheet, not a listing.
+ *
+ * Deliberately NOT built on ArtCollection/ArtGrid like /originals and
+ * /prints: those pages sell things, so their tiles carry a category, a title,
+ * a price and a link to a detail page. These are sketchbook pages kept in the
+ * studio — photographs and nothing else. No captions, no counts, no links.
+ *
+ * Which is why the archive pieces get no /art/<slug> page at all; see the
+ * filter in art/[slug].astro.
+ */
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { archiveArtworks, groupByCollection } from '../lib/artworks';
 
 const pieces = await archiveArtworks();
+
+/* Volume 1 / Volume 2 come from each file's `collection`. Anything without
+   one leads the page, loose, above the volumes. */
+const { singles, collections } = groupByCollection(pieces);
 ---
 
-<ArtCollection
+<BaseLayout
   title="Gallery — Art Work | SND"
   description="Pages from the sketchbook — drawings by Demma Ssendagire, kept in the studio."
-  eyebrow="The sketchbook"
-  heading="Gallery."
-  pieces={pieces}
-  emptyTitle="Nothing hung yet."
-  emptyBody="Pages go up as the sketchbook fills."
-/>
+>
+
+<Header active="Gallery" />
+
+<main id="main" tabindex="-1">
+
+<section class="page-hero">
+  <div class="hero-bg"></div>
+  <div class="container page-hero-inner">
+    <span class="eyebrow">The sketchbook</span>
+    <h1 class="hero-title">Gallery.</h1>
+  </div>
+</section>
+
+<section class="gallery">
+  <div class="container">
+
+    {pieces.length === 0 && (
+      <div class="art-empty reveal">
+        <h3>Nothing hung yet.</h3>
+        <p>Pages go up as the sketchbook fills.</p>
+      </div>
+    )}
+
+    {singles.length > 0 && (
+      <div class="photo-grid">
+        {singles.map((piece, i) => (
+          <figure class="photo reveal">
+            <Image
+              src={piece.data.cover}
+              alt={`${piece.data.medium}, ${piece.data.year}`}
+              widths={[400, 600, 900]}
+              sizes="(max-width: 700px) 50vw, 33vw"
+              loading={i < 3 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </figure>
+        ))}
+      </div>
+    )}
+
+    {collections.map((volume, v) => (
+      <section class="volume">
+        <h2 class="volume-title reveal">{volume.name}</h2>
+        <div class="photo-grid">
+          {volume.items.map((piece, i) => (
+            <figure class="photo reveal">
+              <Image
+                src={piece.data.cover}
+                alt={`${piece.data.medium}, ${piece.data.year}`}
+                widths={[400, 600, 900]}
+                sizes="(max-width: 700px) 50vw, 33vw"
+                loading={v === 0 && i < 3 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </figure>
+          ))}
+        </div>
+      </section>
+    ))}
+
+  </div>
+</section>
+
+</main>
+
+<Footer />
+
+</BaseLayout>
+
+<style>
+  .gallery { padding: 56px 0 100px; }
+
+  .volume + .volume { margin-top: 64px; }
+  .volume-title {
+    font-size: 1.25rem; font-weight: 500; letter-spacing: -0.025em; line-height: 1.2;
+    padding-bottom: 14px; margin-bottom: 28px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  /* Three across, square cells. Every photo in here is shot square, so
+     `contain` crops nothing and the white letterbox is invisible against the
+     white page. Equal gaps — unlike .art-grid, there is no caption below a
+     tile to account for. */
+  .photo-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .photo {
+    margin: 0; aspect-ratio: 1; overflow: hidden;
+    background: var(--white);
+    display: grid; place-items: center;
+  }
+  .photo img { width: 100%; height: 100%; object-fit: contain; }
+
+  @media (max-width: 900px) {
+    .photo-grid { gap: 20px; }
+  }
+  @media (max-width: 700px) {
+    .gallery { padding: 40px 0 72px; }
+    .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .volume + .volume { margin-top: 48px; }
+  }
+</style>

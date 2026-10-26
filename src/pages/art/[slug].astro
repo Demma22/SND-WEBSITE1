@@ -10,7 +10,11 @@ import { relatedArtworks, type Artwork } from '../../lib/artworks';
 import { formatMoney, resolvePrice, getRates, DEFAULT_CURRENCY, BASE_CURRENCY } from '../../lib/money';
 
 export async function getStaticPaths() {
-  const artworks = await getCollection('artworks');
+  /* Only work that is (or was) for sale gets a page. The gallery's sketchbook
+     pages are photographs with no story to tell, so /gallery shows them inline
+     and nothing links deeper — a detail page for them would be an orphan with
+     a placeholder title on it. */
+  const artworks = await getCollection('artworks', ({ data }) => data.status !== 'not-for-sale');
   return artworks.map((piece) => ({
     params: { slug: piece.id },
     props: { piece },

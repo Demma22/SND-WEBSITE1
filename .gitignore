@@ -32,3 +32,6 @@ dist/
 
 # raw artwork photos — run `npm run art:prep` to process into src/assets/art
 art-src/
+
+# local-only scratch: large binaries that are not site assets
+local/

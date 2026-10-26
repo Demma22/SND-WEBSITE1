@@ -19,9 +19,6 @@ const items = [
   { label: 'Prints',      href: '/prints' },
   { label: 'Commissions', href: '/commissions' },
   { label: 'Gallery',     href: '/gallery' },
-  { label: 'The Craft',   anchor: '#work' },
-  { label: 'About',       anchor: '#studio' },
-  { label: 'Inside Stories', href: '/inside-stories' },
   { label: 'Contact',     anchor: '#contact' },
 ];
 
@@ -34,7 +31,7 @@ const resolve = (item: { anchor?: string; href?: string }) =>
 <header class="site-header" id="siteHeader">
   <div class="container header-inner">
     <a href="/" class="logo-link" aria-label="SND — home">
-      <img src="/snd.png" alt="SND" class="logo-img" />
+      <img src="/brand/snd.png" alt="SND" class="logo-img" />
     </a>
     <nav class="nav-links" aria-label="Primary">
       {items.map((item) => (
