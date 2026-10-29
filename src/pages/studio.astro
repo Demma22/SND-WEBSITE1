@@ -200,8 +200,6 @@ import '../styles/app.css';
 
   const db = browserClient();
   const BUCKET = 'art';
-  const DEPLOY_HOOK = import.meta.env.PUBLIC_DEPLOY_HOOK_URL as string | undefined;
-
   const $ = <T extends HTMLElement>(s: string) => document.querySelector(s) as T;
   const gate = $('#gate'), app = $('#app'), editor = $<HTMLDialogElement>('#editor');
   const form = $<HTMLFormElement>('#pieceForm');
@@ -457,15 +455,34 @@ import '../styles/app.css';
 
   /* ── Publish ──
      Saving writes to the database; the live site is static and only picks
-     changes up when it rebuilds. This is that trigger. */
+     changes up when it rebuilds. This is that trigger.
+
+     The hook URL is deliberately not here — api/publish.js holds it and checks
+     the session first, so it cannot be read out of this page. That endpoint is
+     a Vercel function, so Publish works on the deployed site, not under
+     `astro dev`. */
   $('#publish').addEventListener('click', async () => {
-    if (!DEPLOY_HOOK) return say('#appMsg', 'PUBLIC_DEPLOY_HOOK_URL is not set.', true);
     say('#appMsg', 'Publishing…');
+
+    const { data } = await db.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) return say('#appMsg', 'Your session has expired. Sign in again.', true);
+
     try {
-      await fetch(DEPLOY_HOOK, { method: 'POST', mode: 'no-cors' });
-      say('#appMsg', 'Publishing. The site updates in about a minute.');
+      const res = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        say('#appMsg', 'Publishing. The site updates in about a minute.');
+      } else if (res.status === 404) {
+        say('#appMsg', 'Publishing only works on the live site, not locally.', true);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        say('#appMsg', body.error ?? 'Could not start the build.', true);
+      }
     } catch {
-      say('#appMsg', 'Could not reach the deploy hook.', true);
+      say('#appMsg', 'Could not reach the server.', true);
     }
   });
 
