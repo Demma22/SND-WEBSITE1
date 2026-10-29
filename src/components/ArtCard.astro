@@ -48,7 +48,9 @@ const category = kind === 'print'
   <a href={`/art/${piece.id}`} class="art-card-link">
     <div class="art-card-img">
       <Image
-        src={cover}
+        src={cover.src}
+        width={cover.width}
+        height={cover.height}
         alt={`${title} — ${piece.data.medium}, ${year}`}
         widths={[400, 600, 900]}
         sizes="(max-width: 700px) 50vw, (max-width: 1024px) 33vw, 25vw"

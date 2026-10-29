@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
@@ -28,6 +28,19 @@ const { title, year, medium, width, height, kind, status, edition, cover, galler
 
 const rates = await getRates();
 const price = resolvePrice(piece.data, rates);
+
+/* Share card + structured data. cover.src points straight at Supabase, so
+   linking it directly would send every scraper to the 640KB original in
+   storage and put a storage URL on the card instead of this site. Generate
+   the optimised copy here and link that. JPEG rather than WebP: some
+   scrapers still refuse WebP and then show no card at all. */
+const share = await getImage({
+  src: cover.src,
+  width: 1200,
+  height: Math.round((1200 / cover.width) * cover.height),
+  format: 'jpeg',
+});
+const shareImage = new URL(share.src, Astro.site).toString();
 const related = await relatedArtworks(piece, 4);
 
 const sellable = status === 'available' || status === 'reserved';
@@ -70,7 +83,7 @@ const structuredData = {
   dateCreated: String(year),
   width: { '@type': 'Distance', name: `${width} cm` },
   height: { '@type': 'Distance', name: `${height} cm` },
-  image: new URL(cover.src, Astro.site).toString(),
+  image: shareImage,
   creator: {
     '@type': 'Person',
     name: 'Demma Ssendagire',
@@ -97,7 +110,7 @@ const structuredData = {
   description={`${title} — ${medium}, ${width} × ${height} cm, ${year}. ${
     sellable ? 'Available' : STATUS_LABELS[status]
   } from the SND studio in Kampala.`}
-  image={cover.src}
+  image={shareImage}
 >
 
 <Header active="Art" />
@@ -115,7 +128,9 @@ const structuredData = {
     <div class="piece-media">
       <figure class="piece-figure">
         <Image
-          src={cover}
+          src={cover.src}
+          width={cover.width}
+          height={cover.height}
           alt={`${title} — ${medium}, ${year}`}
           widths={[600, 900, 1200]}
           sizes="(max-width: 900px) 100vw, 55vw"
@@ -130,7 +145,9 @@ const structuredData = {
           {gallery.map((img, i) => (
             <figure>
               <Image
-                src={img}
+                src={img.src}
+                width={img.width}
+                height={img.height}
                 alt={`${title} — detail ${i + 1}`}
                 widths={[300, 500]}
                 sizes="25vw"

@@ -1,0 +1,611 @@
+---
+/**
+ * Studio — the private dashboard.
+ *
+ * Deliberately standalone: no BaseLayout, no Header, no ClientRouter. The
+ * site's page-swapping router and intro loader exist for visitors and would
+ * only get in the way of a form that holds unsaved state.
+ *
+ * Everything happens in the browser against Supabase with the anon key.
+ * That key is public by design — row level security is what protects the
+ * data, so nothing here can read or write until you are signed in.
+ */
+import '../styles/app.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Private: keep it out of search results and out of the sitemap. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>Studio — SND</title>
+</head>
+<body class="studio-body">
+
+<!-- ── SIGNED OUT ── -->
+<section id="gate" class="gate">
+  <form id="signin" class="gate-card">
+    <h1 class="gate-title">Studio</h1>
+    <label class="field">
+      <span>Email</span>
+      <input type="email" name="email" autocomplete="username" required />
+    </label>
+    <label class="field">
+      <span>Password</span>
+      <input type="password" name="password" autocomplete="current-password" required />
+    </label>
+    <button type="submit" class="btn-solid">Sign in</button>
+    <p class="msg" id="gateMsg" role="status"></p>
+  </form>
+</section>
+
+<!-- ── SIGNED IN ── -->
+<div id="app" hidden>
+  <header class="bar">
+    <div class="bar-left">
+      <img src="/brand/snd.png" alt="SND" class="bar-logo" />
+      <span class="bar-title">Studio</span>
+    </div>
+    <div class="bar-right">
+      <button type="button" id="publish" class="btn-ghost">Publish</button>
+      <button type="button" id="signout" class="btn-ghost">Sign out</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab is-on" data-filter="all">All</button>
+        <button type="button" class="tab" data-filter="original">Originals</button>
+        <button type="button" class="tab" data-filter="print">Prints</button>
+        <button type="button" class="tab" data-filter="gallery">Gallery</button>
+      </div>
+      <button type="button" id="new" class="btn-solid">New piece</button>
+    </div>
+
+    <p class="msg" id="appMsg" role="status"></p>
+    <div id="list" class="list"></div>
+  </main>
+</div>
+
+<!-- ── EDITOR ── -->
+<dialog id="editor" class="sheet">
+  <form id="pieceForm" method="dialog">
+    <div class="sheet-head">
+      <h2 id="sheetTitle">New piece</h2>
+      <button type="button" id="close" class="btn-ghost" aria-label="Close">Close</button>
+    </div>
+
+    <div class="sheet-body">
+      <!-- Where it appears on the site. Everything else keys off this. -->
+      <fieldset class="field">
+        <legend>Where it goes</legend>
+        <div class="seg" id="dest">
+          <label><input type="radio" name="dest" value="original" checked /><span>Originals</span></label>
+          <label><input type="radio" name="dest" value="print" /><span>Prints</span></label>
+          <label><input type="radio" name="dest" value="gallery" /><span>Gallery</span></label>
+        </div>
+      </fieldset>
+
+      <label class="field">
+        <span>Photo</span>
+        <input type="file" name="cover" accept="image/*" />
+        <small>Shot square works best. Resized to 2000px and converted to WebP before upload.</small>
+      </label>
+      <div id="coverPreview" class="preview"></div>
+
+      <label class="field">
+        <span>More views <em>(optional)</em></span>
+        <input type="file" name="extras" accept="image/*" multiple />
+      </label>
+      <div id="extrasPreview" class="preview preview--row"></div>
+
+      <div class="row">
+        <label class="field"><span>Title</span><input name="title" required /></label>
+        <label class="field"><span>Year</span><input name="year" type="number" required /></label>
+      </div>
+
+      <label class="field">
+        <span>Medium</span>
+        <input name="medium" list="mediums" placeholder="Acrylic on canvas" required />
+        <datalist id="mediums"></datalist>
+      </label>
+
+      <div class="row">
+        <label class="field"><span>Width (cm)</span><input name="width" type="number" step="0.1" required /></label>
+        <label class="field"><span>Height (cm)</span><input name="height" type="number" step="0.1" required /></label>
+      </div>
+
+      <!-- Gallery only -->
+      <label class="field" data-when="gallery">
+        <span>Volume</span>
+        <input name="volume" list="volumes" placeholder="Volume 2" />
+        <datalist id="volumes"></datalist>
+      </label>
+
+      <!-- For sale only -->
+      <div data-when="original print">
+        <div class="row">
+          <label class="field">
+            <span>Status</span>
+            <select name="status">
+              <option value="available">Available</option>
+              <option value="reserved">Reserved</option>
+              <option value="sold">Sold</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Collection <em>(optional)</em></span>
+            <input name="collection" list="collections" placeholder="Face Collection" />
+            <datalist id="collections"></datalist>
+          </label>
+        </div>
+
+        <div class="row">
+          <label class="field">
+            <span>Price</span>
+            <input name="price" type="number" step="any" placeholder="100000" />
+          </label>
+          <label class="field">
+            <span>Currency</span>
+            <select name="currency">
+              <option value="UGX">UGX</option>
+              <option value="USD">USD</option>
+            </select>
+          </label>
+        </div>
+        <small class="hint">
+          The currency you pick is the one shown exactly; every other currency on
+          the site is derived from it. Leave the price empty for “Price on request”.
+        </small>
+      </div>
+
+      <!-- Prints only -->
+      <div class="row" data-when="print">
+        <label class="field"><span>Edition size</span><input name="editionSize" type="number" /></label>
+        <label class="field"><span>This number <em>(optional)</em></span><input name="editionNumber" type="number" /></label>
+      </div>
+
+      <details class="more">
+        <summary>More</summary>
+        <div class="row">
+          <label class="field"><span>Slug</span><input name="slug" placeholder="auto from title" /></label>
+          <label class="field"><span>Sort order</span><input name="sortOrder" type="number" value="0" /></label>
+        </div>
+        <label class="field" data-when="original print">
+          <span>Payment link <em>(optional)</em></span>
+          <input name="paymentLink" type="url" placeholder="https://..." />
+        </label>
+        <div class="checks">
+          <label><input type="checkbox" name="featured" /> <span>Featured on the homepage</span></label>
+          <label data-when="original print"><input type="checkbox" name="framed" /> <span>Framed</span></label>
+        </div>
+      </details>
+    </div>
+
+    <div class="sheet-foot">
+      <button type="button" id="del" class="btn-ghost btn-danger" hidden>Delete</button>
+      <span class="grow"></span>
+      <p class="msg" id="formMsg" role="status"></p>
+      <button type="submit" class="btn-solid" id="save">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+  import { browserClient } from '../lib/supabase';
+
+  const db = browserClient();
+  const BUCKET = 'art';
+  const DEPLOY_HOOK = import.meta.env.PUBLIC_DEPLOY_HOOK_URL as string | undefined;
+
+  const $ = <T extends HTMLElement>(s: string) => document.querySelector(s) as T;
+  const gate = $('#gate'), app = $('#app'), editor = $<HTMLDialogElement>('#editor');
+  const form = $<HTMLFormElement>('#pieceForm');
+  const say = (el: string, text: string, bad = false) => {
+    const n = $(el); n.textContent = text; n.classList.toggle('is-bad', bad);
+  };
+
+  let pieces: any[] = [];
+  let editing: string | null = null;   // slug being edited, null when new
+  let filter = 'all';
+
+  /* ── Images ──
+     Resized in the browser before upload, which is what scripts/art-prep.mjs
+     does on the command line: a 2000px WebP instead of a 4MB phone photo.
+     Without this every painting would cost the storage bucket — and every
+     visitor's build — ten times what it needs to. */
+  const MAX_EDGE = 2000;
+
+  async function processImage(file: File): Promise<{ blob: Blob; width: number; height: number }> {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width; canvas.height = height;
+    canvas.getContext('2d')!.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((res) =>
+      canvas.toBlob(res, 'image/webp', 0.82)
+    );
+    if (!blob) throw new Error('Could not read that image.');
+    return { blob, width, height };
+  }
+
+  async function upload(slug: string, file: File) {
+    const { blob, width, height } = await processImage(file);
+    // Timestamped so re-uploading a cover never collides with the old one,
+    // and the browser cannot serve a stale cached copy.
+    const key = `${slug}/${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, ''))}.webp`;
+    const { error } = await db.storage.from(BUCKET).upload(key, blob, {
+      contentType: 'image/webp', upsert: true,
+    });
+    if (error) throw new Error(error.message);
+    const { data } = db.storage.from(BUCKET).getPublicUrl(key);
+    return { url: data.publicUrl, width, height };
+  }
+
+  const slugify = (s: string) =>
+    s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+  /* ── Auth ── */
+  async function boot() {
+    const { data } = await db.auth.getSession();
+    const on = !!data.session;
+    gate.hidden = on; app.hidden = !on;
+    if (on) await refresh();
+  }
+
+  $<HTMLFormElement>('#signin').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target as HTMLFormElement);
+    say('#gateMsg', 'Signing in…');
+    const { error } = await db.auth.signInWithPassword({
+      email: String(f.get('email')), password: String(f.get('password')),
+    });
+    if (error) return say('#gateMsg', error.message, true);
+    say('#gateMsg', '');
+    await boot();
+  });
+
+  $('#signout').addEventListener('click', async () => { await db.auth.signOut(); location.reload(); });
+
+  /* ── List ── */
+  const destOf = (p: any) =>
+    p.status === 'not-for-sale' ? 'gallery' : p.kind;
+
+  async function refresh() {
+    const { data, error } = await db.from('pieces').select('*').order('sort_order', { ascending: false });
+    if (error) return say('#appMsg', error.message, true);
+    pieces = data ?? [];
+    say('#appMsg', '');
+    fillSuggestions();
+    render();
+  }
+
+  function render() {
+    const rows = pieces.filter((p) => filter === 'all' || destOf(p) === filter);
+    $('#list').innerHTML = rows.length
+      ? rows.map((p) => `
+        <button type="button" class="card" data-slug="${p.slug}">
+          <img src="${p.cover_url}" alt="" loading="lazy" />
+          <span class="card-body">
+            <span class="card-title">${escapeHtml(p.title)}</span>
+            <span class="card-meta">
+              ${destOf(p) === 'gallery' ? escapeHtml(p.collection ?? 'Gallery') : p.status}
+              ${p.price_ugx ? ` · UGX ${Number(p.price_ugx).toLocaleString()}` : ''}
+              ${p.price_usd ? ` · $${p.price_usd}` : ''}
+            </span>
+          </span>
+        </button>`).join('')
+      : `<p class="empty">Nothing here yet.</p>`;
+  }
+
+  const escapeHtml = (s: string) =>
+    s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+
+  /** Offer what already exists, so "Volume 2" is picked rather than retyped
+   *  as "volume 2" and silently becoming a second heading on the page. */
+  function fillSuggestions() {
+    const put = (sel: string, values: (string | null)[]) => {
+      $(sel).innerHTML = [...new Set(values.filter(Boolean))]
+        .map((v) => `<option value="${escapeHtml(v as string)}"></option>`).join('');
+    };
+    put('#volumes', pieces.filter((p) => p.status === 'not-for-sale').map((p) => p.collection));
+    put('#collections', pieces.filter((p) => p.status !== 'not-for-sale').map((p) => p.collection));
+    put('#mediums', pieces.map((p) => p.medium));
+  }
+
+  $('#list').addEventListener('click', (e) => {
+    const card = (e.target as HTMLElement).closest('.card') as HTMLElement | null;
+    if (card) open(pieces.find((p) => p.slug === card.dataset.slug));
+  });
+
+  document.querySelectorAll('.tab').forEach((t) =>
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((x) => x.classList.remove('is-on'));
+      t.classList.add('is-on');
+      filter = (t as HTMLElement).dataset.filter!;
+      render();
+    })
+  );
+
+  /* ── Editor ── */
+  function syncDest() {
+    const dest = (form.elements.namedItem('dest') as RadioNodeList).value;
+    document.querySelectorAll<HTMLElement>('[data-when]').forEach((el) => {
+      el.hidden = !el.dataset.when!.split(' ').includes(dest);
+    });
+  }
+  $('#dest').addEventListener('change', syncDest);
+
+  function open(piece?: any) {
+    form.reset();
+    editing = piece?.slug ?? null;
+    $('#sheetTitle').textContent = piece ? piece.title : 'New piece';
+    $('#del').hidden = !piece;
+    $('#coverPreview').innerHTML = piece ? `<img src="${piece.cover_url}" alt="" />` : '';
+    $('#extrasPreview').innerHTML = (piece?.gallery ?? [])
+      .map((g: any) => `<img src="${g.url}" alt="" />`).join('');
+    say('#formMsg', '');
+
+    if (piece) {
+      const set = (n: string, v: any) => {
+        const el = form.elements.namedItem(n) as HTMLInputElement | null;
+        if (el && v !== null && v !== undefined) el.value = String(v);
+      };
+      (form.elements.namedItem('dest') as RadioNodeList).value = destOf(piece);
+      set('title', piece.title); set('year', piece.year); set('medium', piece.medium);
+      set('width', piece.width); set('height', piece.height); set('slug', piece.slug);
+      set('sortOrder', piece.sort_order); set('paymentLink', piece.payment_link);
+      set('editionSize', piece.edition_size); set('editionNumber', piece.edition_number);
+      if (destOf(piece) === 'gallery') set('volume', piece.collection);
+      else {
+        set('collection', piece.collection);
+        set('status', piece.status);
+        if (piece.price_ugx) { set('price', piece.price_ugx); set('currency', 'UGX'); }
+        else if (piece.price_usd) { set('price', piece.price_usd); set('currency', 'USD'); }
+      }
+      (form.elements.namedItem('featured') as HTMLInputElement).checked = piece.featured;
+      (form.elements.namedItem('framed') as HTMLInputElement).checked = piece.framed;
+    }
+    syncDest();
+    editor.showModal();
+  }
+
+  $('#new').addEventListener('click', () => open());
+  $('#close').addEventListener('click', () => editor.close());
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $<HTMLButtonElement>('#save');
+    btn.disabled = true;
+    try {
+      const f = new FormData(form);
+      const dest = String(f.get('dest'));
+      const slug = slugify(String(f.get('slug') || f.get('title')));
+      const existing = pieces.find((p) => p.slug === editing);
+
+      const coverFile = (f.get('cover') as File);
+      if (!existing && (!coverFile || !coverFile.size)) throw new Error('A photo is required.');
+
+      say('#formMsg', 'Uploading…');
+      const cover = coverFile?.size ? await upload(slug, coverFile) : null;
+
+      const extras = form.elements.namedItem('extras') as HTMLInputElement;
+      const gallery = extras.files?.length
+        ? await Promise.all([...extras.files].map((file) => upload(slug, file)))
+        : existing?.gallery ?? [];
+
+      const price = f.get('price') ? Number(f.get('price')) : null;
+      const usd = dest !== 'gallery' && price && f.get('currency') === 'USD';
+      const ugx = dest !== 'gallery' && price && f.get('currency') === 'UGX';
+
+      const row: Record<string, unknown> = {
+        slug,
+        title: String(f.get('title')),
+        year: Number(f.get('year')),
+        medium: String(f.get('medium')),
+        width: Number(f.get('width')),
+        height: Number(f.get('height')),
+        // The gallery holds work that was never for sale; the site keys off
+        // not-for-sale to split the archive from the shop.
+        kind: dest === 'print' ? 'print' : 'original',
+        status: dest === 'gallery' ? 'not-for-sale' : String(f.get('status')),
+        collection: (dest === 'gallery' ? f.get('volume') : f.get('collection')) || null,
+        price_ugx: ugx ? price : null,
+        price_usd: usd ? price : null,
+        edition_size: dest === 'print' && f.get('editionSize') ? Number(f.get('editionSize')) : null,
+        edition_number: dest === 'print' && f.get('editionNumber') ? Number(f.get('editionNumber')) : null,
+        gallery,
+        payment_link: dest !== 'gallery' && f.get('paymentLink') ? String(f.get('paymentLink')) : null,
+        framed: dest !== 'gallery' && !!f.get('framed'),
+        featured: !!f.get('featured'),
+        sort_order: Number(f.get('sortOrder') || 0),
+        ...(cover ? { cover_url: cover.url, cover_width: cover.width, cover_height: cover.height } : {}),
+      };
+
+      say('#formMsg', 'Saving…');
+      const { error } = await db.from('pieces').upsert(row, { onConflict: 'slug' });
+      if (error) throw new Error(error.message);
+
+      editor.close();
+      await refresh();
+      say('#appMsg', `Saved “${row.title}”. Press Publish when you are ready to put it live.`);
+    } catch (err: any) {
+      say('#formMsg', err.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('#del').addEventListener('click', async () => {
+    if (!editing) return;
+    if (!confirm(`Delete “${editing}”? This cannot be undone.`)) return;
+    const { error } = await db.from('pieces').delete().eq('slug', editing);
+    if (error) return say('#formMsg', error.message, true);
+    editor.close();
+    await refresh();
+    say('#appMsg', 'Deleted.');
+  });
+
+  /* ── Publish ──
+     Saving writes to the database; the live site is static and only picks
+     changes up when it rebuilds. This is that trigger. */
+  $('#publish').addEventListener('click', async () => {
+    if (!DEPLOY_HOOK) return say('#appMsg', 'PUBLIC_DEPLOY_HOOK_URL is not set.', true);
+    say('#appMsg', 'Publishing…');
+    try {
+      await fetch(DEPLOY_HOOK, { method: 'POST', mode: 'no-cors' });
+      say('#appMsg', 'Publishing. The site updates in about a minute.');
+    } catch {
+      say('#appMsg', 'Could not reach the deploy hook.', true);
+    }
+  });
+
+  boot();
+</script>
+
+<style>
+  /* The hidden attribute sets display:none through the user agent sheet, which
+     any display rule here outranks. Everything that shows and hides on this
+     page (the sign-in gate, the app, the editor's conditional fields) carries
+     a display rule, so without this they would all stay on screen. */
+  [hidden] { display: none !important; }
+
+  .studio-body { background: var(--gray-50); min-height: 100vh; }
+
+  /* ── Gate ── */
+  .gate { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  .gate-card {
+    width: 100%; max-width: 340px; background: var(--white);
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    padding: 32px; display: flex; flex-direction: column; gap: 16px;
+  }
+  .gate-title { font-size: 1.4rem; font-weight: 500; letter-spacing: -0.03em; }
+
+  /* ── Bar ── */
+  .bar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 12px 20px;
+    background: var(--white); border-bottom: 1px solid var(--gray-200);
+  }
+  .bar-left { display: flex; align-items: center; gap: 12px; }
+  .bar-logo { height: 22px; width: auto; }
+  .bar-title { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-400); }
+  .bar-right { display: flex; gap: 8px; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 80px; }
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tabs { display: flex; gap: 2px; }
+  .tab {
+    font-size: 0.78rem; padding: 7px 14px; color: var(--gray-400);
+    border: 1px solid transparent; border-radius: var(--r);
+  }
+  .tab.is-on { color: var(--black); border-color: var(--gray-200); background: var(--white); }
+
+  /* ── List ── */
+  .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+  .card {
+    text-align: left; background: var(--white);
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+    overflow: hidden; display: flex; flex-direction: column;
+    transition: border-color 0.15s var(--ease);
+  }
+  .card:hover { border-color: var(--gray-400); }
+  .card img { width: 100%; aspect-ratio: 1; object-fit: contain; background: var(--white); }
+  .card-body { padding: 11px 13px 14px; display: flex; flex-direction: column; gap: 3px; }
+  .card-title { font-size: 0.86rem; font-weight: 500; }
+  .card-meta { font-size: 0.68rem; color: var(--gray-400); letter-spacing: 0.04em; }
+  .empty { color: var(--gray-400); font-size: 0.86rem; padding: 40px 0; }
+
+  /* ── Editor sheet ── */
+  .sheet {
+    width: min(620px, 100%); max-height: 92vh; padding: 0; border: none;
+    border-radius: var(--r); box-shadow: var(--shadow-md); color: var(--black);
+  }
+  .sheet::backdrop { background: rgba(0,0,0,0.4); }
+  .sheet form { display: flex; flex-direction: column; max-height: 92vh; }
+  .sheet-head, .sheet-foot {
+    display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+    background: var(--white);
+  }
+  .sheet-head { border-bottom: 1px solid var(--gray-200); justify-content: space-between; }
+  .sheet-head h2 { font-size: 1rem; font-weight: 500; }
+  .sheet-foot { border-top: 1px solid var(--gray-200); }
+  .grow { flex: 1; }
+  .sheet-body { padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Fields ── */
+  .field { display: flex; flex-direction: column; gap: 6px; border: none; }
+  .field > span, .field > legend {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gray-400);
+  }
+  .field em { font-style: normal; text-transform: none; letter-spacing: 0; }
+  .field input, .field select {
+    font-family: inherit; font-size: 0.9rem; color: var(--black);
+    padding: 9px 11px; background: var(--white);
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+  }
+  .field input:focus, .field select:focus { outline: 2px solid var(--black); outline-offset: -1px; }
+  .field small, .hint { font-size: 0.7rem; color: var(--gray-400); line-height: 1.5; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .checks { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.84rem; }
+  .checks label { display: flex; align-items: center; gap: 8px; }
+  .more { margin-top: 4px; }
+  .more summary {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gray-400); cursor: pointer; padding: 6px 0;
+  }
+  .more > *:not(summary) { margin-top: 14px; }
+
+  .seg { display: flex; gap: 2px; }
+  .seg label { flex: 1; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg span {
+    display: block; text-align: center; font-size: 0.8rem; padding: 9px 10px;
+    border: 1px solid var(--gray-200); border-radius: var(--r); color: var(--gray-400);
+  }
+  .seg input:checked + span { border-color: var(--black); color: var(--black); }
+  .seg input:focus-visible + span { outline: 2px solid var(--black); outline-offset: 2px; }
+
+  .preview { display: flex; gap: 8px; flex-wrap: wrap; }
+  .preview img {
+    width: 84px; height: 84px; object-fit: contain; background: var(--white);
+    border: 1px solid var(--gray-200); border-radius: var(--r);
+  }
+  .preview:empty { display: none; }
+
+  /* ── Buttons ── */
+  .btn-solid {
+    font-size: 0.8rem; padding: 9px 18px; border-radius: var(--r);
+    background: var(--black); color: var(--white);
+  }
+  .btn-solid:disabled { opacity: 0.5; }
+  .btn-ghost {
+    font-size: 0.8rem; padding: 8px 14px; border-radius: var(--r);
+    border: 1px solid var(--gray-200); color: var(--gray-600);
+  }
+  .btn-ghost:hover { border-color: var(--black); color: var(--black); }
+  .btn-danger { color: #8a1c1c; }
+
+  .msg { font-size: 0.76rem; color: var(--gray-400); min-height: 1.1em; }
+  .msg.is-bad { color: #8a1c1c; }
+
+  @media (max-width: 560px) {
+    .row { grid-template-columns: 1fr; }
+    .sheet { width: 100%; max-height: 100vh; height: 100vh; border-radius: 0; }
+    .sheet form { max-height: 100vh; }
+  }
+</style>
+
+</body>
+</html>
