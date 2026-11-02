@@ -31,8 +31,14 @@ import { WHATSAPP } from '../lib/site';
    links to a 404 and would go out in their order message. The build knows what
    survives, so it says so here. Matches the filter in pages/art/[slug].astro —
    if that page would not be built, the cart must not point at it. */
-const buyable = (await getCollection('artworks', ({ data }) => data.status !== 'not-for-sale'))
-  .map((piece) => piece.id);
+const inShop = await getCollection('artworks', ({ data }) => data.status !== 'not-for-sale');
+const buyable = inShop.map((piece) => piece.id);
+
+/* A sold piece keeps its page and stays in the cart — it is still worth
+   looking at, and removing it would be the same unexplained disappearance
+   the pruning above avoids. It just cannot be ordered, so it is marked and
+   left out of the total and the order message. */
+const soldOut = inShop.filter(({ data }) => data.status === 'sold').map((piece) => piece.id);
 ---
 
 <div class="cart-backdrop" id="cartBackdrop"></div>
@@ -59,7 +65,7 @@ const buyable = (await getCollection('artworks', ({ data }) => data.status !== '
   </footer>
 </aside>
 
-<script define:vars={{ WHATSAPP, buyable }}>
+<script define:vars={{ WHATSAPP, buyable, soldOut }}>
   /* Classic (non-module) inline script so it is available to the markup
      immediately; re-bound on every client-side navigation like the rest. */
   (function () {
@@ -84,6 +90,11 @@ const buyable = (await getCollection('artworks', ({ data }) => data.status !== '
 
     const lineAuthored = (item) => (item.ugx ? { UGX: item.ugx * item.qty } : {});
 
+    const isSold = (id) => Array.isArray(soldOut) && soldOut.includes(id);
+    /* What is actually for sale. Totals and the order message run off this,
+       so a sold line never reaches the studio as something to buy. */
+    const orderable = (items) => items.filter((i) => !isSold(i.id));
+
     /* Drop anything the shop no longer sells, and say so rather than letting
        a line vanish without explanation.
 
@@ -103,17 +114,18 @@ const buyable = (await getCollection('artworks', ({ data }) => data.status !== '
 
     /* The authored currency only stays exact if every line carries one. */
     function totals(items) {
-      const usd = items.reduce((n, i) => n + i.usd * i.qty, 0);
-      const allUgx = items.length > 0 && items.every((i) => i.ugx);
+      const live = orderable(items);
+      const usd = live.reduce((n, i) => n + i.usd * i.qty, 0);
+      const allUgx = live.length > 0 && live.every((i) => i.ugx);
       const authored = allUgx
-        ? { UGX: items.reduce((n, i) => n + i.ugx * i.qty, 0) }
+        ? { UGX: live.reduce((n, i) => n + i.ugx * i.qty, 0) }
         : {};
       return { usd, authored };
     }
 
     function orderLink(items) {
       const { usd, authored } = totals(items);
-      const lines = items
+      const lines = orderable(items)
         .map((i) => `• ${i.qty} × ${i.title} — ${money(i.usd * i.qty, lineAuthored(i))}`)
         .join('\n');
       const msg =
@@ -154,28 +166,37 @@ const buyable = (await getCollection('artworks', ({ data }) => data.status !== '
         return;
       }
 
-      body.innerHTML = gone + items.map((i) => `
-        <div class="cart-line" data-id="${i.id}">
+      body.innerHTML = gone + items.map((i) => {
+        const sold = isSold(i.id);
+        /* A sold line keeps its price — it is what the piece went for — but
+           loses the quantity stepper, since there is nothing to count. */
+        const control = sold
+          ? '<span class="cart-line-sold">Sold</span>'
+          : i.max === 1
+            ? '<span class="cart-line-unique">One of one</span>'
+            : `<span class="cart-qty">
+                 <button type="button" data-qty="-1" aria-label="Decrease quantity">&minus;</button>
+                 <span>${i.qty}</span>
+                 <button type="button" data-qty="1" aria-label="Increase quantity">&plus;</button>
+               </span>`;
+        return `
+        <div class="cart-line${sold ? ' is-sold' : ''}" data-id="${i.id}">
           <div class="cart-line-main">
             <a href="/art/${i.id}" class="cart-line-title">${i.title}</a>
             <span class="cart-line-price">${money(i.usd * i.qty, lineAuthored(i))}</span>
           </div>
           <div class="cart-line-actions">
-            ${i.max === 1
-              ? '<span class="cart-line-unique">One of one</span>'
-              : `<span class="cart-qty">
-                   <button type="button" data-qty="-1" aria-label="Decrease quantity">&minus;</button>
-                   <span>${i.qty}</span>
-                   <button type="button" data-qty="1" aria-label="Increase quantity">&plus;</button>
-                 </span>`}
+            ${control}
             <button type="button" class="cart-remove" data-remove aria-label="Remove ${i.title}">Remove</button>
           </div>
-        </div>`).join('');
+        </div>`;
+      }).join('');
 
       const t = totals(items);
       if (total) total.textContent = money(t.usd, t.authored);
       if (checkout) checkout.href = orderLink(items);
-      if (foot) foot.hidden = false;
+      // Every line sold: a total of nothing, and no order to send.
+      if (foot) foot.hidden = orderable(items).length === 0;
     }
 
     function add(data) {

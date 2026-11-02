@@ -507,6 +507,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-size: 0.58rem; font-weight: 500; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--gray-400);
 }
+/* Sold work stays in the drawer but reads as past tense: title and price
+   recede, the tag does not. The price is struck through rather than hidden —
+   it is what the piece went for. */
+.cart-line-sold {
+  font-size: 0.58rem; font-weight: 500; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--black);
+}
+.cart-line.is-sold .cart-line-title { color: var(--gray-400); }
+.cart-line.is-sold .cart-line-price { color: var(--gray-400); text-decoration: line-through; }
 .cart-qty { display: inline-flex; align-items: center; border: 1px solid var(--gray-200); border-radius: var(--r); }
 .cart-qty button { width: 26px; height: 26px; font-size: 0.9rem; line-height: 1; color: var(--gray-600); }
 .cart-qty button:hover { background: var(--black); color: var(--white); }
