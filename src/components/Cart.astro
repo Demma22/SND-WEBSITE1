@@ -22,7 +22,17 @@
  * covered 60px while its contents spilled out over the page. The trigger
  * button lives in the header; the drawer itself must not.
  */
+import { getCollection } from 'astro:content';
 import { WHATSAPP } from '../lib/site';
+
+/* Pieces that still have a page to link to. A cart lives in the visitor's
+   localStorage, so it outlives the catalogue: delete a piece in the dashboard,
+   or move it to the gallery, and anyone who had it selected keeps a line that
+   links to a 404 and would go out in their order message. The build knows what
+   survives, so it says so here. Matches the filter in pages/art/[slug].astro —
+   if that page would not be built, the cart must not point at it. */
+const buyable = (await getCollection('artworks', ({ data }) => data.status !== 'not-for-sale'))
+  .map((piece) => piece.id);
 ---
 
 <div class="cart-backdrop" id="cartBackdrop"></div>
@@ -49,7 +59,7 @@ import { WHATSAPP } from '../lib/site';
   </footer>
 </aside>
 
-<script define:vars={{ WHATSAPP }}>
+<script define:vars={{ WHATSAPP, buyable }}>
   /* Classic (non-module) inline script so it is available to the markup
      immediately; re-bound on every client-side navigation like the rest. */
   (function () {
@@ -73,6 +83,23 @@ import { WHATSAPP } from '../lib/site';
     }
 
     const lineAuthored = (item) => (item.ugx ? { UGX: item.ugx * item.qty } : {});
+
+    /* Drop anything the shop no longer sells, and say so rather than letting
+       a line vanish without explanation.
+
+       Guarded on a non-empty catalogue: if a build ever shipped without one,
+       silently emptying every visitor's cart would be far worse than leaving
+       a stale line in it. */
+    let dropped = [];
+    function prune() {
+      dropped = [];
+      if (!Array.isArray(buyable) || !buyable.length) return;
+      const items = read();
+      const keep = items.filter((i) => buyable.includes(i.id));
+      if (keep.length === items.length) return;
+      dropped = items.filter((i) => !keep.includes(i)).map((i) => i.title);
+      write(keep);
+    }
 
     /* The authored currency only stays exact if every line carries one. */
     function totals(items) {
@@ -115,13 +142,19 @@ import { WHATSAPP } from '../lib/site';
         btn.textContent = inCart ? 'In cart' : 'Add to cart';
       });
 
+      const gone = dropped.length
+        ? `<p class="cart-gone">${dropped.join(' and ')} ${
+            dropped.length > 1 ? 'are' : 'is'} no longer available, so ${
+            dropped.length > 1 ? 'they have' : 'it has'} been removed.</p>`
+        : '';
+
       if (!items.length) {
-        body.innerHTML = '<p class="cart-empty">Nothing selected yet.</p>';
+        body.innerHTML = gone + '<p class="cart-empty">Nothing selected yet.</p>';
         if (foot) foot.hidden = true;
         return;
       }
 
-      body.innerHTML = items.map((i) => `
+      body.innerHTML = gone + items.map((i) => `
         <div class="cart-line" data-id="${i.id}">
           <div class="cart-line-main">
             <a href="/art/${i.id}" class="cart-line-title">${i.title}</a>
@@ -171,6 +204,7 @@ import { WHATSAPP } from '../lib/site';
     }
 
     function init() {
+      prune();
       render();
 
       document.getElementById('cartButton')?.addEventListener('click', () => open(true));
